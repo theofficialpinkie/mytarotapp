@@ -1,40 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Erika Owl Tarot</title>
-</head>
-<body style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
-  
-  <h1>Erika Owl Tarot</h1>
-  <p>Ask your question below, and Erika will provide a reading.</p>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: #fefaf6;
+      color: #333;
+    }
 
-  <textarea id="question" 
-            placeholder="Ask your question here..." 
-            style="width:100%; height:80px; padding:10px; font-size:14px;"></textarea>
-  <br><br>
-  
-  <button onclick="generateReading()" 
-          style="padding:10px 20px; font-size:14px; cursor:pointer;">
-    Generate Reading
-  </button>
-  
-  <div id="output" 
-       style="margin-top:20px; padding:10px; border:1px solid #ccc; white-space: pre-wrap;"></div>
+    h1 {
+      text-align: center;
+      color: #7c3aed;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #7c3aed;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background: #5b21b6;
+    }
+
+    .reading {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      white-space: pre-wrap;
+    }
+
+    .card-spread {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      width: 120px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      font-size: 14px;
+      margin: 5px 0;
+      color: #4c1d95;
+    }
+
+    .orientation {
+      font-size: 12px;
+      font-style: italic;
+      color: #6b21a8;
+    }
+
+    .meaning {
+      font-size: 12px;
+      margin-top: 5px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔮 Erika Owl Tarot</h1>
+  <p style="text-align:center;">Ask your question and receive a 6-card spread reading.</p>
+
+  <textarea id="question" placeholder="Ask your question here..."></textarea>
+  <button onclick="generateReading()">Generate Reading</button>
+
+  <div id="output" class="reading"></div>
+  <div id="cardSpread" class="card-spread"></div>
 
   <script>
     async function generateReading() {
       const question = document.getElementById("question").value.trim();
       const output = document.getElementById("output");
-      
+      const cardSpread = document.getElementById("cardSpread");
+
       if (!question) {
         output.textContent = "Please enter a question.";
         return;
       }
-      
-      output.textContent = "Generating your reading...";
-      
+
+      output.textContent = "🔮 Shuffling the cards...";
+      cardSpread.innerHTML = "";
+
       try {
         const response = await fetch("/api/tarot", {
           method: "POST",
@@ -44,11 +127,26 @@
 
         const data = await response.json();
         output.textContent = data.answer || "No reading received.";
-        
+
+        // Display card spread
+        cardSpread.innerHTML = "";
+        data.cards.forEach(card => {
+          const cardDiv = document.createElement("div");
+          cardDiv.classList.add("card");
+
+          cardDiv.innerHTML = `
+            <h3>${card.name}</h3>
+            <div class="orientation">${card.orientation}</div>
+            <div class="meaning">${card.meaning}</div>
+          `;
+          cardSpread.appendChild(cardDiv);
+        });
+
       } catch (err) {
         output.textContent = "Error: " + err.message;
       }
     }
   </script>
+
 </body>
 </html>
