@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Erika Owl Tarot</title>
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+  
+  <h1>Erika Owl Tarot</h1>
+  <p>Ask your question below, and Erika will provide a reading.</p>
+
+  <textarea id="question" 
+            placeholder="Ask your question here..." 
+            style="width:100%; height:80px; padding:10px; font-size:14px;"></textarea>
+  <br><br>
+  
+  <button onclick="generateReading()" 
+          style="padding:10px 20px; font-size:14px; cursor:pointer;">
+    Generate Reading
+  </button>
+  
+  <div id="output" 
+       style="margin-top:20px; padding:10px; border:1px solid #ccc; white-space: pre-wrap;"></div>
+
+  <script>
+    async function generateReading() {
+      const question = document.getElementById("question").value.trim();
+      const output = document.getElementById("output");
+      
+      if (!question) {
+        output.textContent = "Please enter a question.";
+        return;
+      }
+      
+      output.textContent = "Generating your reading...";
+      
+      try {
+        const response = await fetch("/api/tarot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await response.json();
+        output.textContent = data.answer || "No reading received.";
+        
+      } catch (err) {
+        output.textContent = "Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
