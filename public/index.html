@@ -7,25 +7,23 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-message erika">
+      <img src="/assets/erika-avatar.png" class="avatar">
+      <div class="chat-bubble">Welcome lovely! Ready to begin your reading?</div>
+    </div>
+    <div class="chat-action">
+      <button id="startReadingBtn">Generate Reading</button>
+    </div>
+  </div>
 
-  <h1>Tapp Tarot Reading</h1>
-
-  <div class="input-section">
+  <div class="chat-input-container hidden" id="inputContainer">
     <input type="text" id="question" placeholder="Type your question...">
-    <button id="getSpreadBtn">Shuffle Deck</button>
-  </div>
-
-  <div id="cardContainer" class="card-container"></div>
-
-  <div class="actions">
-    <button id="getReadingBtn" disabled>Get Reading</button>
-  </div>
-
-  <div class="reading" id="reading">
-    <h2>Erika’s Insight</h2>
-    <p id="readingText"></p>
+    <button id="shuffleBtn" class="hidden">Shuffle Cards</button>
+    <button id="getReadingBtn" class="hidden">Get Reading</button>
   </div>
 
   <script src="/script.js" defer></script>
 </body>
 </html>
+
