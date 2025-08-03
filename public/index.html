@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tapp Tarot Reading</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <h1>Tapp Tarot Reading</h1>
+
+  <div class="input-section">
+    <input type="text" id="question" placeholder="Type your question...">
+    <button id="getSpreadBtn">Shuffle Deck</button>
+  </div>
+
+  <div id="cardContainer" class="card-container"></div>
+
+  <div class="actions">
+    <button id="getReadingBtn" disabled>Get Reading</button>
+  </div>
+
+  <div class="reading" id="reading">
+    <h2>Erika’s Insight</h2>
+    <p id="readingText"></p>
+  </div>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>

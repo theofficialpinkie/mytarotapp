@@ -1,58 +1,49 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
+const tarotDeck = require("./deck"); // Import full 78-card deck
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(express.static(".")); // Serve index.html
+app.use(cors());
+app.use(express.static("public"));
 
-// Full 78-card deck with upright/reversed meanings
-const tarotDeck = {
-  "The Fool": { upright: "Adventurous, spontaneous, hopeful, new beginnings, travel, inner child", reversed: "Reckless, naive, hesitant" },
-  "The Magician": { upright: "Resourceful, powerful, focused, manifestation, you have all the tools to succeed", reversed: "Manipulative, scattered, deceptive" },
-  "The High Priestess": { upright: "Intuitive, mysterious, wise, a document being signed", reversed: "Disconnected, secretive, blocked intuition" },
-  "The Empress": { upright: "Nurturing, creative, abundant, self-worth", reversed: "Smothering, insecure, blocked creativity" },
-  "The Emperor": { upright: "Authoritative, structured, protective, leadership roles, starting a business", reversed: "Controlling, rigid, domineering" },
-  "The Hierophant": { upright: "Traditional, spiritual, wise, teacher, commitments", reversed: "Rebellious, dogmatic, restricted" },
-  "The Lovers": { upright: "Romantic, harmonious, soulmate connection, choices from the heart", reversed: "Conflicted, unbalanced, detached" },
-  "The Chariot": { upright: "Driven, determined, victorious, relocation, moving forward", reversed: "Scattered, stuck, unfocused" },
-  "Strength": { upright: "Courageous, compassionate, resilient, healing confidence, inner power", reversed: "Doubtful, insecure, timid" },
-  "The Hermit": { upright: "Introspective, wise, solitary, spiritual study, shadow work", reversed: "Isolated, withdrawn, lost" },
-  "Wheel of Fortune": { upright: "Fortunate, cyclical, destined, karmic cycles turning", reversed: "Resistant, unlucky, stagnant" },
-  "Justice": { upright: "Fair, balanced, truthful, karmic truth, legal matters", reversed: "Unjust, biased, dishonest" },
-  "The Hanged Man": { upright: "Surrendered, patient, reflective, redirection", reversed: "Resistant, indecisive, stalled" },
-  "Death": { upright: "Transformative, endings, liberating, ego death", reversed: "Resistant, stuck, fearful of change" },
-  "Temperance": { upright: "Balanced, harmonious, aligned, healing integration", reversed: "Excessive, imbalanced, impatient" },
-  "The Devil": { upright: "Attached, addictive, intense, toxic ties", reversed: "Liberated, detached, awakened" },
-  "The Tower": { upright: "Chaotic, sudden change, revolutionary shifts, physical move", reversed: "Avoided disaster, internal shifts" },
-  "The Star": { upright: "Hopeful, inspired, healing, connecting to earth and oneness", reversed: "Discouraged, disconnected, faithless" },
-  "The Moon": { upright: "Mysterious, emotional, psychic awakening, dreams", reversed: "Confused, fearful, unclear" },
-  "The Sun": { upright: "Joyful, radiant, successful, celebration, children", reversed: "Pessimistic, doubtful, drained" },
-  "Judgement": { upright: "Awakened, accountable, renewed, spiritual call", reversed: "Denial, regretful, avoiding responsibility" },
-  "The World": { upright: "Complete, fulfilled, accomplished, karmic closure", reversed: "Unfinished, delayed, blocked" },
-  // (Wands, Cups, Swords, Pentacles go here — omitted for brevity but keep from previous deck)
-};
+let currentSpread = [];
 
-// Draw random 6 cards
-function drawCards(deck, numCards = 6) {
+// Utility: Draw spread of 18 random cards
+function drawSpread(deck, numCards = 18) {
   const keys = Object.keys(deck);
-  const drawn = [];
+  const available = [...keys];
+  const spread = [];
+
   for (let i = 0; i < numCards; i++) {
-    const cardName = keys[Math.floor(Math.random() * keys.length)];
+    const randomIndex = Math.floor(Math.random() * available.length);
+    const cardName = available.splice(randomIndex, 1)[0];
     const isReversed = Math.random() < 0.5;
-    drawn.push({
-      name: `${cardName}${isReversed ? " (Reversed)" : ""}`,
+
+    spread.push({
+      id: i + 1,
+      name: cardName,
+      orientation: isReversed ? "Reversed" : "Upright",
       meaning: isReversed ? deck[cardName].reversed : deck[cardName].upright,
-      orientation: isReversed ? "Reversed" : "Upright"
+      image: `/assets/faces/placeholder.png` // Placeholder image for all cards now
     });
   }
-  return drawn;
+  return spread;
 }
 
-app.post("/api/tarot", async (req, res) => {
-  const { question } = req.body;
-  const drawnCards = drawCards(tarotDeck);
+// GET spread (18 cards)
+app.get("/api/spread", (req, res) => {
+  currentSpread = drawSpread(tarotDeck, 18);
+  res.json({ spread: currentSpread });
+});
+
+// POST reading for selected 6 cards
+app.post("/api/reading", async (req, res) => {
+  const { question, selectedIds } = req.body;
+  const selectedCards = currentSpread.filter(c => selectedIds.includes(c.id));
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -66,33 +57,32 @@ app.post("/api/tarot", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: `
-You are Erika Owl, a warm, intuitive tarot reader. 
+            content: `You are Erika Owl, a warm, intuitive tarot reader. 
 Your style blends deep intuition with grounded insight. 
 
 When responding:  
-- **Always start with a clear, direct answer** to the user’s question in the very first sentences.  
-- Present a **central theme** that runs through the reading, weaving it into the interpretation of each card.  
-- Speak in a **"spiritual bestie" tone**—warm, empowering, conversational, with a dash of playful sass.  
-- Interpret the cards in a **flowing narrative** that feels like a story, not a list.  
-- Include **punchy, memorable lines** (without overdoing it) that make the insight stick.  
-- **End with a short, powerful affirmation or takeaway** that leaves the user feeling clear, confident, and aligned.  
+- Always start with a clear, direct answer to the user’s question in the very first sentences.  
+- Present a central theme that runs through the reading, weaving it into the interpretation of each card.  
+- Speak in a "spiritual bestie" tone—warm, empowering, conversational, with a dash of playful sass.  
+- Interpret the cards in a flowing narrative that feels like a story, not a list.  
+- Include punchy, memorable lines (without overdoing it) that make the insight stick.  
+- Keep the response 
+- End with a short, powerful affirmation or takeaway** that leaves the user feeling clear, confident, and aligned.  
+
 
 Structure to follow:  
-1. **Opening clarity** – Give a direct yes/no or clear directional answer in the first sentence.  
-2. **Theme introduction** – State the central energy guiding the reading.  
-3. **Card story** – Interpret each card in context, reinforcing the theme.  
-4. **Punchy insight** – Share a key truth or empowering takeaway.  
-5. **Closing affirmation** – Short, uplifting sentence the user can carry forward.  
-`
+1. Opening clarity – Give a direct yes/no or clear directional answer in the first sentence.  
+2. Theme introduction – State the central energy guiding the reading.  
+3. Card story – Interpret each card in context, reinforcing the theme.  
+4. Punchy insight – Share a key truth or empowering takeaway.  
+5. Closing affirmation – Short, uplifting sentence the user can carry forward.`
           },
           {
             role: "user",
             content: `
 The question is: "${question}"
 The drawn cards are:
-${drawnCards.map(c => `- ${c.name}: ${c.meaning}`).join("\n")}
-
+${selectedCards.map(c => `- ${c.name} (${c.orientation}): ${c.meaning}`).join("\n")}
 Please interpret them in the style described above.
 `
           }
@@ -102,19 +92,14 @@ Please interpret them in the style described above.
 
     const data = await response.json();
     const tarotText = data?.choices?.[0]?.message?.content || "No reading received.";
-
-    res.json({ 
-      question, 
-      cards: drawnCards, 
-      answer: tarotText 
-    });
+    res.json({ question, cards: selectedCards, answer: tarotText });
 
   } catch (err) {
-    console.error("Error in tarot endpoint:", err);
+    console.error("Error in reading endpoint:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
 app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+  console.log("Server running at http://localhost:3000");
 });
