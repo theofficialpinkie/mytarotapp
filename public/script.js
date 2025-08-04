@@ -1,98 +1,90 @@
-// Elements
 const chatContainer = document.getElementById("chatContainer");
 const inputContainer = document.getElementById("inputContainer");
-
-const startBtn = document.getElementById("startReadingBtn");
-const shuffleBtn = document.getElementById("shuffleBtn");
-const getReadingBtn = document.getElementById("getReadingBtn");
 const questionInput = document.getElementById("question");
+const sendQuestionBtn = document.getElementById("sendQuestionBtn");
 
-let selectedCards = [];
 let spreadCards = [];
+let selectedCards = [];
 
-// Step 1: Start Reading
-startBtn.addEventListener("click", () => {
-  addMessage("Erika Owl", "Wonderful! What’s your question for today’s reading?", "erika");
-  inputContainer.classList.remove("hidden");
-  shuffleBtn.classList.remove("hidden");
-  startBtn.parentElement.remove(); // Remove Generate Reading button
+// STEP 1: Generate Reading Button Click
+document.getElementById("startReadingBtn").addEventListener("click", () => {
+  addMessage("Erika Owl", "Great! Please type your question below.", "erika");
+  questionInput.classList.add("active");
+  sendQuestionBtn.disabled = false;
 });
 
-// Step 2: Shuffle Cards after question asked
-shuffleBtn.addEventListener("click", async () => {
+// STEP 2: Send Question
+sendQuestionBtn.addEventListener("click", () => {
   const question = questionInput.value.trim();
   if (!question) return;
 
-  // Show question as user bubble
   addMessage("You", question, "user");
+  questionInput.value = "";
 
-  addMessage("Erika Owl", "Perfect. Let’s shuffle the cards…", "erika");
+  addMessage("Erika Owl", "Ok, deep breath, set an intention...", "erika");
+  addButtonBelow("Shuffle Cards", shuffleCards);
+});
 
-  // Get spread from server
+// STEP 3: Shuffle Cards
+async function shuffleCards() {
+  addMessage("Erika Owl", "Shuffling your cards…", "erika");
+
   const res = await fetch("/api/spread");
   const data = await res.json();
   spreadCards = data.spread;
   selectedCards = [];
 
-  // Show back of cards
   showCardBacks(spreadCards);
-});
+}
 
-// Step 3: Show 18 Card Backs
+// STEP 4: Show Card Backs (18 total)
 function showCardBacks(spread) {
   const cardDiv = document.createElement("div");
   cardDiv.classList.add("card-row");
 
   spread.forEach(card => {
-    const cardWrapper = document.createElement("div");
-    cardWrapper.classList.add("card");
+    const img = document.createElement("img");
+    img.src = "/assets/backs/card-back.png";
+    img.classList.add("chat-card");
 
-    const cardBack = document.createElement("img");
-    cardBack.src = "/assets/backs/card-back.png";
-    cardBack.classList.add("chat-card");
-
-    cardBack.addEventListener("click", () => {
-      if (selectedCards.includes(card) || selectedCards.length >= 6) return;
+    img.addEventListener("click", () => {
+      if (selectedCards.length >= 6 || selectedCards.includes(card)) return;
       selectedCards.push(card);
 
-      // Flip card
-      cardBack.src = card.image;
-      cardBack.classList.add("flipped");
+      // Flip to reveal the card
+      img.src = card.image;
+      img.classList.add("flipped");
 
-      // Show Generate Reading when 6 selected
       if (selectedCards.length === 6) {
-        getReadingBtn.classList.remove("hidden");
-        addMessage("Erika Owl", "Beautiful, I have your 6 cards. Ready for your reading?", "erika");
+        addButtonBelow("Generate Reading", generateReading);
       }
     });
 
-    cardWrapper.appendChild(cardBack);
-    cardDiv.appendChild(cardWrapper);
+    cardDiv.appendChild(img);
   });
 
   chatContainer.appendChild(cardDiv);
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Step 4: Generate Reading
-getReadingBtn.addEventListener("click", async () => {
-  const question = questionInput.value.trim() || "General guidance";
-
-  addMessage("Erika Owl", "Let’s see what the cards reveal…", "erika");
+// STEP 5: Generate Reading
+async function generateReading() {
+  addMessage("Erika Owl", "Wait a second, I’m generating your reading…", "erika");
 
   const res = await fetch("/api/reading", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question, selectedIds: selectedCards.map(c => c.id) })
+    body: JSON.stringify({ 
+      question: questionInput.value || "General guidance", 
+      selectedIds: selectedCards.map(c => c.id) 
+    })
   });
 
   const data = await res.json();
   addMessage("Erika Owl", data.answer, "erika");
+}
 
-  getReadingBtn.classList.add("hidden");
-});
-
-// Helper: Add message to chat
+// Utility: Add Message to Chat
 function addMessage(sender, text, type) {
   const msgDiv = document.createElement("div");
   msgDiv.classList.add("chat-message", type);
@@ -109,5 +101,20 @@ function addMessage(sender, text, type) {
   }
 
   chatContainer.appendChild(msgDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Utility: Add Button Below a Message
+function addButtonBelow(text, callback) {
+  const btnDiv = document.createElement("div");
+  btnDiv.classList.add("chat-action");
+
+  const btn = document.createElement("button");
+  btn.classList.add("chat-btn");
+  btn.textContent = text;
+  btn.addEventListener("click", callback);
+
+  btnDiv.appendChild(btn);
+  chatContainer.appendChild(btnDiv);
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
