@@ -17,7 +17,7 @@ body {
 }
 
 .top-bar {
-  background: black,
+  background: black; /* Fixed: removed comma, added semicolon */
   padding: 2px 10px;
   display: flex;
   justify-content: center;
@@ -38,7 +38,6 @@ body {
   width: auto;
 }
 
-
 .byline {
   font-family: 'AuthenticSignature', cursive;
   font-size: 18px; /* Slightly smaller for balance */
@@ -51,10 +50,10 @@ body {
 
 /* Responsive adjustment for smaller screens */
 @media (max-width: 400px) {
-  .logo {
+  .tapp-logo { /* Fixed: was .logo, now matches the class name */
     height: 38px;
   }
-  .logo-divider {
+  .byline { /* Fixed: was .logo-divider, now matches actual usage */
     font-size: 22px;
   }
 }
@@ -100,7 +99,6 @@ body {
   box-sizing: border-box;
 }
 
-
 .chat-input-container input {
   flex: 1;  /* Take all remaining space */
   padding: 12px;
@@ -126,9 +124,6 @@ body {
   background-color: #1e1e1e;
 }
 
-
-
-
 .tooltip {
   background: #222;
   color: gold;
@@ -151,7 +146,6 @@ body {
   gap: 10px;
   margin: 15px 0;
 }
-
 
 .chat-card {
   width: 80px;
@@ -185,4 +179,3 @@ body {
   border: none;
   cursor: pointer;
 }
-
