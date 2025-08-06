@@ -18,13 +18,14 @@ body {
 
 .top-bar {
   background: black; /* Fixed: removed comma, added semicolon */
-  padding: 2px 10px;
+  padding: 15px 20px; /* Increased padding for better spacing */
   display: flex;
   justify-content: center;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 1px solid #333; /* Add subtle border */
 }
 
 .logo-wrap {
@@ -60,17 +61,22 @@ body {
 
 .chat-container {
   flex: 1;
-  padding: 15px;
+  padding: 20px; /* Reduced from 15px for better spacing */
+  margin: 0 auto; /* Center the container */
+  max-width: 800px; /* Limit max width for better readability */
+  width: 100%; /* Full width up to max-width */
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px; /* Increased gap between messages */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .chat-message {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px; /* Increased gap between avatar and message */
+  margin-bottom: 8px; /* Add space between messages */
 }
 
 .avatar {
@@ -83,20 +89,23 @@ body {
 
 .chat-bubble {
   background: #1e1e1e;
-  padding: 12px 16px;
-  border-radius: 15px;
+  padding: 16px 20px; /* Increased padding for more comfortable reading */
+  border-radius: 18px; /* Slightly more rounded */
   border: 1px solid #555;
-  max-width: 80%;
+  max-width: 85%; /* Slightly wider for better readability */
+  line-height: 1.5; /* Better line spacing */
 }
 
 .chat-input-container {
-  padding: 12px;
+  padding: 20px; /* Increased padding */
+  margin: 0 auto; /* Center the container */
+  max-width: 800px; /* Match chat container width */
+  width: 100%; /* Full width up to max-width */
   background: #111;
   border-top: 1px solid #333;
   display: flex;
-  gap: 8px;
-  width: 100%;  /* Full width */
-  box-sizing: border-box;
+  gap: 12px; /* Increased gap */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .chat-input-container input {
@@ -143,8 +152,9 @@ body {
 .card-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 15px 0;
+  gap: 15px; /* Increased gap between cards */
+  margin: 20px 0; /* More space around card rows */
+  justify-content: center; /* Center the cards */
 }
 
 .chat-card {
@@ -166,16 +176,31 @@ body {
 }
 
 .chat-action {
-  margin-top: 5px;
+  margin-top: 10px; /* Increased margin */
   display: flex;
   justify-content: flex-start;
+  padding-left: 62px; /* Align with chat messages (avatar width + gap) */
 }
 
 .chat-btn {
   background: #8e6dc7;
   color: white;
-  padding: 8px 14px;
-  border-radius: 16px;
+  padding: 12px 20px; /* Increased padding for better button size */
+  border-radius: 20px; /* More rounded */
   border: none;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500; /* Slightly bolder text */
+  transition: background-color 0.2s ease; /* Smooth hover effect */
 }
+
+.chat-btn:hover {
+  background: #7a5bb3; /* Darker on hover */
+}
+
+.chat-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+
