@@ -8,6 +8,81 @@ html, body {
   background: black;
 }
 
+/* 🎴 Card Animation Container */
+.card-animation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70vw;
+  height: auto;
+  z-index: 1; /* Behind overlay */
+  opacity: 0.8;
+  border: 2px solid red; /* DEBUG: See container bounds */
+}
+
+.card-layer {
+  position: relative;
+  width: 100%;
+  border: 2px solid blue; /* DEBUG: See layer bounds */
+}
+
+.card-outline {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  border: 2px solid green; /* DEBUG: See if outline loads */
+}
+
+/* 🌟 Stars (pulse) */
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  animation: starPulse 3s infinite ease-in-out;
+  z-index: 2;
+}
+
+@keyframes starPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* 👑 Giver (sway) */
+.giver {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  animation: giverSway 5s infinite ease-in-out;
+  z-index: 3;
+}
+
+@keyframes giverSway {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* 🙇 Beggars (kneel motion) */
+.beggar-left, .beggar-right {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  animation: beggarKneel 6s infinite ease-in-out;
+  z-index: 3;
+}
+
+.beggar-right {
+  animation-delay: 1s; /* Stagger for realism */
+}
+
+@keyframes beggarKneel {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(3px); opacity: 0.95; }
+}
+
 /* 🖤 Overlay covering 75% height */
 .center-overlay {
   position: absolute;
@@ -15,11 +90,11 @@ html, body {
   left: 0;
   width: 100%;
   height: 75%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center; 
   justify-content: center; 
-  z-index: 2;
+  z-index: 5; /* Above card animations */
   box-sizing: border-box;
 }
 
@@ -43,13 +118,13 @@ html, body {
   flex-direction: column;
   align-items: flex-start;
   transform: translateX(-10px);
-  gap: 16px; /* Space between input and button */
+  gap: 16px;
 }
 
 /* 📬 Signup input */
 .signup-input {
   padding: 14px 20px;
-  font-size: 16px; /* Larger than button text */
+  font-size: 16px;
   border: 1px solid white;
   border-radius: 30px;
   background: transparent;
@@ -65,7 +140,7 @@ html, body {
 /* 🔘 Outline button with smaller text */
 .signup-button {
   padding: 14px 30px;
-  font-size: 14px; /* Smaller than input text */
+  font-size: 14px;
   border: 1px solid white;
   border-radius: 30px;
   background: transparent;
@@ -80,6 +155,10 @@ html, body {
 
 /* 📱 Mobile responsiveness */
 @media (max-width: 600px) {
+  .card-animation {
+    width: 90vw; /* Bigger on mobile */
+  }
+  
   .signup-container {
     align-items: center;
     transform: translateX(0);
