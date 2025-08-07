@@ -745,10 +745,20 @@ document.addEventListener('DOMContentLoaded', function() {
         newReadingButton.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.2)';
       });
       
-      newReadingButton.addEventListener('click', () => {
-        // Instead of reload, go back to main page
-        window.location.href = '/';
+      newReadingButton.addEventListener('mouseover', () => {
+        newReadingButton.style.transform = 'translateY(-2px)';
+        newReadingButton.style.boxShadow = '0 8px 25px rgba(255, 255, 255, 0.3)';
       });
+      
+      newReadingButton.addEventListener('mouseout', () => {
+        newReadingButton.style.transform = 'translateY(0)';
+        newReadingButton.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.2)';
+      });
+      
+     newReadingButton.addEventListener('click', () => {
+  // Go to question screen for new reading
+  window.location.href = '/question-screen.html';
+});
       
       readingContent.appendChild(title);
       readingContent.appendChild(question);
