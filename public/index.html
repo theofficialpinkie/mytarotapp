@@ -1,35 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tapp Tarot Reading</title>
-  <link rel="stylesheet" href="/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rosarivo:ital@0;1&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tapp - Welcome</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      background: black;
+    }
+
+    /* 🖤 Left Side - Tapp Logo + Signup */
+    .center-overlay {
+      position: absolute;
+      top: 50%;
+      left: 25%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+    }
+
+    .logo-and-signup {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .tapp-logo {
+      width: 450px;
+      max-width: 90%;
+    }
+
+    .signup-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transform: translateX(-10px);
+      gap: 20px;
+    }
+
+    .signup-input {
+      padding: 14px 20px;
+      font-size: 16px;
+      border: 1px solid white;
+      border-radius: 30px;
+      background: transparent;
+      color: white;
+      width: 300px;
+      outline: none;
+    }
+
+    .signup-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .signup-button {
+      padding: 14px 30px;
+      font-size: 14px;
+      border: 1px solid white;
+      border-radius: 30px;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .signup-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 🎴 Right Side - Two Static Cards */
+    .card-animation {
+      position: absolute;
+      top: 50%;
+      right: 10%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 30px;
+      z-index: 3;
+      padding: 20px;
+    }
+
+    .card-layer {
+      position: relative;
+      width: 200px;
+    }
+
+    .card-outline {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Hide the giver image */
+    .giver {
+      display: none;
+    }
+
+    .lovers-card {
+      width: 400px;
+    }
+
+    /* 💻 Laptop/Medium screen adjustments (1024px - 1366px) */
+    @media (max-width: 1366px) and (min-width: 1024px) {
+      .center-overlay {
+        left: 30%;
+      }
+      
+      .tapp-logo {
+        width: 350px;
+      }
+      
+      .signup-input {
+        width: 250px;
+      }
+      
+      .card-animation {
+        right: 8%;
+        gap: 20px;
+        padding: 15px;
+      }
+      
+      .card-layer {
+        width: 160px;
+      }
+      
+      .lovers-card {
+        width: 320px;
+      }
+    }
+
+    /* 📱 Small laptop/tablet adjustments */
+    @media (max-width: 1023px) {
+      .center-overlay {
+        left: 50%;
+        top: 35%;
+      }
+      
+      .tapp-logo {
+        width: 300px;
+      }
+      
+      .signup-input {
+        width: 240px;
+      }
+      
+      .card-animation {
+        top: 65%;
+        right: 50%;
+        transform: translate(50%, -50%);
+        gap: 15px;
+        padding: 10px;
+      }
+      
+      .card-layer {
+        width: 140px;
+      }
+      
+      .lovers-card {
+        width: 280px;
+      }
+    }
+
+    /* 📱 Mobile adjustments */
+    @media (max-width: 768px) {
+      .center-overlay {
+        left: 50%;
+        top: 30%;
+      }
+      
+      .tapp-logo {
+        width: 280px;
+      }
+      
+      .signup-input, .signup-button {
+        width: 220px;
+      }
+      
+      .card-animation {
+        top: 70%;
+        right: 50%;
+        transform: translate(50%, -50%);
+        gap: 15px;
+      }
+      
+      .card-layer {
+        width: 120px;
+      }
+      
+      .lovers-card {
+        width: 240px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Top Bar -->
-<div class="top-bar">
-  <div class="logo-wrap">
-    <img src="/assets/tapp-logo.png" class="tapp-logo">
-    <span class="byline">by Erika Owls</span>
+
+<!-- 🎴 Right Side - Two Static Cards -->
+<div class="card-animation">
+  <!-- Six of Pentacles -->
+  <div class="card-layer">
+    <img src="/assets/cards/six-of-pentacles/card-outline.png" class="card-outline">
+    <img src="/assets/cards/six-of-pentacles/the-giver.png" class="giver">
+  </div>
+  
+  <!-- Lovers Card -->
+  <div class="card-layer lovers-card">
+    <img src="/assets/cards/the-lovers/card-outline-lovers.png" class="card-outline">
   </div>
 </div>
 
-  <div class="chat-container" id="chatContainer">
-    <div class="chat-message erika">
-      <img src="/assets/erika-avatar.png" class="avatar">
-      <div class="chat-bubble">Welcome lovely! Ready to begin your reading?</div>
-    </div>
-    <div class="chat-action">
-      <button class="chat-btn" id="startReadingBtn">Generate Reading</button>
+<!-- 🖤 Left Side - Tapp Logo + Signup -->
+<div class="center-overlay">
+  <div class="logo-and-signup">
+    <img src="/assets/tapp-logo-3.png" alt="Tapp Logo" class="tapp-logo">
+    <div class="signup-container">
+      <input type="email" placeholder="Enter your email" class="signup-input" />
+      <button class="signup-button" onclick="window.location.href='video-intro.html'">Join the Beta</button>
     </div>
   </div>
+</div>
 
-  <div class="chat-input-container" id="inputContainer">
-    <input type="text" id="question" placeholder="Type your question...">
-    <button id="sendQuestionBtn" disabled>Send</button>
-  </div>
-
-  <script src="/script.js" defer></script>
 </body>
 </html>
