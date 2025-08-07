@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/shared-styles.css">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.body.insertAdjacentHTML('afterbegin', `
+    <div class="top-bar">
+      <div class="logo-wrap">
+        <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
+        <span class="byline">by Erika Owls</span>
+      </div>
+      <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
+        Book a 1-1 Psychic Session
+      </a>
+    </div>
+  `);
+  document.body.classList.add('has-top-bar');
+});
+</script>
+  <meta charset="UTF-8">
+  <title>Your Spread</title>
+  <style>
+    @font-face {
+      font-family: 'Bookman JF Pro';
+      src: url('/assets/fonts/BookmanJFPro-Regular.woff2') format('woff2'),
+           url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: black;
+      color: white;
+      font-family: 'Bookman JF Pro', serif;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 80px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .left-panel {
+      flex: 1;
+      max-width: 320px;
+      padding-left: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1.spread-title {
+      font-size: 52px;
+      line-height: 1.2;
+      padding-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .stars-container {
+      position: absolute;
+      right: 0px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .star {
+      color: white;
+      font-size: 18px;
+      transform: scaleY(1.5);
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+      position: absolute;
+    }
+
+    .star:first-child {
+      top: -18px;
+      left: 0;
+    }
+
+    .star:last-child {
+      top: 0px;
+      left: 16px;
+    }
+
+    .spread-container {
+      flex: 4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .card-row {
+      position: relative;
+      width: 100%;
+      height: 260px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      width: 130px;
+      height: 195px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      position: absolute;
+      transform-origin: bottom center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .card.selected {
+      box-shadow: 0 0 18px 6px rgba(255, 255, 255, 0.5);
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s ease;
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card-back {
+      background-image: url('/assets/backs/card-back.png');
+    }
+
+    .card-front {
+      background-image: var(--card-image);
+      transform: rotateY(180deg);
+    }
+
+    /* Show backs by default, flip to fronts when selected */
+    .card:not(.selected) .card-inner {
+      transform: rotateY(0deg);
+    }
+
+    .card.selected .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .progress-section {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .progress-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ffffff 0%, #f0f0f0 100%);
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .progress-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.6);
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        padding: 20px 10px;
+        min-height: 100vh;
+        justify-content: flex-start;
+        position: relative;
+      }
+
+      .left-panel {
+        max-width: 100%;
+        padding-left: 0;
+        text-align: center;
+        margin-bottom: 30px;
+        z-index: 100;
+      }
+
+      h1.spread-title {
+        font-size: 36px;
+      }
+
+      .spread-container {
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 40px;
+  overflow-y: auto;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+      .card {
+  width: 220px;
+  height: 330px;
+  position: relative; /* changed from absolute */
+  transform: none !important; /* override the fan layout */
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+  margin: 0 auto;
+}
+
+      .card-face {
+        border-radius: 8px;
+      }
+
+      .card-row {
+    display: flex;
+    flex-direction: column;   /* stack cards vertically */
+    align-items: center;
+    justify-content: center;
+    gap: 40px;                /* spacing between cards */
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+    }
+
+    /* Portrait mobile - show rotation prompt */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .rotation-prompt {
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        z-index: 10000;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-family: 'Bookman JF Pro', serif;
+      }
+      
+      .rotation-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        display: block;
+      }
+      
+      .rotation-text {
+        font-size: 18px;
+        line-height: 1.4;
+        padding: 0 30px;
+      }
+      
+      .spread-container {
+        opacity: 0.3;
+      }
+    }
+
+    /* Landscape mobile - full card spread */
+    @media (max-width: 768px) and (orientation: landscape) {
+      body {
+        padding: 10px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        height: 100vh;
+      }
+      
+      .left-panel {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 15px;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        max-width: 250px;
+      }
+      
+      h1.spread-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+      
+      .progress-section {
+        margin-top: 10px;
+      }
+      
+      .progress-label {
+        font-size: 12px;
+      }
+      
+      .progress-text {
+        font-size: 10px;
+      }
+      
+      .spread-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 0;
+      }
+      
+      .card-row {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      #row2 {
+        display: none;
+      }
+      
+      .card {
+        width: 50px;
+        height: 75px;
+        margin: 0 1px;
+      }
+      
+      .card-face {
+        border-radius: 6px;
+      }
+      
+      .rotation-prompt {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="left-panel">
+    <h1 class="spread-title">
+      Your Spread
+      <div class="stars-container">
+        <span class="star">✦</span>
+        <span class="star">✦</span>
+      </div>
+    </h1>
+    <div class="progress-section">
+      <div class="progress-label">Select your cards</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-text" id="progressText">0 of 6 cards selected</div>
+    </div>
+  </div>
+
+  <div class="spread-container">
+    <div class="card-row" id="row1"></div>
+    <div class="card-row" id="row2"></div>
+  </div>
+
+  <div class="rotation-prompt" style="display: none;">
+    <div class="rotation-icon">📱 ↻</div>
+    <div class="rotation-text">
+      <strong>Rotate your phone to landscape</strong><br>
+      for the full card selection experience
+    </div>
+  </div>
+
+  <script>
+    const spread = JSON.parse(sessionStorage.getItem('spread') || '[]');
+    const row1 = document.getElementById('row1');
+    const row2 = document.getElementById('row2');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    let selectedCount = 0;
+    const maxCards = 6;
+    const isMobile = window.innerWidth <= 768;
+
+    function updateProgress() {
+      const percentage = (selectedCount / maxCards) * 100;
+      progressBar.style.width = `${percentage}%`;
+      progressText.textContent = `${selectedCount} of ${maxCards} cards selected`;
+      
+      // Keep white color throughout
+      progressBar.style.background = 'linear-gradient(90deg, #ffffff 0%, #f0f0f0 100%)';
+      progressText.style.color = 'rgba(255, 255, 255, 0.6)';
+      
+      if (selectedCount === maxCards) {
+        progressText.textContent = 'Ready for your reading!';
+      }
+    }
+
+    function saveSelectedCards() {
+      const selectedCards = [];
+      document.querySelectorAll('.card.selected').forEach(card => {
+        selectedCards.push({
+          id: parseInt(card.getAttribute('data-id')),
+          name: card.getAttribute('data-name'),
+          orientation: card.getAttribute('data-orientation'),
+          meaning: card.getAttribute('data-meaning'),
+          image: card.getAttribute('data-image')
+        });
+      });
+      sessionStorage.setItem('selectedCards', JSON.stringify(selectedCards));
+    }
+
+    function showSelectedCardsInLeftPanel() {
+      const leftPanel = document.querySelector('.left-panel');
+      
+      // Clear the left panel content
+      leftPanel.innerHTML = '';
+      
+      // Create container for selected cards display
+      const cardsContainer = document.createElement('div');
+      cardsContainer.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 16px;
+        width: 100%;
+        max-width: 320px;
+        margin-top: 20px;
+      `;
+      
+      // Mock cards for visual display - replace with actual selected cards
+      const mockSelectedCards = [
+        { name: 'Ace of Pentacles', normalizedName: 'ace-of-pentacles' },
+        { name: 'Eight of Cups', normalizedName: 'eight-of-cups' },
+        { name: 'King of Pentacles', normalizedName: 'king-of-pentacles' },
+        { name: 'Queen of Wands', normalizedName: 'queen-of-wands' },
+        { name: 'The Star', normalizedName: 'the-star' },
+        { name: 'Three of Cups', normalizedName: 'three-of-cups' }
+      ];
+      
+      mockSelectedCards.forEach((card, index) => {
+        const cardDiv = document.createElement('div');
+        cardDiv.style.cssText = `
+          width: 120px;
+          height: 180px;
+          border-radius: 10px;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+          cursor: pointer;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transform-style: preserve-3d;
+          perspective: 1000px;
+        `;
+        
+        const cardInner = document.createElement('div');
+        cardInner.style.cssText = `
+          position: relative;
+          width: 100%;
+          height: 100%;
+          transform-style: preserve-3d;
+          transition: transform 0.6s ease;
+          transform: rotateY(180deg);
+        `;
+        
+        const cardBack = document.createElement('div');
+        cardBack.style.cssText = `
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          border-radius: 10px;
+          background-image: url('/assets/backs/card-back.png');
+          background-size: cover;
+          background-position: center;
+        `;
+        
+        const cardFront = document.createElement('div');
+        const frontImagePath = `/assets/faces/${card.normalizedName}.png`;
+        cardFront.style.cssText = `
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          border-radius: 10px;
+          background-image: url('${frontImagePath}');
+          background-size: cover;
+          background-position: center;
+          transform: rotateY(180deg);
+        `;
+        
+        cardInner.appendChild(cardBack);
+        cardInner.appendChild(cardFront);
+        cardDiv.appendChild(cardInner);
+        
+        // Add hover effects
+        cardDiv.addEventListener('mouseenter', () => {
+          cardDiv.style.transform = 'scale(1.05) translateY(-8px)';
+          cardDiv.style.boxShadow = '0 12px 24px rgba(255, 255, 255, 0.2)';
+        });
+        
+        cardDiv.addEventListener('mouseleave', () => {
+          cardDiv.style.transform = 'scale(1) translateY(0)';
+          cardDiv.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.4)';
+        });
+        
+        cardsContainer.appendChild(cardDiv);
+      });
+      
+      leftPanel.appendChild(cardsContainer);
+    }
+
+    function showLoadingScreenInSpreadArea() {
+      const spreadContainer = document.querySelector('.spread-container');
+      
+      // Clear the spread container
+      spreadContainer.innerHTML = '';
+      spreadContainer.style.cssText = `
+        flex: 4;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+      `;
+      
+      const video = document.createElement('video');
+      video.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+      `;
+      video.autoplay = true;
+      video.loop = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.src = '/assets/video/background.mp4';
+      
+      // Error handling for video loading
+      video.addEventListener('error', () => {
+        console.warn('Video failed to load, using fallback background');
+        spreadContainer.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #0d1117 100%)';
+      });
+      
+      const messageBox = document.createElement('div');
+      messageBox.style.cssText = `
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 40px 60px;
+        border-radius: 20px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        max-width: 90%;
+        z-index: 10;
+      `;
+      
+      const loadingText = document.createElement('h2');
+      loadingText.textContent = 'Generating Your Reading';
+      loadingText.style.cssText = `
+        font-family: 'Bookman JF Pro', serif;
+        font-size: 32px;
+        margin: 0;
+        letter-spacing: 1px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      `;
+      
+      const dots = document.createElement('div');
+      dots.textContent = '• • •';
+      dots.style.cssText = `
+        font-size: 24px;
+        margin-top: 20px;
+        opacity: 0.6;
+        animation: pulse 1.5s infinite;
+      `;
+      
+      messageBox.appendChild(loadingText);
+      messageBox.appendChild(dots);
+      spreadContainer.appendChild(video);
+      spreadContainer.appendChild(messageBox);
+    }
+
+    async function generateReadingForSpreadArea() {
+      const selectedCards = JSON.parse(sessionStorage.getItem('selectedCards') || '[]');
+      const selectedIds = selectedCards.map(card => card.id);
+      
+      try {
+        const response = await fetch('/api/reading', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            question: sessionStorage.getItem('userQuestion') || 'What guidance do I need right now?',
+            selectedIds: selectedIds
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to generate reading');
+        }
+        
+        const reading = await response.json();
+        displayReadingInSpreadArea(reading);
+        
+      } catch (error) {
+        console.error('Error generating reading:', error);
+        alert('Failed to generate reading. Please try again.');
+        // Could reload the page or reset to original state
+      }
+    }
+
+    function displayReadingInSpreadArea(reading) {
+      const spreadContainer = document.querySelector('.spread-container');
+      
+      // Clear loading screen
+      spreadContainer.innerHTML = '';
+      spreadContainer.style.cssText = `
+        flex: 4;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 40px;
+        overflow-y: auto;
+        max-height: 100vh;
+      `;
+      
+      const readingContent = document.createElement('div');
+      readingContent.style.cssText = `
+        max-width: 600px;
+        width: 100%;
+        font-family: 'Bookman JF Pro', serif;
+        line-height: 1.6;
+      `;
+      
+      const title = document.createElement('h1');
+      title.textContent = 'Your Reading';
+      title.style.cssText = `
+        font-size: 36px;
+        text-align: center;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      `;
+      
+      const question = document.createElement('h3');
+      question.textContent = `"${reading.question}"`;
+      question.style.cssText = `
+        font-style: italic;
+        text-align: center;
+        margin-bottom: 30px;
+        opacity: 0.8;
+        font-weight: 300;
+        color: white;
+      `;
+      
+      const answer = document.createElement('div');
+      answer.innerHTML = reading.answer.replace(/\n/g, '<br><br>');
+      answer.style.cssText = `
+        font-size: 16px;
+        line-height: 1.8;
+        margin-bottom: 30px;
+        color: white;
+      `;
+      
+      const newReadingButton = document.createElement('button');
+      newReadingButton.textContent = 'New Reading';
+      newReadingButton.style.cssText = `
+        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        color: black;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 20px;
+        font-family: 'Bookman JF Pro', serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        display: block;
+        margin: 0 auto;
+      `;
+      
+      newReadingButton.addEventListener('mouseover', () => {
+        newReadingButton.style.transform = 'translateY(-2px)';
+        newReadingButton.style.boxShadow = '0 8px 25px rgba(255, 255, 255, 0.3)';
+      });
+      
+      newReadingButton.addEventListener('mouseout', () => {
+        newReadingButton.style.transform = 'translateY(0)';
+        newReadingButton.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.2)';
+      });
+      
+      newReadingButton.addEventListener('click', () => {
+        // Instead of reload, go back to main page
+        window.location.href = '/';
+      });
+      
+      readingContent.appendChild(title);
+      readingContent.appendChild(question);
+      readingContent.appendChild(answer);
+      readingContent.appendChild(newReadingButton);
+      spreadContainer.appendChild(readingContent);
+    }
+
+    const fanCards = (container, cards, upwardCurve = true) => {
+      const total = cards.length;
+      const angleSpread = 30;
+      const angleStep = total > 1 ? angleSpread / (total - 1) : 0;
+      const startAngle = -angleSpread / 2;
+
+      cards.forEach((card, i) => {
+        const div = document.createElement('div');
+        div.className = 'card';
+
+        // Create card inner container for flip effect
+        const cardInner = document.createElement('div');
+        cardInner.className = 'card-inner';
+        
+        // Create front and back faces
+        const cardBack = document.createElement('div');
+        cardBack.className = 'card-face card-back';
+        
+        const cardFront = document.createElement('div');
+        cardFront.className = 'card-face card-front';
+        
+        // Set the front image
+        const normalizedName = card.name.toLowerCase()
+          .replace(/ /g, '-')
+          .replace(/'/g, '');
+        const frontImagePath = `/assets/faces/${normalizedName}.png`;
+        cardFront.style.setProperty('--card-image', `url('${frontImagePath}')`);
+        
+        cardInner.appendChild(cardBack);
+        cardInner.appendChild(cardFront);
+        div.appendChild(cardInner);
+
+        const angle = startAngle + i * angleStep;
+        const lift = upwardCurve ? -Math.abs(i - total / 2) * 8 : 0;
+        const offset = (i - total / 2) * 35;
+
+        const initialTransform = `translate(${offset}px, ${lift}px) rotate(${angle}deg)`;
+        div.style.transform = initialTransform;
+        
+        // Store the transform values directly on the element
+        div._offset = offset;
+        div._lift = lift;
+        div._angle = angle;
+
+        div.setAttribute('data-id', card.id);
+        div.setAttribute('data-name', card.name);
+        div.setAttribute('data-orientation', card.orientation);
+        div.setAttribute('data-meaning', card.meaning);
+        div.setAttribute('data-image', card.image);
+
+        div.addEventListener('click', () => {
+          // Toggle selected state and apply the appropriate transform
+          if (div.classList.contains('selected')) {
+            div.classList.remove('selected');
+            div.style.transform = `translate(${div._offset}px, ${div._lift}px) rotate(${div._angle}deg)`;
+            selectedCount--;
+          } else {
+            // Check if we've reached the maximum
+            if (selectedCount >= maxCards) {
+              alert('You can only select 6 cards for your reading.');
+              return;
+            }
+            div.classList.add('selected');
+            div.style.transform = `translate(${div._offset}px, ${div._lift - 20}px) rotate(${div._angle}deg)`;
+            selectedCount++;
+          }
+          
+          // Update progress bar
+          updateProgress();
+          
+          // Save selected cards to sessionStorage
+          saveSelectedCards();
+          
+          // Check if we have 6 cards selected
+          if (selectedCount === maxCards) {
+            // Show the selected cards in the left panel and automatically start loading
+            setTimeout(() => {
+              showSelectedCardsInLeftPanel();
+              showLoadingScreenInSpreadArea();
+              generateReadingForSpreadArea();
+            }, 500); // Small delay to let the user see the progress completion
+          }
+        });
+
+        container.appendChild(div);
+      });
+    };
+
+    if (spread.length > 0) {
+      const halfway = Math.ceil(spread.length / 2);
+      const firstHalf = spread.slice(0, halfway);
+      const secondHalf = spread.slice(halfway);
+      fanCards(row1, firstHalf, true);
+      fanCards(row2, secondHalf, false);
+    } else {
+      row1.innerHTML = '<p>No spread found.</p>';
+    }
+
+    // Initialize progress
+    updateProgress();
+  </script>
+</body>
+</html>

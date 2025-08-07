@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rosarivo:ital@0;1&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tapp - History</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      background: black;
+    }
+
+    /* 🖤 Left Side - Tapp Logo (same position as welcome.html) */
+    .center-overlay {
+      position: absolute;
+      top: 45%;
+      left: 25%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+    }
+
+    .logo-and-signup {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .tapp-logo {
+      width: 450px;
+      max-width: 90%;
+    }
+
+    /* 📖 Right Side - History Text */
+    .history-section {
+      position: absolute;
+      top: 50%;
+      right: 10%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 450px;
+      max-width: 40%;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .history-text {
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 400;
+      text-align: left;
+      margin: 0;
+    }
+
+    .history-text em {
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Next button */
+    .next-button {
+      padding: 14px 30px;
+      font-size: 14px;
+      border: 1px solid white;
+      border-radius: 30px;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      white-space: nowrap;
+      align-self: flex-end;
+    }
+
+    .next-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 💻 Laptop/Medium screen adjustments (1024px - 1366px) */
+    @media (max-width: 1366px) and (min-width: 1024px) {
+      .center-overlay {
+        left: 30%;
+        top: 45%;
+      }
+      
+      .tapp-logo {
+        width: 350px;
+      }
+      
+      .history-section {
+        right: 8%;
+        width: 400px;
+        max-width: 38%;
+        padding: 25px;
+        gap: 25px;
+      }
+      
+      .history-text {
+        font-size: 15px;
+        line-height: 1.5;
+      }
+    }
+
+    /* 📱 Small laptop/tablet adjustments */
+    @media (max-width: 1023px) {
+      .center-overlay {
+        left: 50%;
+        top: 32%;
+      }
+      
+      .tapp-logo {
+        width: 300px;
+      }
+      
+      .history-section {
+        top: 65%;
+        right: 50%;
+        transform: translate(50%, -50%);
+        width: 80%;
+        max-width: 500px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .history-text {
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+
+    /* 📱 Mobile adjustments */
+    @media (max-width: 768px) {
+      .center-overlay {
+        left: 50%;
+        top: 27%;
+      }
+      
+      .tapp-logo {
+        width: 280px;
+      }
+      
+      .history-section {
+        top: 70%;
+        width: 90%;
+        padding: 15px;
+      }
+      
+      .history-text {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      
+      .next-button {
+        padding: 12px 25px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🖤 Left Side - Tapp Logo (same position as welcome.html) -->
+<div class="center-overlay">
+  <div class="logo-and-signup">
+    <img src="/assets/tarot-logo-tarot-history.png" alt="Tapp Logo" class="tapp-logo">
+  </div>
+</div>
+
+<!-- 📖 Right Side - History Text -->
+<div class="history-section">
+  <p class="history-text">
+    Tarot was never just about fortune-telling—it began as a storytelling tool in 15th-century Italy, a way for people to reflect on life's triumphs, challenges, and archetypes through symbolic imagery. Over time, mystics and seekers realized its deeper power: tarot could mirror the inner world, helping people tap into truths they already sensed but couldn't yet articulate. At its core, tarot isn't about predicting the future—it's about unlocking the wisdom that already lives within you. That's the heart of Tapp: a modern, intuitive guide to help you <em>tapp</em> into your inner knowing, one card—and one honest moment of reflection—at a time.
+  </p>
+  <a href="#" class="next-button">Next</a>
+</div>
+
+</body>
+</html>

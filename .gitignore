@@ -1,2 +1,6 @@
 node_modules/
 .env
+signups.json
+*.log
+.DS_Store
+.vercel

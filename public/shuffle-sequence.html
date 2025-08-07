@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/shared-styles.css">
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.body.insertAdjacentHTML('afterbegin', `
+      <div class="top-bar">
+        <div class="logo-wrap">
+          <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
+          <span class="byline">by Erika Owls</span>
+        </div>
+        <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
+          Book a 1-1 Psychic Session
+        </a>
+      </div>
+    `);
+    document.body.classList.add('has-top-bar');
+  });
+  </script>
+  <meta charset="UTF-8">
+  <title>Preparing Your Reading</title>
+  <style>
+    @font-face {
+      font-family: 'Bookman JF Pro';
+      src: url('/assets/fonts/BookmanJFPro-Regular.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: black;
+      color: white;
+      font-family: 'Bookman JF Pro', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      flex-direction: column;
+      font-size: 36px;
+      text-align: center;
+    }
+
+    /* Remove button overrides - let it use default shared styles */
+    .top-bar {
+      padding: 15px 15px !important; /* Just slightly reduce padding */
+    }
+
+    .message {
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+
+    .hidden {
+      opacity: 0;
+    }
+
+    .loader {
+      margin-top: 30px;
+      font-size: 20px;
+      opacity: 0;
+      animation: pulse 1.5s infinite ease-in-out;
+      transition: opacity 0.6s ease;
+    }
+
+    .loader.visible {
+      opacity: 0.7;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    /* Mobile - only adjust content, not button */
+    @media (max-width: 768px) {
+      .top-bar {
+        padding: 15px 10px !important;
+      }
+
+      .message {
+        font-size: 28px;
+      }
+
+      .loader {
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .top-bar {
+        padding: 15px 8px !important;
+      }
+
+      .message {
+        font-size: 24px;
+      }
+
+      .loader {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="message" id="breathe">Take a deep breath…</div>
+  <div class="loader" id="loader">Fetching your spread ✦</div>
+
+  <script>
+    const breathe = document.getElementById('breathe');
+    const loader = document.getElementById('loader');
+
+    // Step 1: Wait 5s on the "deep breath" screen
+    setTimeout(() => {
+      breathe.classList.add('hidden');       // Fade out breath
+      loader.classList.add('visible');       // Fade in loader
+
+      // Step 2: Fetch spread AFTER breath is done
+      fetch('/api/spread')
+        .then(res => res.json())
+        .then(data => {
+          sessionStorage.setItem('spread', JSON.stringify(data.spread));
+          console.log('✅ Spread saved to sessionStorage');
+          // Step 3: Redirect to spread
+          setTimeout(() => {
+            window.location.href = '/spread.html';
+          }, 1500); // Let loader pulse for 1.5s
+        })
+        .catch(err => {
+          console.error('❌ Error fetching spread:', err);
+          alert('Something went wrong fetching your spread.');
+        });
+    }, 5000);
+  </script>
+</body>
+</html>

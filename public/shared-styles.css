@@ -1,0 +1,105 @@
+@font-face {
+  font-family: 'AuthenticSignature';
+  src: url('/assets/fonts/authentic-signature.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Top Bar Styles */
+.top-bar {
+  background: black;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  border-bottom: 1px solid #333;
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tapp-logo {
+  height: 75px;
+  width: auto;
+}
+
+.byline {
+  font-family: 'AuthenticSignature', cursive;
+  font-size: 18px;
+  color: white;
+  margin-top: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.booking-button {
+  background: white;
+  color: black;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.booking-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
+/* Add top padding to pages with top bar */
+.has-top-bar {
+  padding-top: 105px;
+}
+
+.has-top-bar .question-container,
+.has-top-bar .chat-container,
+.has-top-bar main,
+.has-top-bar .content {
+  padding-top: 105px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tapp-logo { height: 60px; }
+  .byline { font-size: 16px; }
+  .booking-button { font-size: 11px; padding: 8px 12px; }
+  
+  .has-top-bar,
+  .has-top-bar .question-container,
+  .has-top-bar .chat-container,
+  .has-top-bar main,
+  .has-top-bar .content {
+    padding-top: 95px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tapp-logo { height: 45px; }
+  .byline { font-size: 14px; }
+  .booking-button { font-size: 10px; padding: 6px 10px; }
+  
+  .has-top-bar,
+  .has-top-bar .question-container,
+  .has-top-bar .chat-container,
+  .has-top-bar main,
+  .has-top-bar .content {
+    padding-top: 85px;
+  }
+}

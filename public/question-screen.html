@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tapp - Ask Your Question</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Bookman JF Pro';
+      src: url('/assets/fonts/BookmanJFPro-Regular.woff2') format('woff2'),
+           url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'AuthenticSignature';
+      src: url('/assets/fonts/authentic-signature.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #000;
+    }
+
+    /* Top Bar Styles */
+    .top-bar {
+      background: black;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      border-bottom: 1px solid #333;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tapp-logo {
+      height: 75px;
+      width: auto;
+    }
+
+    .byline {
+      font-family: 'AuthenticSignature', cursive;
+      font-size: 18px;
+      color: white;
+      margin-top: 0;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .booking-button {
+      background: white;
+      color: black;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .booking-button:hover {
+      background: #f0f0f0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    }
+
+    .question-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 20px 40px; /* Increased top padding for bigger logo */
+    }
+
+    .question-content {
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .question-title {
+      color: white;
+      font-family: 'Bookman JF Pro', serif;
+      font-size: 42px;
+      margin-bottom: 40px;
+      font-weight: normal;
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Star decorations - positioned to the right diagonally */
+    .stars-container {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .star {
+      color: white;
+      font-size: 20px;
+      transform: scaleY(1.5);
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+      position: absolute;
+    }
+
+    .star:first-child {
+      top: -30px;
+      left: 0;
+    }
+
+    .star:last-child {
+      top: 0px;
+      left: 20px;
+    }
+
+    .erika-message-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 50px;
+      max-width: 600px;
+    }
+
+    .erika-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .question-subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 400;
+      text-align: left;
+      flex: 1;
+    }
+
+    .question-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 16px 20px;
+      font-size: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      outline: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      text-align: center;
+      transition: all 0.3s ease;
+      margin-bottom: 30px;
+    }
+
+    .question-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 300;
+    }
+
+    .question-input:focus {
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .continue-button {
+      padding: 14px 30px;
+      font-size: 14px;
+      border: 1px solid white;
+      border-radius: 30px;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      white-space: nowrap;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .continue-button.active {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .continue-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Generate Question button with darker, shimmery gold styling */
+    .generate-button {
+      padding: 14px 30px;
+      font-size: 14px;
+      border: 1px solid #B8860B;
+      border-radius: 30px;
+      background: linear-gradient(135deg, rgba(184, 134, 11, 0.1), rgba(218, 165, 32, 0.05));
+      color: #B8860B;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      white-space: nowrap;
+      margin-left: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generate-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(184, 134, 11, 0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    .generate-button:hover::before {
+      left: 100%;
+    }
+
+    .generate-button:hover {
+      background: linear-gradient(135deg, rgba(184, 134, 11, 0.15), rgba(218, 165, 32, 0.1));
+      border-color: #DAA520;
+      color: #DAA520;
+      box-shadow: 0 4px 15px rgba(184, 134, 11, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Button container */
+    .button-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .top-bar {
+        padding: 15px 20px;
+      }
+
+      .tapp-logo {
+        height: 60px; /* Slightly smaller on mobile but still prominent */
+      }
+
+      .byline {
+        font-size: 16px;
+      }
+
+      .booking-button {
+        font-size: 11px;
+        padding: 8px 12px;
+      }
+
+      .question-container {
+        padding: 100px 20px 40px; /* Adjusted for smaller mobile logo */
+      }
+
+      .question-title {
+        font-size: 32px;
+        margin-bottom: 30px;
+      }
+
+      .stars-container {
+        right: -18px;
+      }
+
+      .star {
+        font-size: 18px;
+      }
+
+      .star:first-child {
+        top: -24px;
+      }
+
+      .star:last-child {
+        top: 0px;
+        left: 16px;
+      }
+      
+      .erika-message-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+      
+      .erika-logo {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .question-subtitle {
+        font-size: 14px;
+        text-align: center;
+      }
+      
+      .question-input {
+        padding: 14px 18px;
+        font-size: 15px;
+        margin-bottom: 25px;
+      }
+      
+      .continue-button {
+        padding: 12px 25px;
+        font-size: 13px;
+      }
+
+      .generate-button {
+        padding: 12px 25px;
+        font-size: 13px;
+        margin-left: 0;
+        margin-top: 10px;
+      }
+
+      .button-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tapp-logo {
+        height: 45px; /* Smaller on very small screens */
+      }
+
+      .byline {
+        font-size: 14px;
+      }
+
+      .booking-button {
+        font-size: 10px;
+        padding: 6px 10px;
+      }
+
+      .question-container {
+        padding: 85px 20px 40px;
+      }
+
+      .question-title {
+        font-size: 28px;
+        gap: 12px;
+      }
+
+      .star {
+        font-size: 18px;
+      }
+      
+      .question-subtitle {
+        font-size: 13px;
+      }
+      
+      .question-input {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+      
+      .continue-button {
+        padding: 10px 20px;
+        font-size: 12px;
+      }
+
+      .generate-button {
+        padding: 10px 20px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="logo-wrap">
+      <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
+      <span class="byline">by Erika Owls</span>
+    </div>
+    <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
+      Book a 1-1 Psychic Session
+    </a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="question-container">
+    <div class="question-content">
+      <h1 class="question-title">
+        What's calling to you?
+        <div class="stars-container">
+          <span class="star">✦</span>
+          <span class="star">✦</span>
+        </div>
+      </h1>
+      
+      <div class="erika-message-section">
+        <img src="/assets/erika-avatar.png" alt="Erika" class="erika-logo">
+        <p class="question-subtitle">
+          Take a moment to center yourself. What question is your heart truly asking? The more intentional you are, the clearer your path will become.
+        </p>
+      </div>
+      
+      <input 
+        type="text" 
+        class="question-input" 
+        placeholder="Ask your question..."
+        id="questionInput"
+        maxlength="200"
+      >
+      
+      <div class="button-container">
+        <button class="continue-button" id="continueBtn">
+          Begin My Reading
+        </button>
+        <button class="generate-button" id="generateBtn">
+          Generate a Question
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questionInput = document.getElementById('questionInput');
+    const continueBtn = document.getElementById('continueBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    
+    // Array of random questions
+    const questions = [
+      "What's my energy today?",
+      "What's my superpower today?",
+      "What are some good intentions to set for the upcoming week?",
+      "How are my relationships?",
+      "Where can I grow and step out of my comfort zone?",
+      "How can I bring more love into my life?",
+      "What is my biggest block toward achieving what I want?",
+      "How do people around me see me?",
+      "How is my past impacting my current situation?"
+    ];
+    
+    questionInput.addEventListener('input', function() {
+      if (this.value.trim().length > 0) {
+        continueBtn.classList.add('active');
+      } else {
+        continueBtn.classList.remove('active');
+      }
+    });
+    
+    questionInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && this.value.trim().length > 0) {
+        proceedToReading();
+      }
+    });
+    
+    continueBtn.addEventListener('click', proceedToReading);
+    
+    // Generate random question functionality
+    generateBtn.addEventListener('click', function() {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      const randomQuestion = questions[randomIndex];
+      
+      questionInput.value = randomQuestion;
+      continueBtn.classList.add('active');
+      
+      // Add a subtle animation to show the question was generated
+      questionInput.style.transform = 'scale(1.02)';
+      setTimeout(() => {
+        questionInput.style.transform = 'scale(1)';
+      }, 200);
+    });
+    
+    function proceedToReading() {
+      const question = questionInput.value.trim();
+      if (question.length > 0) {
+        sessionStorage.setItem('userQuestion', question);
+        window.location.href = '/shuffle-cards.html';
+      }
+    }
+    
+    setTimeout(() => {
+      questionInput.focus();
+    }, 100);
+  </script>
+</body>
+</html>
