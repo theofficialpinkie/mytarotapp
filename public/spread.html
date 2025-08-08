@@ -421,7 +421,56 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 
   <script>
+    // Load the actual deck from sessionStorage (should be set by your server)
     const spread = JSON.parse(sessionStorage.getItem('spread') || '[]');
+    
+    // If no spread in sessionStorage, create a mock spread based on your deck.js structure
+    if (spread.length === 0) {
+      // Mock deck data that matches your deck.js structure
+      const mockDeck = [
+        { id: 1, name: "The Fool", image: "/assets/faces/the-fool.png", orientation: "upright", meaning: "New beginnings" },
+        { id: 2, name: "The Magician", image: "/assets/faces/the-magician.png", orientation: "upright", meaning: "Manifestation" },
+        { id: 3, name: "The High Priestess", image: "/assets/faces/the-high-priestess.png", orientation: "upright", meaning: "Intuition" },
+        { id: 4, name: "The Empress", image: "/assets/faces/the-empress.png", orientation: "upright", meaning: "Abundance" },
+        { id: 5, name: "The Emperor", image: "/assets/faces/the-emperor.png", orientation: "upright", meaning: "Authority" },
+        { id: 6, name: "The Hierophant", image: "/assets/faces/the-hierophant.png", orientation: "upright", meaning: "Tradition" },
+        { id: 7, name: "The Lovers", image: "/assets/faces/the-lovers.png", orientation: "upright", meaning: "Relationships" },
+        { id: 8, name: "The Chariot", image: "/assets/faces/the-chariot.png", orientation: "upright", meaning: "Victory" },
+        { id: 9, name: "Strength", image: "/assets/faces/strength.png", orientation: "upright", meaning: "Inner strength" },
+        { id: 10, name: "The Hermit", image: "/assets/faces/the-hermit.png", orientation: "upright", meaning: "Soul searching" },
+        { id: 11, name: "Wheel of Fortune", image: "/assets/faces/wheel-of-fortune.png", orientation: "upright", meaning: "Luck" },
+        { id: 12, name: "Justice", image: "/assets/faces/justice.png", orientation: "upright", meaning: "Fairness" },
+        { id: 13, name: "The Hanged Man", image: "/assets/faces/the-hanged-man.png", orientation: "upright", meaning: "Sacrifice" },
+        { id: 14, name: "Death", image: "/assets/faces/death.png", orientation: "upright", meaning: "Transformation" },
+        { id: 15, name: "Temperance", image: "/assets/faces/temperance.png", orientation: "upright", meaning: "Balance" },
+        { id: 16, name: "The Devil", image: "/assets/faces/the-devil.png", orientation: "upright", meaning: "Temptation" },
+        { id: 17, name: "The Tower", image: "/assets/faces/the-tower.png", orientation: "upright", meaning: "Sudden change" },
+        { id: 18, name: "The Star", image: "/assets/faces/the-star.png", orientation: "upright", meaning: "Hope" },
+        { id: 19, name: "The Moon", image: "/assets/faces/the-moon.png", orientation: "upright", meaning: "Illusion" },
+        { id: 20, name: "The Sun", image: "/assets/faces/the-sun.png", orientation: "upright", meaning: "Joy" },
+        { id: 21, name: "Judgement", image: "/assets/faces/judgement.png", orientation: "upright", meaning: "Rebirth" },
+        { id: 22, name: "The World", image: "/assets/faces/the-world.png", orientation: "upright", meaning: "Completion" },
+        // Cups
+        { id: 23, name: "Ace of Cups", image: "/assets/faces/ace-of-cups.png", orientation: "upright", meaning: "New love" },
+        { id: 24, name: "Two of Cups", image: "/assets/faces/two-of-cups.png", orientation: "upright", meaning: "Partnership" },
+        { id: 25, name: "Three of Cups", image: "/assets/faces/three-of-cups.png", orientation: "upright", meaning: "Celebration" },
+        { id: 26, name: "Four of Cups", image: "/assets/faces/four-of-cups.png", orientation: "upright", meaning: "Contemplation" },
+        { id: 27, name: "Five of Cups", image: "/assets/faces/five-of-cups.png", orientation: "upright", meaning: "Loss" },
+        { id: 28, name: "Six of Cups", image: "/assets/faces/six-of-cups.png", orientation: "upright", meaning: "Nostalgia" },
+        { id: 29, name: "Seven of Cups", image: "/assets/faces/seven-of-cups.png", orientation: "upright", meaning: "Choices" },
+        { id: 30, name: "Eight of Cups", image: "/assets/faces/eight-of-cups.png", orientation: "upright", meaning: "Moving on" },
+        { id: 31, name: "Nine of Cups", image: "/assets/faces/nine-of-cups.png", orientation: "upright", meaning: "Satisfaction" },
+        { id: 32, name: "Ten of Cups", image: "/assets/faces/ten-of-cups.png", orientation: "upright", meaning: "Happiness" },
+        { id: 33, name: "Page of Cups", image: "/assets/faces/page-of-cups.png", orientation: "upright", meaning: "Creative messages" },
+        { id: 34, name: "Knight of Cups", image: "/assets/faces/knight-of-cups.png", orientation: "upright", meaning: "Romance" },
+        { id: 35, name: "Queen of Cups", image: "/assets/faces/queen-of-cups.png", orientation: "upright", meaning: "Intuitive compassion" },
+        { id: 36, name: "King of Cups", image: "/assets/faces/king-of-cups.png", orientation: "upright", meaning: "Emotional balance" }
+      ];
+      
+      // Use the mock deck if no spread is available
+      spread.push(...mockDeck);
+    }
+    
     const row1 = document.getElementById('row1');
     const row2 = document.getElementById('row2');
     const progressBar = document.getElementById('progressBar');
@@ -469,10 +518,12 @@ document.addEventListener('DOMContentLoaded', function() {
         max-width: none;
         width: 45%;
         padding: 20px;
+        padding-top: 0;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
+        min-height: 100vh;
       `;
       
       // Get the actual selected cards data
@@ -621,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Clear the spread container
       spreadContainer.innerHTML = '';
       spreadContainer.style.cssText = `
-        flex: 2;
+        flex: 4;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -734,49 +785,251 @@ document.addEventListener('DOMContentLoaded', function() {
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        padding: 40px;
+        padding: 0;
         overflow-y: auto;
         max-height: 100vh;
+        background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);
+        border-radius: 0;
+        margin: 0;
       `;
       
-      const readingContent = document.createElement('div');
-      readingContent.style.cssText = `
-        max-width: 600px;
+      // Create chat container
+      const chatContainer = document.createElement('div');
+      chatContainer.style.cssText = `
         width: 100%;
-        font-family: 'Bookman JF Pro', serif;
-        line-height: 1.6;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        flex-grow: 1;
+        padding: 30px 20px;
       `;
       
-      const title = document.createElement('h1');
-      title.textContent = 'Your Reading';
-      title.style.cssText = `
-        font-size: 36px;
-        text-align: center;
+      // Chat header
+      const chatHeader = document.createElement('div');
+      chatHeader.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         margin-bottom: 20px;
-        background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
       `;
       
-      const question = document.createElement('h3');
-      question.textContent = `"${reading.question}"`;
-      question.style.cssText = `
-        font-style: italic;
-        text-align: center;
-        margin-bottom: 30px;
-        opacity: 0.8;
-        font-weight: 300;
+      const avatar = document.createElement('img');
+      avatar.src = '/assets/erika-avatar.png';
+      avatar.style.cssText = `
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        object-fit: cover;
+      `;
+      
+      // Fallback if image doesn't load
+      avatar.onerror = function() {
+        const fallbackAvatar = document.createElement('div');
+        fallbackAvatar.style.cssText = `
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #6b46c1, #9333ea);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 20px;
+          border: 2px solid rgba(255, 255, 255, 0.1);
+        `;
+        fallbackAvatar.textContent = 'E';
+        avatar.parentNode.replaceChild(fallbackAvatar, avatar);
+      };
+      
+      const nameContainer = document.createElement('div');
+      nameContainer.style.cssText = `
+        display: flex;
+        flex-direction: column;
+      `;
+      
+      const name = document.createElement('div');
+      name.textContent = 'Erika Owls';
+      name.style.cssText = `
         color: white;
-      `;
-      
-      const answer = document.createElement('div');
-      answer.innerHTML = reading.answer.replace(/\n/g, '<br><br>');
-      answer.style.cssText = `
+        font-weight: 600;
         font-size: 16px;
-        line-height: 1.8;
-        margin-bottom: 30px;
+        font-family: 'Bookman JF Pro', serif;
+      `;
+      
+      const status = document.createElement('div');
+      status.textContent = 'Spiritual Mentor';
+      status.style.cssText = `
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      `;
+      
+      nameContainer.appendChild(name);
+      nameContainer.appendChild(status);
+      chatHeader.appendChild(avatar);
+      chatHeader.appendChild(nameContainer);
+      
+      // Messages container
+      const messagesContainer = document.createElement('div');
+      messagesContainer.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        flex-grow: 1;
+        padding-bottom: 20px;
+      `;
+      
+      // Split reading into multiple messages
+      const messages = splitReadingIntoMessages(reading);
+      
+      chatContainer.appendChild(chatHeader);
+      chatContainer.appendChild(messagesContainer);
+      spreadContainer.appendChild(chatContainer);
+      
+      // Animate messages appearing one by one
+      animateMessages(messagesContainer, messages, () => {
+        // Show new reading button only after all messages are complete
+        showNewReadingButton(chatContainer);
+      });
+    }
+    
+    function splitReadingIntoMessages(reading) {
+      const messages = [];
+      
+      // Welcome message
+      messages.push("✨ Welcome! I can feel the energy from your selected cards...");
+      
+      // Question acknowledgment
+      messages.push(`I see you're seeking guidance about: "${reading.question}"`);
+      
+      // Split the main reading into 2-3 parts
+      const readingText = reading.answer;
+      const sentences = readingText.split(/(?<=[.!?])\s+/);
+      const midpoint = Math.ceil(sentences.length / 2);
+      
+      const firstHalf = sentences.slice(0, midpoint).join(' ');
+      const secondHalf = sentences.slice(midpoint).join(' ');
+      
+      messages.push(firstHalf);
+      if (secondHalf.trim()) {
+        messages.push(secondHalf);
+      }
+      
+      // Closing message
+      messages.push("🌟 Remember, you have the power to shape your destiny. Trust your intuition and the wisdom the cards have revealed.");
+      
+      return messages;
+    }
+    
+    function createChatMessage(text, delay = 0) {
+      const messageWrapper = document.createElement('div');
+      messageWrapper.style.cssText = `
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      `;
+      
+      // Avatar for each message
+      const messageAvatar = document.createElement('img');
+      messageAvatar.src = '/assets/erika-avatar.png';
+      messageAvatar.style.cssText = `
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        object-fit: cover;
+      `;
+      
+      // Fallback for message avatar
+      messageAvatar.onerror = function() {
+        const fallback = document.createElement('div');
+        fallback.style.cssText = `
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #6b46c1, #9333ea);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 14px;
+          flex-shrink: 0;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        fallback.textContent = 'E';
+        messageAvatar.parentNode.replaceChild(fallback, messageAvatar);
+      };
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.style.cssText = `
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.08));
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 18px;
+        padding: 16px 20px;
         color: white;
+        font-family: 'Bookman JF Pro', serif;
+        font-size: 15px;
+        line-height: 1.6;
+        max-width: 85%;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      `;
+      
+      messageDiv.textContent = text;
+      messageWrapper.appendChild(messageAvatar);
+      messageWrapper.appendChild(messageDiv);
+      
+      // Add animation
+      setTimeout(() => {
+        messageWrapper.style.opacity = '1';
+        messageWrapper.style.transform = 'translateY(0)';
+      }, delay);
+      
+      return messageWrapper;
+    }
+    
+    function animateMessages(container, messages, onComplete) {
+      let currentIndex = 0;
+      
+      function showNextMessage() {
+        if (currentIndex >= messages.length) {
+          onComplete();
+          return;
+        }
+        
+        const message = createChatMessage(messages[currentIndex], 0);
+        container.appendChild(message);
+        
+        // Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+        
+        currentIndex++;
+        
+        // Show next message after a delay (simulating typing)
+        setTimeout(showNextMessage, 2000 + Math.random() * 1000);
+      }
+      
+      showNextMessage();
+    }
+    
+    function showNewReadingButton(container) {
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.cssText = `
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+        margin-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
       `;
       
       const newReadingButton = document.createElement('button');
@@ -793,9 +1046,15 @@ document.addEventListener('DOMContentLoaded', function() {
         cursor: pointer;
         box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
         transition: all 0.3s ease;
-        display: block;
-        margin: 0 auto;
+        opacity: 0;
+        transform: translateY(10px);
       `;
+      
+      // Animate button appearance
+      setTimeout(() => {
+        newReadingButton.style.opacity = '1';
+        newReadingButton.style.transform = 'translateY(0)';
+      }, 500);
       
       newReadingButton.addEventListener('mouseover', () => {
         newReadingButton.style.transform = 'translateY(-2px)';
@@ -807,16 +1066,12 @@ document.addEventListener('DOMContentLoaded', function() {
         newReadingButton.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.2)';
       });
       
-     newReadingButton.addEventListener('click', () => {
-  // Go to question screen for new reading
-  window.location.href = '/question-screen.html';
-});
+      newReadingButton.addEventListener('click', () => {
+        window.location.href = '/question-screen.html';
+      });
       
-      readingContent.appendChild(title);
-      readingContent.appendChild(question);
-      readingContent.appendChild(answer);
-      readingContent.appendChild(newReadingButton);
-      spreadContainer.appendChild(readingContent);
+      buttonContainer.appendChild(newReadingButton);
+      container.appendChild(buttonContainer);
     }
 
     const fanCards = (container, cards, upwardCurve = true) => {
@@ -843,6 +1098,27 @@ document.addEventListener('DOMContentLoaded', function() {
         // USE THE SERVER'S IMAGE PATH (from deck.js)
         console.log('Card:', card.name, 'Image path:', card.image);
         cardFront.style.setProperty('--card-image', `url('${card.image}')`);
+        
+        // Special logging for Queen of Cups
+        if (card.name.toLowerCase().includes('queen') && card.name.toLowerCase().includes('cups')) {
+          console.log('🔍 QUEEN OF CUPS DEBUG:');
+          console.log('  - Card name:', card.name);
+          console.log('  - Image path:', card.image);
+          console.log('  - Full URL would be:', window.location.origin + card.image);
+        }
+        
+        // Add error handling for missing images
+        const testImg = new Image();
+        testImg.onload = function() {
+          console.log('✓ Image loaded successfully:', card.image);
+        };
+        testImg.onerror = function() {
+          console.error('✗ Failed to load image:', card.image);
+          console.log('Card name:', card.name);
+          // Fallback to a placeholder or card back
+          cardFront.style.setProperty('--card-image', `url('/assets/backs/card-back.png')`);
+        };
+        testImg.src = card.image;
         
         cardInner.appendChild(cardBack);
         cardInner.appendChild(cardFront);
