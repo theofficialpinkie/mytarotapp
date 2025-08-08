@@ -1,0 +1,61 @@
+@media (max-width: 768px) {
+  body {
+    flex-direction: column-reverse;
+    padding-top: 60px;
+  }
+
+  .chat-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    min-height: 45vh;
+    max-height: 55vh;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: none;
+    z-index: 2;
+    margin-top: -30px; /* creates slight overlap */
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .chat-messages {
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  .content-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    min-height: 55vh;
+    overflow-y: auto;
+    z-index: 1;
+  }
+
+  .card {
+    width: 80px;
+    height: 120px;
+  }
+
+  .card-row {
+    height: 150px;
+  }
+
+  .popup-container {
+    width: 90%;
+    height: 500px;
+  }
+
+  .carousel-card {
+    width: 150px;
+    height: 225px;
+  }
+
+  .carousel-card.prev {
+    transform: translateX(-120px) scale(0.8) rotateY(10deg);
+  }
+
+  .carousel-card.next {
+    transform: translateX(120px) scale(0.8) rotateY(-10deg);
+  }
+}

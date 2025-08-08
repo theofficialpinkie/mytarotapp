@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
         Book a 1-1 Psychic Session
       </a>
     </div>
+    <link rel="stylesheet" href="/mobile-overrides.css">
+
   `);
   document.body.classList.add('has-top-bar');
 });
@@ -60,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
       min-height: calc(100vh - 80px);
       background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);
       border-right: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
     }
 
     .chat-header {
@@ -174,6 +177,71 @@ document.addEventListener('DOMContentLoaded', function() {
       cursor: not-allowed;
       transform: none;
       box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
+    }
+
+    /* Chat Overlay */
+    .chat-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      border-radius: 0;
+    }
+
+    .chat-overlay.active {
+      display: flex;
+    }
+
+    .overlay-title {
+      font-family: 'Bookman JF Pro', serif;
+      font-size: 24px;
+      color: white;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .overlay-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .overlay-button {
+      background: linear-gradient(135deg, #6b46c1, #9333ea);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-family: 'Bookman JF Pro', serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 200px;
+      box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
+    }
+
+    .overlay-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(107, 70, 193, 0.4);
+    }
+
+    .overlay-button.secondary {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .overlay-button.secondary:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.3));
     }
 
     /* Right Content Area */
@@ -594,14 +662,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       .chat-panel {
+        width: 100%;
         max-width: 100%;
+        min-width: 100%;
         min-height: 50vh;
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .content-panel {
+        width: 100%;
         max-width: 100%;
+        min-width: 100%;
         min-height: 50vh;
       }
 
@@ -654,6 +726,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
   <!-- Chat Panel (Left) -->
   <div class="chat-panel">
+    <!-- Chat Overlay -->
+    <div class="chat-overlay" id="chatOverlay">
+      <div class="overlay-title">What would you like to do next?</div>
+      <div class="overlay-buttons">
+        <button class="overlay-button" onclick="hideOverlay()">Read Again</button>
+        <button class="overlay-button secondary" onclick="window.location.href='question-screen.html'">Ask Another Question</button>
+        <button class="overlay-button secondary" onclick="window.location.href='https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc'" target="_blank">Book 1-1 Session</button>
+      </div>
+    </div>
+
     <div class="chat-header">
       <img src="/assets/erika-avatar.png" alt="Erika Owls" class="erika-avatar" onerror="this.style.display='none'">
       <div class="erika-info">
@@ -717,6 +799,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedCards = [];
     let currentCardIndex = 0;
     let userQuestion = sessionStorage.getItem('userQuestion') || 'What guidance do I need right now?';
+    let carouselInterval = null;
+    let overlayTimer = null;
 
     const chatMessages = document.getElementById('chatMessages');
     const shuffleContainer = document.getElementById('shuffleContainer');
@@ -724,7 +808,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardSelectionContainer = document.getElementById('cardSelectionContainer');
     const cardCarouselContainer = document.getElementById('cardCarouselContainer');
     const popupOverlay = document.getElementById('popupOverlay');
-    const shuffleBtn = document.getElementById('shuffleBtn');
+    const chatOverlay = document.getElementById('chatOverlay');
     const cardStack = document.getElementById('cardStack');
 
     // Initialize the experience
@@ -1027,6 +1111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showCardCarousel() {
       showPhase('carousel');
       setupCarousel();
+      startCarouselAutoplay();
     }
 
     // Setup carousel
@@ -1085,6 +1170,47 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
+    // Start carousel autoplay
+    function startCarouselAutoplay() {
+      // Clear any existing interval
+      if (carouselInterval) {
+        clearInterval(carouselInterval);
+      }
+      
+      carouselInterval = setInterval(() => {
+        currentCardIndex = (currentCardIndex + 1) % selectedCards.length;
+        updateCarousel();
+      }, 3000); // Auto-advance every 3 seconds
+    }
+
+    // Stop carousel autoplay
+    function stopCarouselAutoplay() {
+      if (carouselInterval) {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+      }
+    }
+
+    // Show overlay after 70 seconds
+    function startOverlayTimer() {
+      overlayTimer = setTimeout(() => {
+        // Only show if user hasn't already seen it from scrolling behavior
+        if (!chatOverlay.classList.contains('active')) {
+          showOverlay();
+        }
+      }, 70000); // 70 seconds - plenty of time to read
+    }
+
+    // Show chat overlay
+    function showOverlay() {
+      chatOverlay.classList.add('active');
+    }
+
+    // Hide chat overlay
+    function hideOverlay() {
+      chatOverlay.classList.remove('active');
+    }
+
     // Deliver reading in chunks
     function deliverReading(readingText) {
       // Switch to reading phase - now messages go top to bottom
@@ -1105,19 +1231,59 @@ document.addEventListener('DOMContentLoaded', function() {
               addStandaloneButton("New Reading", () => {
                 window.location.href = '/question-screen.html';
               });
+              
+              // Mark reading as complete
+              readingComplete = true;
+              
+              // Start the 70-second timer for overlay after reading is complete
+              // This gives users time to read everything
+              startOverlayTimer();
             }, 600);
           }
         }, index * 1200);
       });
     }
 
-    // Auto-advance carousel
-    function startCarouselAutoplay() {
-      setInterval(() => {
-        currentCardIndex = (currentCardIndex + 1) % selectedCards.length;
-        updateCarousel();
-      }, 4000);
+    // Check if chat is scrolled to bottom
+    function isChatScrolledToBottom() {
+      const threshold = 50; // pixels
+      return chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - threshold;
     }
+
+    // Track if reading is complete
+    let readingComplete = false;
+    let hasScrolledToBottom = false;
+
+    // Listen for scroll events on chat to detect bottom
+    chatMessages.addEventListener('scroll', () => {
+      if (isReadingPhase && isChatScrolledToBottom()) {
+        hasScrolledToBottom = true;
+        
+        // Only show overlay if reading is complete AND user has scrolled to bottom
+        // AND they've been at the bottom for at least 10 seconds
+        if (readingComplete && !chatOverlay.classList.contains('active')) {
+          setTimeout(() => {
+            if (hasScrolledToBottom && isChatScrolledToBottom()) {
+              showOverlay();
+            }
+          }, 10000); // Wait 10 seconds after scrolling to bottom
+        }
+      } else {
+        hasScrolledToBottom = false;
+      }
+    });
+
+    // Pause carousel autoplay when user interacts with cards
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('carousel-card') || e.target.classList.contains('nav-dot')) {
+        stopCarouselAutoplay();
+        
+        // Resume autoplay after 10 seconds of inactivity
+        setTimeout(() => {
+          startCarouselAutoplay();
+        }, 10000);
+      }
+    });
 
     // Initialize when page loads
     document.addEventListener('DOMContentLoaded', () => {
