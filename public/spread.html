@@ -474,17 +474,10 @@ document.addEventListener('DOMContentLoaded', function() {
         margin-top: 20px;
       `;
       
-      // Mock cards for visual display - replace with actual selected cards
-      const mockSelectedCards = [
-        { name: 'Ace of Pentacles', normalizedName: 'ace-of-pentacles' },
-        { name: 'Eight of Cups', normalizedName: 'eight-of-cups' },
-        { name: 'King of Pentacles', normalizedName: 'king-of-pentacles' },
-        { name: 'Queen of Wands', normalizedName: 'queen-of-wands' },
-        { name: 'The Star', normalizedName: 'the-star' },
-        { name: 'Three of Cups', normalizedName: 'three-of-cups' }
-      ];
+      // Get the actual selected cards data
+      const actualSelectedCards = JSON.parse(sessionStorage.getItem('selectedCards') || '[]');
       
-      mockSelectedCards.forEach((card, index) => {
+      actualSelectedCards.forEach((card, index) => {
         const cardDiv = document.createElement('div');
         cardDiv.style.cssText = `
           width: 120px;
@@ -495,47 +488,10 @@ document.addEventListener('DOMContentLoaded', function() {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
           transform-style: preserve-3d;
           perspective: 1000px;
-        `;
-        
-        const cardInner = document.createElement('div');
-        cardInner.style.cssText = `
-          position: relative;
-          width: 100%;
-          height: 100%;
-          transform-style: preserve-3d;
-          transition: transform 0.6s ease;
-          transform: rotateY(180deg);
-        `;
-        
-        const cardBack = document.createElement('div');
-        cardBack.style.cssText = `
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          border-radius: 10px;
-          background-image: url('/assets/backs/card-back.png');
+          background-image: url('${card.image}');
           background-size: cover;
           background-position: center;
         `;
-        
-        const cardFront = document.createElement('div');
-        const frontImagePath = `/assets/faces/${card.normalizedName}.png`;
-        cardFront.style.cssText = `
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          border-radius: 10px;
-          background-image: url('${frontImagePath}');
-          background-size: cover;
-          background-position: center;
-          transform: rotateY(180deg);
-        `;
-        
-        cardInner.appendChild(cardBack);
-        cardInner.appendChild(cardFront);
-        cardDiv.appendChild(cardInner);
         
         // Add hover effects
         cardDiv.addEventListener('mouseenter', () => {
@@ -745,16 +701,6 @@ document.addEventListener('DOMContentLoaded', function() {
         newReadingButton.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.2)';
       });
       
-      newReadingButton.addEventListener('mouseover', () => {
-        newReadingButton.style.transform = 'translateY(-2px)';
-        newReadingButton.style.boxShadow = '0 8px 25px rgba(255, 255, 255, 0.3)';
-      });
-      
-      newReadingButton.addEventListener('mouseout', () => {
-        newReadingButton.style.transform = 'translateY(0)';
-        newReadingButton.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.2)';
-      });
-      
      newReadingButton.addEventListener('click', () => {
   // Go to question screen for new reading
   window.location.href = '/question-screen.html';
@@ -788,12 +734,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const cardFront = document.createElement('div');
         cardFront.className = 'card-face card-front';
         
-        // Set the front image
-        const normalizedName = card.name.toLowerCase()
-          .replace(/ /g, '-')
-          .replace(/'/g, '');
-        const frontImagePath = `/assets/faces/${normalizedName}.png`;
-        cardFront.style.setProperty('--card-image', `url('${frontImagePath}')`);
+        // USE THE SERVER'S IMAGE PATH (from deck.js)
+        console.log('Card:', card.name, 'Image path:', card.image);
+        cardFront.style.setProperty('--card-image', `url('${card.image}')`);
         
         cardInner.appendChild(cardBack);
         cardInner.appendChild(cardFront);
