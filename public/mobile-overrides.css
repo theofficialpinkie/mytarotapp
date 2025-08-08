@@ -1,21 +1,17 @@
 @media (max-width: 768px) {
   body {
-    flex-direction: column-reverse;
+    flex-direction: column;
     padding-top: 60px;
   }
 
   .chat-panel {
+    order: 2;
     width: 100%;
-    max-width: 100%;
-    min-width: 100%;
     min-height: 45vh;
     max-height: 55vh;
-    border-right: none;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: none;
-    z-index: 2;
-    margin-top: -30px; /* creates slight overlap */
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    z-index: 2;
   }
 
   .chat-messages {
@@ -24,9 +20,8 @@
   }
 
   .content-panel {
+    order: 1;
     width: 100%;
-    max-width: 100%;
-    min-width: 100%;
     min-height: 55vh;
     overflow-y: auto;
     z-index: 1;
