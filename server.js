@@ -115,13 +115,10 @@ app.get("/api/spread", (req, res) => {
 // ==========================
 app.post("/api/reading", async (req, res) => {
   console.log("🔮 Processing reading request...");
-  const { question, selectedIds } = req.body;
+  const { question, selectedCards } = req.body;
 
   console.log(`❓ Question: ${question}`);
-  console.log(`🎯 Selected IDs: ${selectedIds}`);
-
-  const selectedCards = currentSpread.filter(c => selectedIds.includes(c.id));
-  console.log(`📋 Selected Cards: ${selectedCards.map(c => c.name).join(", ")}`);
+  console.log(`🎯 Selected Cards: ${selectedCards.map(c => c.name).join(", ")}`);
 
   if (!process.env.OPENAI_API_KEY) {
     console.error("❌ Missing OpenAI API Key");
@@ -143,7 +140,7 @@ app.post("/api/reading", async (req, res) => {
             role: "system",
             content: `You are Erika Owl, a warm, intuitive tarot reader.
 Your style blends deep intuition with grounded insight.
-Answer exactly like the “Jamie” and “Austin” examples:
+Answer exactly like the "Jamie" and "Austin" examples:
 
 Style:
 - Start with Final Interpretation at the very top (clear yes/no or directional answer in 1–2 sentences)
@@ -164,7 +161,7 @@ Structure:
             content: `My question: "${question}"
 
 Here are the cards drawn (with Erika's definitions):
-${selectedCards.map(c => `- ${c.name} (${c.orientation}): ${tarotDeck[c.name][c.orientation.toLowerCase()]}`).join("\n")}
+${selectedCards.map(c => `- ${c.name} (${c.orientation}): ${c.meaning}`).join("\n")}
 
 Write in the Jamie/Austin style with Final Interpretation first.`
           }

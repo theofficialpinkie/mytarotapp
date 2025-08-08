@@ -1076,37 +1076,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Generate reading
+
     async function generateReading() {
-      try {
-        const response = await fetch('/api/reading', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            question: userQuestion,
-            selectedIds: selectedCards.map(c => c.id)
-          })
-        });
-        
-        const data = await response.json();
-        
-        // Hide popup and show carousel
-        setTimeout(() => {
-          hidePopup();
-          showCardCarousel();
-          
-          // Start delivering reading messages
-          setTimeout(() => {
-            deliverReading(data.answer);
-          }, 800);
-          
-        }, 2000);
-        
-      } catch (error) {
-        console.error('Error generating reading:', error);
-        hidePopup();
-        addMessage("I'm having trouble connecting with the cards right now. Please try again in a moment.");
-      }
-    }
+  try {
+    // Send the actual selected card objects instead of just IDs
+    const response = await fetch('/api/reading', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: userQuestion,
+        selectedCards: selectedCards  // Send the full card objects
+      })
+    });
+    
+    const data = await response.json();
+    
+    // Hide popup and show carousel
+    setTimeout(() => {
+      hidePopup();
+      showCardCarousel();
+      
+      // Start delivering reading messages
+      setTimeout(() => {
+        deliverReading(data.answer);
+      }, 800);
+      
+    }, 2000);
+    
+  } catch (error) {
+    console.error('Error generating reading:', error);
+    hidePopup();
+    addMessage("I'm having trouble connecting with the cards right now. Please try again in a moment.");
+  }
+}
+
 
     // Show card carousel
     function showCardCarousel() {
