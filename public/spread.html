@@ -41,20 +41,23 @@ document.addEventListener('DOMContentLoaded', function() {
       font-family: 'Bookman JF Pro', serif;
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      padding: 60px 80px;
+      padding: 20px 60px;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
     .left-panel {
       flex: 1;
-      max-width: 320px;
-      padding-left: 40px;
+      max-width: 45%;
+      padding-left: 20px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 0;
     }
 
     h1.spread-title {
@@ -93,28 +96,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     .spread-container {
-      flex: 4;
+      flex: 2;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
-      gap: 30px;
+      gap: 20px;
+      padding-top: 80px;
     }
 
     .card-row {
       position: relative;
       width: 100%;
-      height: 260px;
+      height: 240px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
     .card {
-      width: 130px;
-      height: 195px;
+      width: 140px;
+      height: 210px;
       border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
       position: absolute;
       transform-origin: bottom center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -124,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     .card.selected {
-      box-shadow: 0 0 18px 6px rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 25px 8px rgba(255, 255, 255, 0.6);
     }
 
     .card-inner {
@@ -140,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      border-radius: 10px;
+      border-radius: 8px;
       background-size: cover;
       background-position: center;
     }
@@ -164,25 +168,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     .progress-section {
-      margin-top: 20px;
+      margin-top: 40px;
       width: 100%;
-      max-width: 280px;
+      max-width: 400px;
     }
 
     .progress-label {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 300;
       color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       text-align: center;
     }
 
     .progress-bar-container {
       width: 100%;
-      height: 8px;
+      height: 10px;
       background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
+      border-radius: 5px;
       overflow: hidden;
       position: relative;
     }
@@ -190,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .progress-bar {
       height: 100%;
       background: linear-gradient(90deg, #ffffff 0%, #f0f0f0 100%);
-      border-radius: 4px;
+      border-radius: 5px;
       width: 0%;
       transition: width 0.4s ease;
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
@@ -198,11 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     .progress-text {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 400;
       color: rgba(255, 255, 255, 0.6);
       text-align: center;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     @keyframes pulse {
@@ -233,41 +237,40 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       .spread-container {
-  flex: 4;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 40px;
-  overflow-y: auto;
-  padding-top: 40px;
-  padding-bottom: 40px;
-}
+        flex: 4;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 40px;
+        overflow-y: auto;
+        padding-top: 40px;
+        padding-bottom: 40px;
+      }
 
       .card {
-  width: 220px;
-  height: 330px;
-  position: relative; /* changed from absolute */
-  transform: none !important; /* override the fan layout */
-  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
-  margin: 0 auto;
-}
+        width: 220px;
+        height: 330px;
+        position: relative;
+        transform: none !important;
+        box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+        margin: 0 auto;
+      }
 
       .card-face {
         border-radius: 8px;
       }
 
       .card-row {
-    display: flex;
-    flex-direction: column;   /* stack cards vertically */
-    align-items: center;
-    justify-content: center;
-    gap: 40px;                /* spacing between cards */
-    width: 100%;
-    height: auto;
-    overflow: visible;
-}
-
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+      }
     }
 
     /* Portrait mobile - show rotation prompt */
@@ -389,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <body>
   <div class="left-panel">
     <h1 class="spread-title">
-      Your Spread
+      Set an Intention
       <div class="stars-container">
         <span class="star">✦</span>
         <span class="star">✦</span>
@@ -461,53 +464,155 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Clear the left panel content
       leftPanel.innerHTML = '';
-      
-      // Create container for selected cards display
-      const cardsContainer = document.createElement('div');
-      cardsContainer.style.cssText = `
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 16px;
-        width: 100%;
-        max-width: 320px;
-        margin-top: 20px;
+      leftPanel.style.cssText = `
+        flex: 1;
+        max-width: none;
+        width: 45%;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
       `;
       
       // Get the actual selected cards data
       const actualSelectedCards = JSON.parse(sessionStorage.getItem('selectedCards') || '[]');
       
-      actualSelectedCards.forEach((card, index) => {
-        const cardDiv = document.createElement('div');
-        cardDiv.style.cssText = `
-          width: 120px;
-          height: 180px;
-          border-radius: 10px;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-          cursor: pointer;
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          transform-style: preserve-3d;
-          perspective: 1000px;
-          background-image: url('${card.image}');
-          background-size: cover;
-          background-position: center;
-        `;
-        
-        // Add hover effects
-        cardDiv.addEventListener('mouseenter', () => {
-          cardDiv.style.transform = 'scale(1.05) translateY(-8px)';
-          cardDiv.style.boxShadow = '0 12px 24px rgba(255, 255, 255, 0.2)';
-        });
-        
-        cardDiv.addEventListener('mouseleave', () => {
-          cardDiv.style.transform = 'scale(1) translateY(0)';
-          cardDiv.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.4)';
-        });
-        
-        cardsContainer.appendChild(cardDiv);
+      // Create carousel container
+      const carouselContainer = document.createElement('div');
+      carouselContainer.style.cssText = `
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 500px;
+        max-height: 750px;
+      `;
+      
+      // Create main card display
+      const mainCard = document.createElement('div');
+      mainCard.style.cssText = `
+        width: 350px;
+        height: 525px;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.15);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        background-size: cover;
+        background-position: center;
+        background-image: url('${actualSelectedCards[0]?.image || '/assets/faces/placeholder.png'}');
+        position: relative;
+        z-index: 10;
+      `;
+      
+      // Create navigation buttons
+      const prevButton = document.createElement('button');
+      prevButton.style.cssText = `
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        font-size: 20px;
+        z-index: 15;
+      `;
+      prevButton.innerHTML = '‹';
+      
+      const nextButton = document.createElement('button');
+      nextButton.style.cssText = `
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        font-size: 20px;
+        z-index: 15;
+      `;
+      nextButton.innerHTML = '›';
+      
+      // Create card counter
+      const cardCounter = document.createElement('div');
+      cardCounter.style.cssText = `
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        color: white;
+        backdrop-filter: blur(10px);
+        z-index: 15;
+      `;
+      cardCounter.textContent = `1 of ${actualSelectedCards.length}`;
+      
+      // Carousel functionality
+      let currentIndex = 0;
+      
+      function updateCarousel() {
+        const card = actualSelectedCards[currentIndex];
+        if (card) {
+          mainCard.style.backgroundImage = `url('${card.image}')`;
+          cardCounter.textContent = `${currentIndex + 1} of ${actualSelectedCards.length}`;
+          
+          // Update button states
+          prevButton.style.opacity = currentIndex === 0 ? '0.5' : '1';
+          nextButton.style.opacity = currentIndex === actualSelectedCards.length - 1 ? '0.5' : '1';
+          prevButton.disabled = currentIndex === 0;
+          nextButton.disabled = currentIndex === actualSelectedCards.length - 1;
+        }
+      }
+      
+      // Button events
+      prevButton.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateCarousel();
+        }
       });
       
-      leftPanel.appendChild(cardsContainer);
+      nextButton.addEventListener('click', () => {
+        if (currentIndex < actualSelectedCards.length - 1) {
+          currentIndex++;
+          updateCarousel();
+        }
+      });
+      
+      // Assemble carousel
+      carouselContainer.appendChild(prevButton);
+      carouselContainer.appendChild(mainCard);
+      carouselContainer.appendChild(nextButton);
+      carouselContainer.appendChild(cardCounter);
+      
+      leftPanel.appendChild(carouselContainer);
+      
+      // Initialize carousel
+      updateCarousel();
     }
 
     function showLoadingScreenInSpreadArea() {
@@ -516,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Clear the spread container
       spreadContainer.innerHTML = '';
       spreadContainer.style.cssText = `
-        flex: 4;
+        flex: 2;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -524,6 +629,7 @@ document.addEventListener('DOMContentLoaded', function() {
         position: relative;
         overflow: hidden;
         border-radius: 20px;
+        min-height: 80vh;
       `;
       
       const video = document.createElement('video');
