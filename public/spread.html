@@ -1,42 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="/shared-styles.css">
-     <link rel="stylesheet" href="/mobile-overrides.css">
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.body.insertAdjacentHTML('afterbegin', `
-    <div class="top-bar">
-      <div class="logo-wrap">
-        <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
-        <span class="byline">by Erika Owls</span>
-      </div>
-      <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
-        Book a 1-1 Psychic Session
-      </a>
-    </div>
-
-
-  `);
-  document.body.classList.add('has-top-bar');
-});
-</script>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Your Reading with Erika</title>
+  <link rel="stylesheet" href="/shared-styles.css" />
+  <link rel="stylesheet" href="/mobile-overrides.css" />
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.insertAdjacentHTML(
+        'afterbegin',
+        `
+        <div class="top-bar">
+          <div class="logo-wrap">
+            <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
+            <span class="byline">by Erika Owls</span>
+          </div>
+          <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
+            Book a 1-1 Psychic Session
+          </a>
+        </div>
+      `
+      );
+      document.body.classList.add('has-top-bar');
+    });
+  </script>
   <style>
     @font-face {
       font-family: 'Bookman JF Pro';
       src: url('/assets/fonts/BookmanJFPro-Regular.woff2') format('woff2'),
-           url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff');
+        url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff');
       font-weight: normal;
       font-style: normal;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: black;
@@ -53,657 +50,133 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* Chat Panel (Left) */
     .chat-panel {
-      flex: none;
-      width: 45%;
-      min-width: 45%;
-      max-width: 45%;
-      padding: 20px 40px;
-      display: flex;
-      flex-direction: column;
+      flex: none; width: 45%; min-width: 45%; max-width: 45%;
+      padding: 20px 40px; display: flex; flex-direction: column;
       min-height: calc(100vh - 80px);
       background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);
       border-right: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
     }
 
-    .chat-header {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      margin-bottom: 20px;
-    }
-
-    .erika-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      object-fit: cover;
-    }
-
-    .erika-info h2 {
-      color: white;
-      font-weight: 600;
-      font-size: 18px;
-      font-family: 'Bookman JF Pro', serif;
-      margin-bottom: 2px;
-    }
-
-    .erika-info p {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 12px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
+    .chat-header { display: flex; align-items: center; gap: 15px; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px; }
+    .erika-avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); object-fit: cover; }
+    .erika-info h2 { color: white; font-weight: 600; font-size: 18px; margin-bottom: 2px; }
+    .erika-info p { color: rgba(255,255,255,0.6); font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 
     .chat-messages {
-      flex: none;
-      min-height: 400px;
-      max-height: calc(100vh - 200px);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      overflow-y: auto;
-      padding-bottom: 20px;
-      scroll-behavior: smooth;
+      flex: none; min-height: 400px; max-height: calc(100vh - 200px);
+      display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-bottom: 20px; scroll-behavior: smooth;
     }
+    .message-wrapper { display: flex; align-items: flex-start; gap: 12px; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .message-wrapper.visible { opacity: 1; transform: translateY(0); }
+    .message-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); object-fit: cover; }
+    .message-content { background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08)); border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 16px 20px; color: white; font-size: 15px; line-height: 1.6; max-width: 85%; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 
-    .message-wrapper {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
+    .chat-button { background: linear-gradient(135deg, #6b46c1, #9333ea); color: white; border: none; outline: none; padding: 12px 24px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 15px; align-self: flex-start; box-shadow: 0 4px 15px rgba(107,70,193,0.3); }
+    .chat-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(107,70,193,0.4); }
+    .chat-button:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: 0 4px 15px rgba(107,70,193,0.3); }
 
-    .message-wrapper.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    /* Chat Overlay (kept in DOM, but feature disabled in JS) */
+    .chat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; border-radius: 0; }
+    .chat-overlay.active { display: flex; }
 
-    .message-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      object-fit: cover;
-    }
-
-    .message-content {
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.08));
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 18px;
-      padding: 16px 20px;
-      color: white;
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 15px;
-      line-height: 1.6;
-      max-width: 85%;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .chat-button {
-      background: linear-gradient(135deg, #6b46c1, #9333ea);
-      color: white;
-      border: none;
-      outline: none;
-      padding: 12px 24px;
-      border-radius: 20px;
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 15px;
-      align-self: flex-start;
-      box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
-    }
-
-    .chat-button:focus {
-      outline: none;
-      box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
-    }
-
-    .chat-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(107, 70, 193, 0.4);
-    }
-
-    .chat-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
-    }
-
-    /* Chat Overlay */
-    .chat-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(5px);
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      border-radius: 0;
-    }
-
-    .chat-overlay.active {
-      display: flex;
-    }
-
-    .overlay-title {
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 24px;
-      color: white;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .overlay-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .overlay-button {
-      background: linear-gradient(135deg, #6b46c1, #9333ea);
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 25px;
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      min-width: 200px;
-      box-shadow: 0 4px 15px rgba(107, 70, 193, 0.3);
-    }
-
-    .overlay-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(107, 70, 193, 0.4);
-    }
-
-    .overlay-button.secondary {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .overlay-button.secondary:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.3));
-    }
+    .overlay-title { font-size: 24px; color: white; margin-bottom: 30px; text-align: center; }
+    .overlay-buttons { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+    .overlay-button { background: linear-gradient(135deg, #6b46c1, #9333ea); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all .3s ease; min-width: 200px; box-shadow: 0 4px 15px rgba(107,70,193,.3); }
+    .overlay-button.secondary { background: linear-gradient(135deg, rgba(255,255,255,.1), rgba(255,255,255,.2)); border: 1px solid rgba(255,255,255,.3); }
 
     /* Right Content Area */
-    .content-panel {
-      flex: none;
-      width: 55%;
-      min-width: 55%;
-      max-width: 55%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: calc(100vh - 80px);
-      padding: 20px;
-      position: relative;
-    }
+    .content-panel { flex: none; width: 55%; min-width: 55%; max-width: 55%; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 80px); padding: 20px; position: relative; }
 
     /* Shuffle Deck Phase */
-    .shuffle-container {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 0;
-      width: 100%;
-      height: 100%;
-      padding-top: 120px;
-    }
-
-    .shuffle-container.active {
-      display: flex;
-    }
-
-    .card-stack {
-      position: relative;
-      width: 180px;
-      height: 260px;
-      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    .stack-card {
-      position: absolute;
-      width: 180px;
-      height: 260px;
-      border-radius: 12px;
-      background-image: url('/assets/backs/card-back.png');
-      background-size: cover;
-      background-position: center;
-      background-color: #333;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .stack-card:nth-child(1) { z-index: 8; transform: translateY(0px) rotate(-0.5deg); }
-    .stack-card:nth-child(2) { z-index: 7; transform: translateY(2px) rotate(0.3deg); }
-    .stack-card:nth-child(3) { z-index: 6; transform: translateY(4px) rotate(-0.2deg); }
-    .stack-card:nth-child(4) { z-index: 5; transform: translateY(6px) rotate(0.4deg); }
-    .stack-card:nth-child(5) { z-index: 4; transform: translateY(8px) rotate(-0.3deg); }
-    .stack-card:nth-child(6) { z-index: 3; transform: translateY(10px) rotate(0.2deg); }
-    .stack-card:nth-child(7) { z-index: 2; transform: translateY(12px) rotate(-0.1deg); }
-    .stack-card:nth-child(8) { z-index: 1; transform: translateY(14px) rotate(0.5deg); }
-
-    .shuffle-button {
-      padding: 16px 32px;
-      font-size: 16px;
-      border: 1px solid white;
-      border-radius: 30px;
-      background: transparent;
-      color: white;
-      cursor: pointer;
-      font-family: 'Bookman JF Pro', serif;
-      transition: all 0.3s ease;
-      margin-top: 15px;
-      align-self: flex-start;
-    }
-
-    .shuffle-button:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
+    .shuffle-container { display: none; flex-direction: column; align-items: center; justify-content: flex-start; gap: 0; width: 100%; height: 100%; padding-top: 120px; }
+    .shuffle-container.active { display: flex; }
+    .card-stack { position: relative; width: 180px; height: 260px; transition: transform .8s cubic-bezier(0.68,-0.55,0.265,1.55); }
+    .stack-card { position: absolute; width: 180px; height: 260px; border-radius: 12px; background-image: url('/assets/backs/card-back.png'); background-size: cover; background-position: center; background-color: #333; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
 
     /* Loading Phase */
-    .loading-container {
-      display: none;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      text-align: center;
-      gap: 0;
-      width: 100%;
-      height: 100%;
-      padding-top: 150px;
-    }
-
-    .loading-container.active {
-      display: flex;
-    }
-
-    .loading-title {
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 36px;
-      color: white;
-      margin-bottom: 30px;
-      opacity: 1;
-      transition: opacity 1s ease;
-    }
-
-    .loading-title.hidden {
-      opacity: 0;
-    }
-
-    .loading-subtitle {
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 20px;
-      color: rgba(255, 255, 255, 0.7);
-      opacity: 0;
-      transition: opacity 0.6s ease;
-      animation: pulse 1.5s infinite ease-in-out;
-    }
-
-    .loading-subtitle.visible {
-      opacity: 0.7;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.4; }
-      50% { opacity: 1; }
-      100% { opacity: 0.4; }
-    }
+    .loading-container { display: none; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; gap: 0; width: 100%; height: 100%; padding-top: 150px; }
+    .loading-container.active { display: flex; }
+    .loading-title { font-size: 36px; color: white; margin-bottom: 30px; opacity: 1; transition: opacity 1s ease; }
+    .loading-title.hidden { opacity: 0; }
+    .loading-subtitle { font-size: 20px; color: rgba(255,255,255,0.7); opacity: 0; transition: opacity .6s ease; animation: pulse 1.5s infinite ease-in-out; }
+    .loading-subtitle.visible { opacity: .7; }
+    @keyframes pulse { 0%{opacity:.4} 50%{opacity:1} 100%{opacity:.4} }
 
     /* Card Selection Phase */
-    .card-selection-container {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      width: 100%;
-    }
+    .card-selection-container { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px; width: 100%; }
+    .card-selection-container.active { display: flex; }
+    .selection-title { font-size: 24px; color: white; margin-bottom: 20px; text-align: center; }
 
-    .card-selection-container.active {
-      display: flex;
-    }
+    .card-row { position: relative; width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
 
-    .selection-title {
-      font-size: 24px;
-      color: white;
-      font-family: 'Bookman JF Pro', serif;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .card-row {
-      position: relative;
-      width: 100%;
-      height: 240px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .card {
-      width: 120px;
-      height: 180px;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-      position: absolute;
-      transform-origin: bottom center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      perspective: 1000px;
-    }
-
-    .card.selected {
-      box-shadow: 0 0 25px 8px rgba(255, 255, 255, 0.6);
-    }
-
-    .card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transition: transform 0.6s ease;
-    }
-
-    .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 6px;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .card-back {
-      background-image: url('/assets/backs/card-back.png');
-    }
-
-    .card-front {
-      background-image: var(--card-image);
-      transform: rotateY(180deg);
-    }
-
-    .card:not(.selected) .card-inner {
-      transform: rotateY(0deg);
-    }
-
-    .card.selected .card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .selection-progress {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 14px;
-      margin-top: 20px;
-    }
+    .card { width: 120px; height: 180px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.6); position: absolute; transform-origin: bottom center; transition: transform .3s ease, box-shadow .3s ease; cursor: pointer; transform-style: preserve-3d; perspective: 1000px; }
+    .card.selected { box-shadow: 0 0 25px 8px rgba(255,255,255,0.6); }
+    .card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .6s ease; }
+    .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; background-size: cover; background-position: center; }
+    .card-back { background-image: url('/assets/backs/card-back.png'); }
+    .card-front { background-image: var(--card-image); transform: rotateY(180deg); }
+    .card:not(.selected) .card-inner { transform: rotateY(0deg); }
+    .card.selected .card-inner { transform: rotateY(180deg); }
+    .selection-progress { text-align: center; color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 20px; }
 
     /* Generate Reading Popup */
-    .popup-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      backdrop-filter: blur(5px);
-    }
-
-    .popup-overlay.active {
-      display: flex;
-    }
-
-    .popup-container {
-      position: relative;
-      width: 500px;
-      height: 600px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .popup-video-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-    }
-
-    .popup-content {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, 
-        rgba(0, 0, 0, 0.7) 0%, 
-        rgba(107, 70, 193, 0.3) 50%, 
-        rgba(0, 0, 0, 0.8) 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 40px;
-    }
-
-    .popup-title {
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 32px;
-      color: white;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .popup-subtitle {
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.9);
-      margin-bottom: 40px;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    }
-
-    .popup-loading {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 16px;
-    }
-
-    .popup-spinner {
-      width: 24px;
-      height: 24px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top: 2px solid white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+    .popup-overlay.active { display: flex; }
+    .popup-container { position: relative; width: 500px; height: 600px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+    .popup-video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+    .popup-content { position: relative; z-index: 2; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(107,70,193,0.3) 50%, rgba(0,0,0,0.8) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; }
+    .popup-title { font-size: 32px; color: white; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    .popup-subtitle { font-size: 18px; color: rgba(255,255,255,0.9); margin-bottom: 40px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+    .popup-loading { display: flex; align-items: center; gap: 15px; color: rgba(255,255,255,0.8); font-size: 16px; }
+    .popup-spinner { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* Card Carousel Phase */
-    .card-carousel-container {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      padding: 40px 20px;
-    }
+    .card-carousel-container { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; padding: 40px 20px; }
+    .card-carousel-container.active { display: flex; }
 
-    .card-carousel-container.active {
-      display: flex;
-    }
+    .carousel-title { font-size: 28px; color: white; margin-bottom: 40px; text-align: center; }
 
-    .carousel-title {
-      font-family: 'Bookman JF Pro', serif;
-      font-size: 28px;
-      color: white;
-      margin-bottom: 40px;
-      text-align: center;
-    }
+    .carousel-wrapper { position: relative; width: 100%; max-width: 600px; height: 350px; display: flex; align-items: center; justify-content: center; }
+    .carousel-cards { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-    .carousel-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      height: 350px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .carousel-card { position: absolute; width: 200px; height: 300px; border-radius: 12px; background-size: cover; background-position: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all .8s cubic-bezier(0.25,0.46,0.45,0.94); cursor: pointer; }
+    .carousel-card.active { z-index: 10; transform: scale(1.1) translateZ(0); box-shadow: 0 20px 40px rgba(255,255,255,0.1); }
+    .carousel-card.prev { z-index: 5; transform: translateX(-180px) scale(0.85) rotateY(15deg); opacity: 0.7; }
+    .carousel-card.next { z-index: 5; transform: translateX(180px) scale(0.85) rotateY(-15deg); opacity: 0.7; }
+    .carousel-card.hidden { z-index: 1; opacity: 0.3; transform: scale(0.6); }
 
-    .carousel-cards {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .carousel-nav { display: flex; gap: 10px; margin-top: 30px; }
+    .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: all .3s ease; }
+    .nav-dot.active { background: white; transform: scale(1.2); }
 
-    .carousel-card {
-      position: absolute;
-      width: 200px;
-      height: 300px;
-      border-radius: 12px;
-      background-size: cover;
-      background-position: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      cursor: pointer;
+    /* Side arrows */
+    .carousel-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 44px; border-radius: 50%; z-index: 20;
+      border: 1px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.08);
+      color: white; font-size: 22px; line-height: 1; cursor: pointer;
+      backdrop-filter: blur(6px);
+      display: grid; place-items: center;
+      transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
     }
+    .carousel-arrow:hover { transform: translateY(-50%) translateY(-1px); background: rgba(255,255,255,0.14); }
+    .carousel-arrow:focus { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.25); }
+    .carousel-arrow.prev { left: 8px; }
+    .carousel-arrow.next { right: 8px; }
 
-    .carousel-card.active {
-      z-index: 10;
-      transform: scale(1.1) translateZ(0);
-      box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
-    }
-
-    .carousel-card.prev {
-      z-index: 5;
-      transform: translateX(-180px) scale(0.85) rotateY(15deg);
-      opacity: 0.7;
-    }
-
-    .carousel-card.next {
-      z-index: 5;
-      transform: translateX(180px) scale(0.85) rotateY(-15deg);
-      opacity: 0.7;
-    }
-
-    .carousel-card.hidden {
-      z-index: 1;
-      opacity: 0.3;
-      transform: scale(0.6);
-    }
-
-    .carousel-nav {
-      display: flex;
-      gap: 10px;
-      margin-top: 30px;
-    }
-
-    .nav-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .nav-dot.active {
-      background: white;
-      transform: scale(1.2);
-    }
-
-    /* Mobile Styles */
     @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-        padding-top: 60px;
-      }
-
-      .chat-panel {
-        width: 100%;
-        max-width: 100%;
-        min-width: 100%;
-        min-height: 50vh;
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .content-panel {
-        width: 100%;
-        max-width: 100%;
-        min-width: 100%;
-        min-height: 50vh;
-      }
-
-      .card {
-        width: 80px;
-        height: 120px;
-      }
-
-      .card-row {
-        height: 150px;
-      }
-
-      .popup-container {
-        width: 90%;
-        height: 500px;
-      }
-
-      .carousel-card {
-        width: 150px;
-        height: 225px;
-      }
-
-      .carousel-card.prev {
-        transform: translateX(-120px) scale(0.8) rotateY(10deg);
-      }
-
-      .carousel-card.next {
-        transform: translateX(120px) scale(0.8) rotateY(-10deg);
-      }
+      body { flex-direction: column; padding-top: 60px; }
+      .chat-panel { width: 100%; max-width: 100%; min-width: 100%; min-height: 50vh; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      .content-panel { width: 100%; max-width: 100%; min-width: 100%; min-height: 50vh; }
+      .card { width: 80px; height: 120px; }
+      .card-row { height: 200px; }
+      .popup-container { width: 90%; height: 500px; }
+      .carousel-card { width: 150px; height: 225px; }
+      .carousel-card.prev { transform: translateX(-120px) scale(0.8) rotateY(10deg); }
+      .carousel-card.next { transform: translateX(120px) scale(0.8) rotateY(-10deg); }
     }
   </style>
 </head>
@@ -712,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="popup-overlay" id="popupOverlay">
     <div class="popup-container">
       <video class="popup-video-bg" autoplay muted loop>
-        <source src="/assets/background.mp4" type="video/mp4">
+        <source src="/assets/background.mp4" type="video/mp4" />
       </video>
       <div class="popup-content">
         <div class="popup-title">Channeling Your Energy</div>
@@ -727,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   <!-- Chat Panel (Left) -->
   <div class="chat-panel">
-    <!-- Chat Overlay -->
+    <!-- Chat Overlay (kept but disabled) -->
     <div class="chat-overlay" id="chatOverlay">
       <div class="overlay-title">What would you like to do next?</div>
       <div class="overlay-buttons">
@@ -738,20 +211,17 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <div class="chat-header">
-      <img src="/assets/erika-avatar.png" alt="Erika Owls" class="erika-avatar" onerror="this.style.display='none'">
+      <img src="/assets/erika-avatar.png" alt="Erika Owls" class="erika-avatar" onerror="this.style.display='none'" />
       <div class="erika-info">
         <h2>Erika Owls</h2>
         <p>Spiritual Mentor & Tarot Reader</p>
       </div>
     </div>
-    <div class="chat-messages" id="chatMessages">
-      <!-- Messages will be added here -->
-    </div>
+    <div class="chat-messages" id="chatMessages"><!-- Messages --></div>
   </div>
 
   <!-- Content Panel (Right) -->
   <div class="content-panel" id="contentPanel">
-    
     <!-- Phase 1: Shuffle Deck -->
     <div class="shuffle-container" id="shuffleContainer">
       <div class="card-stack" id="cardStack">
@@ -783,15 +253,12 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card-carousel-container" id="cardCarouselContainer">
       <div class="carousel-title">Your Selected Cards</div>
       <div class="carousel-wrapper">
-        <div class="carousel-cards" id="carouselCards">
-          <!-- Cards will be populated here -->
-        </div>
+        <div class="carousel-cards" id="carouselCards"><!-- Cards will be populated here --></div>
+        <button class="carousel-arrow prev" aria-label="Previous card">‹</button>
+        <button class="carousel-arrow next" aria-label="Next card">›</button>
       </div>
-      <div class="carousel-nav" id="carouselNav">
-        <!-- Navigation dots will be populated here -->
-      </div>
+      <div class="carousel-nav" id="carouselNav"><!-- Dots --></div>
     </div>
-
   </div>
 
   <script>
@@ -800,8 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedCards = [];
     let currentCardIndex = 0;
     let userQuestion = sessionStorage.getItem('userQuestion') || 'What guidance do I need right now?';
-    let carouselInterval = null;
-    let overlayTimer = null;
+    let overlayTimer = null; // intentionally unused (overlay disabled)
 
     const chatMessages = document.getElementById('chatMessages');
     const shuffleContainer = document.getElementById('shuffleContainer');
@@ -812,193 +278,155 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatOverlay = document.getElementById('chatOverlay');
     const cardStack = document.getElementById('cardStack');
 
-    // Initialize the experience
     function init() {
       addMessage(`Welcome! I can feel your energy around the question: "${userQuestion}"`);
       setTimeout(() => {
-        addMessage("Take a moment to set your intention and focus on your question.");
-        addStandaloneButton("Shuffle Cards", startShuffle);
+        addMessage('Take a moment to set your intention and focus on your question.');
+        addStandaloneButton('Shuffle Cards', startShuffle);
         showPhase('shuffle');
       }, 800);
     }
 
-    let isReadingPhase = false; // Track if we're in the reading delivery phase
+    let isReadingPhase = false;
 
-    // Add message to chat
     function addMessage(text) {
       const messageWrapper = document.createElement('div');
       messageWrapper.className = 'message-wrapper';
-      
+
       const messageAvatar = document.createElement('img');
       messageAvatar.src = '/assets/erika-avatar.png';
       messageAvatar.className = 'message-avatar';
-      messageAvatar.onerror = function() {
+      messageAvatar.onerror = function () {
         const fallback = document.createElement('div');
         fallback.style.cssText = `
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
+          width: 40px; height: 40px; border-radius: 50%;
           background: linear-gradient(135deg, #6b46c1, #9333ea);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          font-size: 16px;
-          flex-shrink: 0;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          display: flex; align-items: center; justify-content: center;
+          color: white; font-weight: bold; font-size: 16px; flex-shrink: 0;
+          border: 1px solid rgba(255,255,255,0.1);
         `;
         fallback.textContent = 'E';
         messageAvatar.parentNode.replaceChild(fallback, messageAvatar);
       };
-      
+
       const messageContent = document.createElement('div');
       messageContent.className = 'message-content';
       messageContent.textContent = text;
-      
+
       messageWrapper.appendChild(messageAvatar);
       messageWrapper.appendChild(messageContent);
-      
+
       if (isReadingPhase) {
-        // During reading: add to bottom and scroll to show new messages
         chatMessages.appendChild(messageWrapper);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       } else {
-        // During initial setup: add to top and keep at top
         chatMessages.insertBefore(messageWrapper, chatMessages.firstChild);
         chatMessages.scrollTop = 0;
       }
-      
-      setTimeout(() => {
-        messageWrapper.classList.add('visible');
-      }, 50);
+
+      setTimeout(() => messageWrapper.classList.add('visible'), 50);
     }
 
-    // Add standalone button
     function addStandaloneButton(buttonText, callback) {
       const buttonWrapper = document.createElement('div');
       buttonWrapper.style.cssText = `
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 20px 0;
-        padding-left: 52px;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
+        display: flex; align-items: center; gap: 12px; margin: 20px 0; padding-left: 52px;
+        opacity: 0; transform: translateY(20px); transition: opacity .5s ease, transform .5s ease;
       `;
-      
+
       const button = document.createElement('button');
       button.className = 'chat-button';
       button.textContent = buttonText;
       button.onclick = callback;
-      
+
       buttonWrapper.appendChild(button);
-      
+
       if (isReadingPhase) {
-        // During reading: add to bottom
         chatMessages.appendChild(buttonWrapper);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       } else {
-        // During initial setup: add to top
         chatMessages.insertBefore(buttonWrapper, chatMessages.firstChild);
         chatMessages.scrollTop = 0;
       }
-      
+
       setTimeout(() => {
         buttonWrapper.style.opacity = '1';
         buttonWrapper.style.transform = 'translateY(0)';
       }, 50);
     }
 
-    // Show specific phase
     function showPhase(phase) {
       shuffleContainer.classList.remove('active');
       loadingContainer.classList.remove('active');
       cardSelectionContainer.classList.remove('active');
       cardCarouselContainer.classList.remove('active');
-      
-      switch(phase) {
-        case 'shuffle':
-          shuffleContainer.classList.add('active');
-          break;
-        case 'loading':
-          loadingContainer.classList.add('active');
-          break;
-        case 'selection':
-          cardSelectionContainer.classList.add('active');
-          break;
-        case 'carousel':
-          cardCarouselContainer.classList.add('active');
-          break;
+
+      switch (phase) {
+        case 'shuffle': shuffleContainer.classList.add('active'); break;
+        case 'loading': loadingContainer.classList.add('active'); break;
+        case 'selection': cardSelectionContainer.classList.add('active'); break;
+        case 'carousel': cardCarouselContainer.classList.add('active'); break;
       }
     }
 
-    // Start shuffle process
     async function startShuffle() {
       showPhase('loading');
-      
-      // Animate card stack
       cardStack.style.transform = 'scale(1.1) rotate(5deg)';
-      
+
       const loadingTitle = document.getElementById('loadingTitle');
       const loadingSubtitle = document.getElementById('loadingSubtitle');
-      
-      // Step 1: Show "Take a deep breath" for 4 seconds (reduced)
+
       setTimeout(() => {
         loadingTitle.classList.add('hidden');
         loadingSubtitle.classList.add('visible');
-        
-        // Step 2: Fetch spread AFTER breath is done
+
         fetch('/api/spread')
-          .then(res => res.json())
-          .then(data => {
+          .then((res) => res.json())
+          .then((data) => {
             spreadCards = data.spread;
-            console.log('✅ Spread saved');
-            
-            // Step 3: Transition to card selection after loader pulses
             setTimeout(() => {
               cardStack.style.transform = 'scale(1) rotate(0deg)';
               showCardSelection();
             }, 1000);
           })
-          .catch(error => {
+          .catch((error) => {
             console.error('Error fetching spread:', error);
-            addMessage("Let me try shuffling those cards again...");
+            addMessage('Let me try shuffling those cards again...');
             setTimeout(startShuffle, 2000);
           });
       }, 4000);
     }
 
-    // Show card selection
     function showCardSelection() {
-      addMessage("Select 6 cards that call to you.");
+      addMessage('Select 6 cards that call to you.');
       showPhase('selection');
       setupCardSelection();
     }
 
-    // Setup card selection
     function setupCardSelection() {
       const row1 = document.getElementById('row1');
       const row2 = document.getElementById('row2');
-      
       row1.innerHTML = '';
       row2.innerHTML = '';
-      
+
       const halfway = Math.ceil(spreadCards.length / 2);
       const firstHalf = spreadCards.slice(0, halfway);
       const secondHalf = spreadCards.slice(halfway);
-      
+
       fanCards(row1, firstHalf, true);
       fanCards(row2, secondHalf, false);
     }
 
-    // Create fan of cards
+    // Wider fan
     function fanCards(container, cards, upwardCurve) {
       const total = cards.length;
-      const angleSpread = 25;
-      const angleStep = total > 1 ? angleSpread / (total - 1) : 0;
-      const startAngle = -angleSpread / 2;
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      const ANGLE_SPREAD = isMobile ? 36 : 50;
+      const OFFSET_STEP = isMobile ? 32 : 46;
+      const LIFT_FACTOR = isMobile ? 6 : 8;
+
+      const angleStep = total > 1 ? ANGLE_SPREAD / (total - 1) : 0;
+      const startAngle = -ANGLE_SPREAD / 2;
 
       cards.forEach((card, i) => {
         const cardElement = document.createElement('div');
@@ -1006,21 +434,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const cardInner = document.createElement('div');
         cardInner.className = 'card-inner';
-        
+
         const cardBack = document.createElement('div');
         cardBack.className = 'card-face card-back';
-        
+
         const cardFront = document.createElement('div');
         cardFront.className = 'card-face card-front';
         cardFront.style.setProperty('--card-image', `url('${card.image}')`);
-        
+
         cardInner.appendChild(cardBack);
         cardInner.appendChild(cardFront);
         cardElement.appendChild(cardInner);
 
         const angle = startAngle + i * angleStep;
-        const lift = upwardCurve ? -Math.abs(i - total / 2) * 6 : 0;
-        const offset = (i - total / 2) * 30;
+        const centerIndex = (total - 1) / 2;
+        const offset = (i - centerIndex) * OFFSET_STEP;
+        const lift = upwardCurve ? -Math.abs(i - centerIndex) * LIFT_FACTOR : 0;
 
         cardElement.style.transform = `translate(${offset}px, ${lift}px) rotate(${angle}deg)`;
         cardElement._offset = offset;
@@ -1032,7 +461,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // Select card
     function selectCard(cardElement, card) {
       if (cardElement.classList.contains('selected')) return;
       if (selectedCards.length >= 6) {
@@ -1042,257 +470,154 @@ document.addEventListener('DOMContentLoaded', function() {
 
       cardElement.classList.add('selected');
       selectedCards.push(card);
-      
       cardElement.style.transform = `translate(${cardElement._offset}px, ${cardElement._lift - 15}px) rotate(${cardElement._angle}deg)`;
-      
       updateSelectionProgress();
-      
+
       if (selectedCards.length === 6) {
-        setTimeout(() => {
-          showPopup();
-        }, 500);
+        setTimeout(() => { showPopup(); }, 500);
       }
     }
 
-    // Update selection progress
     function updateSelectionProgress() {
       const progress = document.getElementById('selectionProgress');
       progress.textContent = `Select 6 cards (${selectedCards.length} selected)`;
     }
 
-    // Show popup
-    function showPopup() {
-      popupOverlay.classList.add('active');
-      
-      // Start generating reading after popup animation
-      setTimeout(() => {
-        generateReading();
-      }, 1500);
-    }
-
-    // Hide popup
-    function hidePopup() {
-      popupOverlay.classList.remove('active');
-    }
-
-    // Generate reading
+    function showPopup() { popupOverlay.classList.add('active'); setTimeout(() => { generateReading(); }, 1500); }
+    function hidePopup() { popupOverlay.classList.remove('active'); }
 
     async function generateReading() {
-  try {
-    // Send the actual selected card objects instead of just IDs
-    const response = await fetch('/api/reading', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question: userQuestion,
-        selectedCards: selectedCards  // Send the full card objects
-      })
-    });
-    
-    const data = await response.json();
-    
-    // Hide popup and show carousel
-    setTimeout(() => {
-      hidePopup();
-      showCardCarousel();
-      
-      // Start delivering reading messages
-      setTimeout(() => {
-        deliverReading(data.answer);
-      }, 800);
-      
-    }, 2000);
-    
-  } catch (error) {
-    console.error('Error generating reading:', error);
-    hidePopup();
-    addMessage("I'm having trouble connecting with the cards right now. Please try again in a moment.");
-  }
-}
+      try {
+        const response = await fetch('/api/reading', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: userQuestion, selectedCards: selectedCards })
+        });
+        const data = await response.json();
+        console.log('reading response', data);
 
+        setTimeout(() => {
+          hidePopup();
+          showCardCarousel();
+          setTimeout(() => { deliverReading(data.answer); }, 800);
+        }, 2000);
+      } catch (error) {
+        console.error('Error generating reading:', error);
+        hidePopup();
+        addMessage("I'm having trouble connecting with the cards right now. Please try again in a moment.");
+      }
+    }
 
-    // Show card carousel
+    // ===== Manual Carousel (no autoplay) =====
+    function goNext() {
+      if (!selectedCards.length) return;
+      currentCardIndex = (currentCardIndex + 1) % selectedCards.length;
+      updateCarousel();
+    }
+    function goPrev() {
+      if (!selectedCards.length) return;
+      currentCardIndex = (currentCardIndex - 1 + selectedCards.length) % selectedCards.length;
+      updateCarousel();
+    }
+    function handleCarouselKeys(e) {
+      if (!cardCarouselContainer.classList.contains('active')) return;
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
+    }
+    function enableSwipe(el) {
+      let startX = null;
+      el.addEventListener('touchstart', (e) => { startX = e.changedTouches[0].clientX; }, { passive: true });
+      el.addEventListener('touchend', (e) => {
+        if (startX == null) return;
+        const dx = e.changedTouches[0].clientX - startX; startX = null;
+        if (Math.abs(dx) > 40) { dx < 0 ? goNext() : goPrev(); }
+      }, { passive: true });
+    }
+
     function showCardCarousel() {
       showPhase('carousel');
       setupCarousel();
-      startCarouselAutoplay();
+
+      const prevBtn = document.querySelector('.carousel-arrow.prev');
+      const nextBtn = document.querySelector('.carousel-arrow.next');
+      if (prevBtn) prevBtn.onclick = goPrev;
+      if (nextBtn) nextBtn.onclick = goNext;
+
+      document.addEventListener('keydown', handleCarouselKeys);
+      const cardsArea = document.getElementById('carouselCards');
+      if (cardsArea) enableSwipe(cardsArea);
     }
 
-    // Setup carousel
     function setupCarousel() {
       const carouselCards = document.getElementById('carouselCards');
       const carouselNav = document.getElementById('carouselNav');
-      
       carouselCards.innerHTML = '';
       carouselNav.innerHTML = '';
-      
-      // Create carousel cards
+
       selectedCards.forEach((card, index) => {
         const cardElement = document.createElement('div');
         cardElement.className = 'carousel-card';
         cardElement.style.backgroundImage = `url('${card.image}')`;
         cardElement.addEventListener('click', () => goToCard(index));
         carouselCards.appendChild(cardElement);
-        
-        // Create navigation dot
+
         const dot = document.createElement('div');
         dot.className = 'nav-dot';
         dot.addEventListener('click', () => goToCard(index));
         carouselNav.appendChild(dot);
       });
-      
+
       updateCarousel();
     }
 
-    // Go to specific card
-    function goToCard(index) {
-      currentCardIndex = index;
-      updateCarousel();
-    }
+    function goToCard(index) { currentCardIndex = index; updateCarousel(); }
 
-    // Update carousel positions
     function updateCarousel() {
       const cards = document.querySelectorAll('.carousel-card');
       const dots = document.querySelectorAll('.nav-dot');
-      
       cards.forEach((card, index) => {
         card.classList.remove('active', 'prev', 'next', 'hidden');
-        
-        if (index === currentCardIndex) {
-          card.classList.add('active');
-        } else if (index === (currentCardIndex - 1 + cards.length) % cards.length) {
-          card.classList.add('prev');
-        } else if (index === (currentCardIndex + 1) % cards.length) {
-          card.classList.add('next');
-        } else {
-          card.classList.add('hidden');
-        }
+        if (index === currentCardIndex) card.classList.add('active');
+        else if (index === (currentCardIndex - 1 + cards.length) % cards.length) card.classList.add('prev');
+        else if (index === (currentCardIndex + 1) % cards.length) card.classList.add('next');
+        else card.classList.add('hidden');
       });
-      
-      dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentCardIndex);
-      });
+      dots.forEach((dot, index) => dot.classList.toggle('active', index === currentCardIndex));
     }
 
-    // Start carousel autoplay
-    function startCarouselAutoplay() {
-      // Clear any existing interval
-      if (carouselInterval) {
-        clearInterval(carouselInterval);
-      }
-      
-      carouselInterval = setInterval(() => {
-        currentCardIndex = (currentCardIndex + 1) % selectedCards.length;
-        updateCarousel();
-      }, 3000); // Auto-advance every 3 seconds
-    }
-
-    // Stop carousel autoplay
-    function stopCarouselAutoplay() {
-      if (carouselInterval) {
-        clearInterval(carouselInterval);
-        carouselInterval = null;
-      }
-    }
-
-    // Show overlay after 70 seconds
+    // ===== Overlay related functions disabled =====
+    /*
     function startOverlayTimer() {
       overlayTimer = setTimeout(() => {
-        // Only show if user hasn't already seen it from scrolling behavior
-        if (!chatOverlay.classList.contains('active')) {
-          showOverlay();
-        }
-      }, 70000); // 70 seconds - plenty of time to read
+        if (!chatOverlay.classList.contains('active')) { showOverlay(); }
+      }, 70000);
     }
+    function showOverlay() { chatOverlay.classList.add('active'); }
+    function hideOverlay() { chatOverlay.classList.remove('active'); }
+    */
 
-    // Show chat overlay
-    function showOverlay() {
-      chatOverlay.classList.add('active');
-    }
-
-    // Hide chat overlay
-    function hideOverlay() {
-      chatOverlay.classList.remove('active');
-    }
-
-    // Deliver reading in chunks
     function deliverReading(readingText) {
-      // Switch to reading phase - now messages go top to bottom
       isReadingPhase = true;
-      
-      // Split reading into fewer, more focused messages
       const sentences = readingText.split(/(?<=[.!?])\s+/);
       const chunks = [];
       for (let i = 0; i < sentences.length; i += 3) {
         chunks.push(sentences.slice(i, i + 3).join(' '));
       }
-      
       chunks.forEach((chunk, index) => {
         setTimeout(() => {
           addMessage(chunk);
           if (index === chunks.length - 1) {
             setTimeout(() => {
-              addStandaloneButton("New Reading", () => {
-                window.location.href = '/question-screen.html';
-              });
-              
-              // Mark reading as complete
-              readingComplete = true;
-              
-              // Start the 70-second timer for overlay after reading is complete
-              // This gives users time to read everything
-              startOverlayTimer();
+              addStandaloneButton('New Reading', () => { window.location.href = '/question-screen.html'; });
+              // readingComplete = true; // only needed if overlay feature is re-enabled
+              // startOverlayTimer(); // disabled
             }, 600);
           }
         }, index * 1200);
       });
     }
 
-    // Check if chat is scrolled to bottom
-    function isChatScrolledToBottom() {
-      const threshold = 50; // pixels
-      return chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - threshold;
-    }
-
-    // Track if reading is complete
-    let readingComplete = false;
-    let hasScrolledToBottom = false;
-
-    // Listen for scroll events on chat to detect bottom
-    chatMessages.addEventListener('scroll', () => {
-      if (isReadingPhase && isChatScrolledToBottom()) {
-        hasScrolledToBottom = true;
-        
-        // Only show overlay if reading is complete AND user has scrolled to bottom
-        // AND they've been at the bottom for at least 10 seconds
-        if (readingComplete && !chatOverlay.classList.contains('active')) {
-          setTimeout(() => {
-            if (hasScrolledToBottom && isChatScrolledToBottom()) {
-              showOverlay();
-            }
-          }, 10000); // Wait 10 seconds after scrolling to bottom
-        }
-      } else {
-        hasScrolledToBottom = false;
-      }
-    });
-
-    // Pause carousel autoplay when user interacts with cards
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('carousel-card') || e.target.classList.contains('nav-dot')) {
-        stopCarouselAutoplay();
-        
-        // Resume autoplay after 10 seconds of inactivity
-        setTimeout(() => {
-          startCarouselAutoplay();
-        }, 10000);
-      }
-    });
-
-    // Initialize when page loads
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(init, 500);
-    });
+    // Init
+    document.addEventListener('DOMContentLoaded', () => { setTimeout(init, 500); });
   </script>
 </body>
 </html>
