@@ -1,56 +1,75 @@
+/* Mobile overrides that WIN no matter what */
 @media (max-width: 768px) {
-  body {
-    flex-direction: column;
-    padding-top: 60px;
+  /* Kill any body flex/grid coming from shared styles */
+  html body {
+    display: block !important;
+    padding-top: 60px !important;
+  }
+
+  /* If wrapper exists, stack deck -> chat */
+  .layout {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto !important;
+    grid-template-areas:
+      "deck"
+      "chat" !important;
+    min-height: auto !important;
+  }
+
+  /* If wrapper DIDN'T exist, safety script creates it; these still help */
+  .content-panel {
+    grid-area: deck !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    float: none !important;
+    flex: none !important;
+
+    min-height: 55vh !important;
+    max-height: 55vh !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+    padding: 20px 20px 10px 20px !important;
+    justify-content: flex-start !important;
   }
 
   .chat-panel {
-    order: 2;
-    width: 100%;
-    min-height: 45vh;
-    max-height: 55vh;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-    z-index: 2;
+    grid-area: chat !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    float: none !important;
+    flex: none !important;
+
+    min-height: 45vh !important;
+    max-height: 45vh !important;
+    border-right: none !important;
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    padding: 15px 20px !important;
+    justify-content: flex-start !important;
   }
 
   .chat-messages {
-    max-height: 40vh;
-    overflow-y: auto;
+    max-height: 35vh !important;
+    margin-top: 0 !important;
+    padding-top: 5px !important;
   }
 
-  .content-panel {
-    order: 1;
-    width: 100%;
-    min-height: 55vh;
-    overflow-y: auto;
-    z-index: 1;
-  }
+  .shuffle-container { padding-top: 40px !important; }
 
-  .card {
-    width: 80px;
-    height: 120px;
-  }
+  /* Card selection sizing */
+  .card { width: 80px !important; height: 120px !important; }
+  .card-row { height: 200px !important; }
 
-  .card-row {
-    height: 200px;
-  }
+  /* Popup sizing */
+  .popup-container { width: 90% !important; height: 500px !important; }
 
-  .popup-container {
-    width: 90%;
-    height: 500px;
-  }
-
-  .carousel-card {
-    width: 150px;
-    height: 225px;
-  }
-
-  .carousel-card.prev {
-    transform: translateX(-120px) scale(0.8) rotateY(10deg);
-  }
-
-  .carousel-card.next {
-    transform: translateX(120px) scale(0.8) rotateY(-10deg);
-  }
+  /* Carousel sizing */
+  .carousel-card { width: 150px !important; height: 225px !important; }
+  .carousel-card.prev { transform: translateX(-120px) scale(0.8) rotateY(10deg) !important; }
+  .carousel-card.next { transform: translateX(120px) scale(0.8) rotateY(-10deg) !important; }
 }
+
