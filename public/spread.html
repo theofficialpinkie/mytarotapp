@@ -403,6 +403,99 @@
   return window.matchMedia('(max-width: 768px)').matches;
 }
 
+  function installChatSheetDrag() {
+    if (!isMobileView()) return;
+
+    const chat = document.querySelector('.chat-panel');
+    if (!chat) return;
+
+    // Create the handle once
+    let handle = document.getElementById('chatDragHandle');
+    if (!handle) {
+      handle = document.createElement('div');
+      handle.id = 'chatDragHandle';
+      handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
+      chat.prepend(handle);
+    }
+
+    // Enter sheet mode when drag starts
+    function enterSheet() {
+      if (!chat.classList.contains('sheet')) {
+        chat.classList.add('sheet');
+        // lock current height so we have a pixel base to drag from
+        const h = chat.getBoundingClientRect().height || (window.innerHeight * 0.45);
+        chat.style.setProperty('height', Math.max(220, Math.min(h, window.innerHeight)) + 'px', 'important');
+      }
+    }
+
+    const safeTop = () => (parseFloat(getComputedStyle(document.body).paddingTop) || 0); // your fixed top bar space
+    let startY, startH, minH, maxH;
+
+    function onStart(e) {
+      const t = (e.touches && e.touches[0]) || e;
+      enterSheet();
+
+      startY = t.clientY;
+      startH = chat.getBoundingClientRect().height;
+
+      // bounds: don’t collapse too small; allow full height up to just under the top bar
+      minH = Math.max(window.innerHeight * 0.30, 220);
+      maxH = window.innerHeight - safeTop() - 4;
+
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('touchend', onEnd);
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onEnd);
+    }
+
+    function onMove(e) {
+      const t = (e.touches && e.touches[0]) || e;
+      const dy = t.clientY - startY;     // drag up => negative
+      let newH = startH - dy;
+
+      if (newH < minH) newH = minH;
+      if (newH > maxH) newH = maxH;
+
+      chat.style.setProperty('height', newH + 'px', 'important');
+
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function onEnd() {
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onEnd);
+    }
+
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('mousedown', onStart);
+  }
+
+  // Call it when the DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(init, 500);
+    installChatSheetDrag();
+  });
+
+  // Keep it mobile-only; clean up when moving to desktop
+  window.addEventListener('resize', () => {
+    if (isMobileView()) {
+      installChatSheetDrag();
+    } else {
+      const chat = document.querySelector('.chat-panel');
+      if (chat) {
+        chat.classList.remove('sheet');
+        chat.style.removeProperty('height');
+      }
+    }
+  });
+
+  window.addEventListener('orientationchange', () => setTimeout(() => {
+    if (isMobileView()) installChatSheetDrag();
+  }, 250));
+
+
 /* Fit both card rows inside the visible deck area on mobile.
    Ensures row2 has some bottom padding while still fitting. */
 function fitRowsForMobile() {
@@ -444,6 +537,115 @@ function fitRowsForMobile() {
   row2.style.paddingBottom = bottomPadRow2 + 'px';
   row2.style.height = rowHeight + 'px';
 }
+
+
+  function installChatDrag() {
+    if (!isMobileView()) return;
+
+    const chat   = document.querySelector('.chat-panel');
+    const deck   = document.getElementById('contentPanel');
+    if (!chat || !deck) return;
+
+    // Create the handle once
+    let handle = document.getElementById('chatDragHandle');
+    if (!handle) {
+      handle = document.createElement('div');
+      handle.id = 'chatDragHandle';
+      handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
+      chat.prepend(handle);
+    }
+
+    const progress = document.getElementById('selectionProgress');
+    const sel = document.getElementById('cardSelectionContainer');
+    const row1 = document.getElementById('row1');
+
+    const bodyPadTop = () => parseFloat(getComputedStyle(document.body).paddingTop) || 0;
+    const avail = () => window.innerHeight - bodyPadTop(); // total space for deck+chat
+
+    function computeMinDeck() {
+      if (!sel || !row1) return 320; // safe default
+      const s = getComputedStyle(sel);
+      const padY = parseFloat(s.paddingTop) + parseFloat(s.paddingBottom);
+      const gap = 20, bottomPadRow2 = 16;
+      const progressH = progress ? progress.offsetHeight : 0;
+
+      // How much row1 lifts upward (negative translateY)
+      let maxUp = 0;
+      row1.querySelectorAll('.card').forEach(c => {
+        const lift = Number(c._lift || 0);
+        if (lift < 0) maxUp = Math.max(maxUp, -lift);
+      });
+      const topPadRow1 = Math.ceil(maxUp) + 8;
+
+      // 2 rows * ~130px each + paddings/gap/progress text
+      return (2 * 130) + topPadRow1 + bottomPadRow2 + gap + progressH + padY;
+    }
+
+    let startY, startChatH, minDeckCached;
+
+    function onStart(e) {
+      const t = (e.touches && e.touches[0]) || e;
+      startY = t.clientY;
+      startChatH = chat.getBoundingClientRect().height;
+      minDeckCached = computeMinDeck();
+
+      document.addEventListener('touchmove', onMove, { passive: false });
+      document.addEventListener('touchend', onEnd);
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onEnd);
+    }
+
+    function onMove(e) {
+      const t = (e.touches && e.touches[0]) || e;
+      const dy = t.clientY - startY;          // up = negative
+      const total = avail();
+
+      // Grow chat when dragging up; clamp so deck never gets too small
+      let newChat = startChatH - dy;
+      const minChat = Math.max(total * 0.30, 200);
+      const maxChat = Math.max(total - minDeckCached, minChat + 1);
+
+      if (newChat < minChat) newChat = minChat;
+      if (newChat > maxChat) newChat = maxChat;
+
+      const newDeck = total - newChat;
+
+      // Override mobile CSS (which uses !important) with inline !important
+      chat.style.setProperty('height', newChat + 'px', 'important');
+      deck.style.setProperty('height', newDeck + 'px', 'important');
+
+      // Refit cards inside the new deck height
+      fitRowsForMobile();
+
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function onEnd() {
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onEnd);
+    }
+
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('mousedown', onStart);
+  }
+
+  // After your existing listeners:
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(init, 500);
+    // install the handle after DOM is ready
+    installChatDrag();
+  });
+
+  window.addEventListener('resize', () => {
+    if (isMobileView()) installChatDrag();   // re-ensure handle exists after resizes
+    fitRowsForMobile();
+  });
+  window.addEventListener('orientationchange', () => setTimeout(() => {
+    if (isMobileView()) installChatDrag();
+    fitRowsForMobile();
+  }, 250));
 
     function showCardSelection() {
       addMessage('Select 6 cards that call to you.');
