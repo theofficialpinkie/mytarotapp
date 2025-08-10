@@ -27,8 +27,8 @@
     float: none !important;
     flex: none !important;
 
-    min-height: 55vh !important;
-    max-height: 55vh !important;
+    min-height: 55svh !important;
+    max-height: 55svh !important;
     border-right: none !important;
     border-bottom: 1px solid rgba(255,255,255,0.1) !important;
     padding: 20px 20px 10px 20px !important;
@@ -44,8 +44,8 @@
     float: none !important;
     flex: none !important;
 
-    min-height: 45vh !important;
-    max-height: 45vh !important;
+    min-height: 45svh !important;
+    max-height: 45svh !important;
     border-right: none !important;
     border-top: 1px solid rgba(255,255,255,0.1) !important;
     padding: 15px 20px !important;
@@ -53,7 +53,7 @@
   }
 
   .chat-messages {
-    max-height: 35vh !important;
+    max-height: 35svh !important;
     margin-top: 0 !important;
     padding-top: 5px !important;
   }
@@ -73,3 +73,22 @@
   .carousel-card.next { transform: translateX(120px) scale(0.8) rotateY(-10deg) !important; }
 }
 
+@media (max-width: 768px) {
+  /* Fallback for older browsers */
+  .content-panel { min-height: 55vh; max-height: 55vh; }
+  .chat-panel    { min-height: 45vh; max-height: 45vh; }
+  .chat-messages { max-height: 35vh; }
+
+  /* Use modern viewport units when supported */
+  @supports (height: 100svh) {
+    .content-panel { min-height: 55svh; max-height: 55svh; }
+    .chat-panel    { min-height: 45svh; max-height: 45svh; }
+    .chat-messages { max-height: 35svh; }
+  }
+
+  /* Smooth scrolling feel */
+  .chat-messages {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
