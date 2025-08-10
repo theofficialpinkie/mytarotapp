@@ -548,22 +548,94 @@
       dots.forEach((dot, i) => dot.classList.toggle('active', i===currentCardIndex));
     }
 
-    function deliverReading(text) {
-      isReadingPhase = true;
-      const sentences = text.split(/(?<=[.!?])\s+/);
-      const chunks = [];
-      for (let i=0; i<sentences.length; i+=3) chunks.push(sentences.slice(i,i+3).join(' '));
-      chunks.forEach((chunk, idx) => {
-        setTimeout(() => {
-          addMessage(chunk);
-          if (idx === chunks.length - 1) {
-            setTimeout(() => {
-              addStandaloneButton('New Reading', () => { window.location.href = '/question-screen.html'; });
-            }, 600);
+    // --- Mobile check ---
+function isMobileView() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+// --- Try to derive a human name if the API didn't include one ---
+function deriveNameFromImage(src = '') {
+  try {
+    const parts = src.split('/');
+    // Best-guess slug (e.g., "nine-of-pentacles" or filename without extension)
+    const slug = parts.find(p => /-of-|^the-|wands|cups|swords|pentacles|major|minor/i.test(p))
+              || parts[parts.length - 1].replace(/\.[a-z]+$/i, '');
+    const name = slug
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase())
+      .trim();
+    return name;
+  } catch {
+    return '';
+  }
+}
+
+// --- Build regex patterns for each selected card name ---
+function buildCardPatterns(cards) {
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return cards
+    .map(card => {
+      const name = (card.name || deriveNameFromImage(card.image) || '').trim();
+      if (!name) return null;
+      return { name, re: new RegExp(`\\b${esc(name)}\\b`, 'i'), card };
+    })
+    .filter(Boolean);
+}
+
+// --- Append a small card thumb under the latest message (mobile only) ---
+function addCardThumb(card, displayName) {
+  if (!isMobileView()) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-card-thumb';
+  wrap.innerHTML = `
+    <div class="thumb-label">${displayName}</div>
+    <img class="thumb-img" src="${card.image}" alt="${displayName}">
+  `;
+  chatMessages.appendChild(wrap);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+
+ function deliverReading(readingText) {
+  isReadingPhase = true;
+
+  // Build patterns once for the selected cards
+  const patterns = buildCardPatterns(selectedCards);
+  const shownThumbs = new Set(); // avoid duplicate thumbs
+
+  const sentences = readingText.split(/(?<=[.!?])\s+/);
+  const chunks = [];
+  for (let i = 0; i < sentences.length; i += 3) {
+    chunks.push(sentences.slice(i, i + 3).join(' '));
+  }
+
+  chunks.forEach((chunk, index) => {
+    setTimeout(() => {
+      // 1) Add the reading chunk message
+      addMessage(chunk);
+
+      // 2) On mobile, check if this chunk mentions any card(s)
+      if (isMobileView() && patterns.length) {
+        for (const { name, re, card } of patterns) {
+          if (!shownThumbs.has(name) && re.test(chunk)) {
+            addCardThumb(card, name);
+            shownThumbs.add(name);
           }
-        }, idx * 1200);
-      });
-    }
+        }
+      }
+
+      // 3) Wrap up
+      if (index === chunks.length - 1) {
+        setTimeout(() => {
+          addStandaloneButton('New Reading', () => {
+            window.location.href = '/question-screen.html';
+          });
+        }, 600);
+      }
+    }, index * 1200);
+  });
+}
+
 
     document.addEventListener('DOMContentLoaded', () => { setTimeout(init, 500); });
   </script>

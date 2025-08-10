@@ -44,21 +44,21 @@
     float: none !important;
     flex: none !important;
 
-    min-height: 45svh !important;
-    max-height: 45svh !important;
+    /*min-height: 45svh !important;
+    max-height: 45svh !important;*/
     border-right: none !important;
     border-top: 1px solid rgba(255,255,255,0.1) !important;
-    padding: 15px 20px !important;
+    padding: 5px 10px !important;
     justify-content: flex-start !important;
   }
 
   .chat-messages {
-    max-height: 35svh !important;
+    /*max-height: 35svh !important;*/
     margin-top: 0 !important;
     padding-top: 5px !important;
   }
 
-  .shuffle-container { padding-top: 40px !important; }
+  .shuffle-container { padding-top: 5px !important; }
 
   /* Card selection sizing */
   .card { width: 80px !important; height: 120px !important; }
@@ -81,7 +81,7 @@
 
   /* Use modern viewport units when supported */
   @supports (height: 100svh) {
-    .content-panel { min-height: 55svh; max-height: 55svh; }
+   /* .content-panel { min-height: 55svh; max-height: 55svh; } */
     .chat-panel    { min-height: 45svh; max-height: 45svh; }
     .chat-messages { max-height: 35svh; }
   }
@@ -90,5 +90,66 @@
   .chat-messages {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-card-thumb {
+    margin: 8px 0 16px 52px;            /* aligns under avatar bubble */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .chat-card-thumb .thumb-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .chat-card-thumb .thumb-img {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 6px 18px rgba(0,0,0,.5);
+  }
+}
+
+/* Just in case: hide these thumbs on desktop */
+@media (min-width: 769px) {
+  .chat-card-thumb { display: none; }
+}
+
+
+@media (max-width: 768px) {
+  /* Make each panel a fixed-height flex column */
+  .content-panel {
+    height: 55svh !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .chat-panel {
+    height: 45svh !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  /* The magic: let messages be the scroll area */
+  .chat-messages {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;              /* <-- critical in flex layouts */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    max-height: none !important;            /* don’t fight with height math */
   }
 }
