@@ -61,8 +61,8 @@
   .shuffle-container { padding-top: 5px !important; }
 
   /* Card selection sizing */
-  .card { width: 80px !important; height: 120px !important; }
-  .card-row { height: 200px !important; }
+.card { width: 80px !important; height: 120px !important; }
+.card-row { height: 200px; } /* ✅ no !important so JS can override */
 
   /* Popup sizing */
   .popup-container { width: 90% !important; height: 500px !important; }

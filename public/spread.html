@@ -399,11 +399,58 @@
       }, 4000);
     }
 
+    function isMobileView() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+/* Fit both card rows inside the visible deck area on mobile.
+   Ensures row2 has some bottom padding while still fitting. */
+function fitRowsForMobile() {
+  if (!isMobileView()) return;
+
+  const panel = document.getElementById('contentPanel');
+  const sel   = document.getElementById('cardSelectionContainer');
+  const row1  = document.getElementById('row1');
+  const row2  = document.getElementById('row2');
+  const progress = document.getElementById('selectionProgress');
+  if (!panel || !sel || !row1 || !row2) return;
+
+  // padding of the selection container itself
+  const selStyles = getComputedStyle(sel);
+  const padY = parseFloat(selStyles.paddingTop) + parseFloat(selStyles.paddingBottom);
+
+  const progressH = progress ? progress.offsetHeight : 0;
+  const gapBetweenRows = 20;       // your .card-row margin-bottom
+  const bottomPadRow2  = 16;       // desired bottom padding inside row 2
+
+  // figure out how far row1 cards lift upward (negative translateY)
+  let maxUp = 0;
+  row1.querySelectorAll('.card').forEach(c => {
+    const lift = Number(c._lift || 0);     // negative means up
+    if (lift < 0) maxUp = Math.max(maxUp, -lift);
+  });
+  const topPadRow1 = Math.ceil(maxUp) + 8; // a little extra breathing room
+
+  // available height for the two rows *including* those paddings
+  const available = panel.clientHeight - padY - progressH - gapBetweenRows - topPadRow1 - bottomPadRow2;
+
+  let rowHeight = Math.floor(available / 2);
+  rowHeight = Math.max(rowHeight, 130);    // don't go smaller than card height-ish
+
+  // apply sizes + paddings
+  row1.style.paddingTop = topPadRow1 + 'px';
+  row1.style.height = rowHeight + 'px';
+
+  row2.style.paddingBottom = bottomPadRow2 + 'px';
+  row2.style.height = rowHeight + 'px';
+}
+
     function showCardSelection() {
       addMessage('Select 6 cards that call to you.');
       showPhase('selection');
       setupCardSelection();
     }
+
 
     function setupCardSelection() {
       const row1 = document.getElementById('row1');
@@ -417,6 +464,8 @@
 
       fanCards(row1, firstHalf, true);
       fanCards(row2, secondHalf, false);
+      requestAnimationFrame(() => fitRowsForMobile());
+
     }
 
     function fanCards(container, cards, upwardCurve) {
@@ -548,11 +597,6 @@
       dots.forEach((dot, i) => dot.classList.toggle('active', i===currentCardIndex));
     }
 
-    // --- Mobile check ---
-function isMobileView() {
-  return window.matchMedia('(max-width: 768px)').matches;
-}
-
 // --- Try to derive a human name if the API didn't include one ---
 function deriveNameFromImage(src = '') {
   try {
@@ -638,6 +682,9 @@ function addCardThumb(card, displayName) {
 
 
     document.addEventListener('DOMContentLoaded', () => { setTimeout(init, 500); });
+    window.addEventListener('resize', fitRowsForMobile);
+    window.addEventListener('orientationchange', () => setTimeout(fitRowsForMobile, 250));
+    window.addEventListener('load', fitRowsForMobile);
   </script>
 </body>
 </html>
