@@ -1,12 +1,11 @@
 /* Mobile overrides that WIN no matter what */
 @media (max-width: 768px) {
-  /* Kill any body flex/grid coming from shared styles */
   html body {
     display: block !important;
-    padding-top: 60px !important;
+    padding-top: 60px !important; /* space for fixed top bar */
   }
 
-  /* If wrapper exists, stack deck -> chat */
+  /* Stack deck -> chat on mobile */
   .layout {
     display: grid !important;
     grid-template-columns: 1fr !important;
@@ -17,7 +16,7 @@
     min-height: auto !important;
   }
 
-  /* If wrapper DIDN'T exist, safety script creates it; these still help */
+  /* Deck panel (top) */
   .content-panel {
     grid-area: deck !important;
     width: 100% !important;
@@ -27,33 +26,61 @@
     float: none !important;
     flex: none !important;
 
+    /* default when not dragging */
     min-height: 55svh !important;
     max-height: 55svh !important;
+
     border-right: none !important;
     border-bottom: 1px solid rgba(255,255,255,0.1) !important;
     padding: 20px 20px 10px 20px !important;
     justify-content: flex-start !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    /* IMPORTANT: let fanned cards be fully visible */
+    overflow: visible !important;
   }
 
+  /* Selection container + rows must not clip cards */
+  .card-selection-container { overflow: visible !important; }
+  .card-row { overflow: visible !important; }
+
+  /* Chat panel (bottom) */
   .chat-panel {
     grid-area: chat !important;
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    position: static !important;
+    position: relative !important;
     float: none !important;
     flex: none !important;
 
-    /*min-height: 45svh !important;
-    max-height: 45svh !important;*/
+    /* default when not dragging */
+    height: 45svh !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
     border-right: none !important;
     border-top: 1px solid rgba(255,255,255,0.1) !important;
     padding: 5px 10px !important;
     justify-content: flex-start !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    /* keep inner scrolling in .chat-messages, but don't hide the drag handle */
+    overflow: hidden !important;
   }
 
+  /* The scroll area */
   .chat-messages {
-    /*max-height: 35svh !important;*/
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    max-height: none !important;
     margin-top: 0 !important;
     padding-top: 5px !important;
   }
@@ -61,8 +88,8 @@
   .shuffle-container { padding-top: 5px !important; }
 
   /* Card selection sizing */
-.card { width: 80px !important; height: 120px !important; }
-.card-row { height: 200px; } /* ✅ no !important so JS can override */
+  .card { width: 80px !important; height: 120px !important; }
+  .card-row { height: 200px; } /* no !important so JS can adjust */
 
   /* Popup sizing */
   .popup-container { width: 90% !important; height: 500px !important; }
@@ -73,29 +100,22 @@
   .carousel-card.next { transform: translateX(120px) scale(0.8) rotateY(-10deg) !important; }
 }
 
+/* Fallback + modern viewport units */
 @media (max-width: 768px) {
-  /* Fallback for older browsers */
   .content-panel { min-height: 55vh; max-height: 55vh; }
   .chat-panel    { min-height: 45vh; max-height: 45vh; }
   .chat-messages { max-height: 35vh; }
 
-  /* Use modern viewport units when supported */
   @supports (height: 100svh) {
-   /* .content-panel { min-height: 55svh; max-height: 55svh; } */
     .chat-panel    { min-height: 45svh; max-height: 45svh; }
     .chat-messages { max-height: 35svh; }
   }
-
-  /* Smooth scrolling feel */
-  .chat-messages {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
 }
 
+/* Mobile chat-card thumbs shown under messages */
 @media (max-width: 768px) {
   .chat-card-thumb {
-    margin: 8px 0 16px 52px;            /* aligns under avatar bubble */
+    margin: 8px 0 16px 52px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -117,124 +137,49 @@
   }
 }
 
-/* Just in case: hide these thumbs on desktop */
+/* Hide thumbs on desktop */
 @media (min-width: 769px) {
   .chat-card-thumb { display: none; }
 }
 
-
+/* ---------- Bottom-sheet chat (mobile only) ---------- */
 @media (max-width: 768px) {
-  /* Make each panel a fixed-height flex column */
-  .content-panel {
-    height: 55svh !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
+  .chat-panel.sheet {
+    position: fixed !important;
+    left: 0; right: 0; bottom: 0;
+    height: 45svh !important;     /* initial overlay height */
+    z-index: 400;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -12px 40px rgba(0,0,0,.6);
+    overflow: hidden;              /* content scrolls inside */
   }
 
-  .chat-panel {
-    height: 45svh !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
+  /* Drag handle INSIDE the chat (so overflow:hidden doesn't clip it) */
+  #chatDragHandle {
+    position: absolute;
+    top: 6px;                      /* visible & tappable */
+    left: 0; right: 0;
+    height: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    touch-action: none;            /* smooth dragging */
+    z-index: 450;
   }
 
-  /* The magic: let messages be the scroll area */
-  .chat-messages {
-    flex: 1 1 auto !important;
-    min-height: 0 !important;              /* <-- critical in flex layouts */
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    max-height: none !important;            /* don’t fight with height math */
+  #chatDragHandle .chevron {
+    width: 10px; height: 10px;
+    border-left: 2px solid rgba(255,255,255,.9);
+    border-top: 2px solid rgba(255,255,255,.9);
+    transform: rotate(45deg);
+    margin-bottom: 4px;
   }
-
-  /* Let the handle position itself relative to chat */
-.chat-panel { position: relative !important; }
-
-/* Drag handle that sits on the top edge of the chat panel */
-#chatDragHandle {
-  position: absolute;
-  top: -14px;           /* sits just above chat */
-  left: 0; right: 0;
-  height: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto;
-  touch-action: none;   /* allow smooth dragging on mobile */
-  z-index: 50;
-}
-
-/* little up chevron */
-#chatDragHandle .chevron {
-  width: 10px; height: 10px;
-  border-left: 2px solid rgba(255,255,255,.85);
-  border-top: 2px solid rgba(255,255,255,.85);
-  transform: rotate(45deg);
-  margin-bottom: 4px;
-  opacity: .9;
-}
-
-/* pill “grabber” */
-#chatDragHandle .grab-pill {
-  width: 44px; height: 5px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.35);
-
-  
-}
-.chat-panel.sheet {
-  position: fixed !important;
-  left: 0; right: 0; bottom: 0;
-  height: 45svh !important;         /* initial sheet height */
-  z-index: 400;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  box-shadow: 0 -12px 40px rgba(0,0,0,.6);
-  overflow: hidden;                  /* keep header/msgs tidy */
-}
-
-/* Make sure we can place the handle relative to chat */
-.chat-panel { position: relative !important; }
-
-/* Drag handle sitting on the top edge of chat */
-#chatDragHandle {
-  position: absolute;
-  top: -14px;                        /* slightly above chat edge */
-  left: 0; right: 0;
-  height: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto;
-  touch-action: none;
-  z-index: 450;
-}
-
-/* little up chevron */
-#chatDragHandle .chevron {
-  width: 10px; height: 10px;
-  border-left: 2px solid rgba(255,255,255,.9);
-  border-top: 2px solid rgba(255,255,255,.9);
-  transform: rotate(45deg);
-  margin-bottom: 4px;
-}
-
-/* pill “grabber” */
-#chatDragHandle .grab-pill {
-  width: 44px; height: 5px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.35);
-}
-
-
-
-
+  #chatDragHandle .grab-pill {
+    width: 44px; height: 5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.35);
+  }
 }

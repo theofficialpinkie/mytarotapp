@@ -7,8 +7,7 @@
   <title>Your Reading with Erika</title>
 
   <link rel="stylesheet" href="/shared-styles.css" />
-  <link rel="stylesheet" href="/mobile-overrides.css?v=3" />
-
+  <link rel="stylesheet" href="/mobile-overrides.css?v=6" />
 
   <script>
     // Insert top bar
@@ -30,11 +29,10 @@
       document.body.classList.add('has-top-bar');
     });
 
-    // 🔒 Safety: ensure .layout wrapper exists with (deck, chat) inside in the right order
+    // Ensure a .layout wrapper with (deck, chat)
     document.addEventListener('DOMContentLoaded', () => {
       const content = document.getElementById('contentPanel');   // deck
       const chat = document.querySelector('.chat-panel');        // chat
-
       if (!content || !chat) return;
 
       const sameParent = content.parentElement === chat.parentElement;
@@ -43,7 +41,6 @@
       if (!alreadyLayout) {
         const layout = document.createElement('main');
         layout.className = 'layout';
-        // insert wrapper before whichever of the two appears first
         const first = (content.compareDocumentPosition(chat) & Node.DOCUMENT_POSITION_FOLLOWING) ? content : chat;
         first.parentNode.insertBefore(layout, first);
         layout.appendChild(content);
@@ -63,18 +60,17 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Keep body simple; layout handled by .layout */
     body {
       background: black;
       color: white;
       font-family: 'Bookman JF Pro', serif;
-      display: block;              /* important: not a flex container */
+      display: block;
       padding-top: 80px;           /* room for fixed top bar */
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* === Desktop Grid: chat | deck === */
+    /* Desktop grid */
     .layout {
       display: grid;
       grid-template-columns: 45% 55%;
@@ -125,7 +121,7 @@
       position:relative;
     }
 
-    /* Shuffle / Loading / Selection / Carousel (unchanged from your version) */
+    /* Shuffle / Loading / Selection / Carousel */
     .shuffle-container { display:none; flex-direction:column; align-items:center; justify-content:flex-start; gap:0; width:100%; height:100%; padding-top:120px; }
     .shuffle-container.active { display:flex; }
     .card-stack { position:relative; width:180px; height:260px; transition: transform .8s cubic-bezier(0.68,-0.55,0.265,1.55); }
@@ -136,7 +132,6 @@
     .loading-title { font-size:36px; color:#fff; margin-bottom:30px; opacity:1; transition: opacity 1s; }
     .loading-title.hidden { opacity:0; }
     .loading-subtitle { font-size:20px; color:rgba(255,255,255,0.7); opacity:0; transition: opacity .6s; animation:pulse 1.5s infinite ease-in-out; }
-    .loading-subtitle.visible { opacity:.7; }
     @keyframes pulse { 0%{opacity:.4} 50%{opacity:1} 100%{opacity:.4} }
 
     .card-selection-container { display:none; flex-direction:column; justify-content:center; align-items:center; gap:20px; width:100%; }
@@ -178,7 +173,6 @@
     .carousel-nav { display:flex; gap:10px; margin-top:30px; }
     .nav-dot { width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer; transition:all .3s; }
     .nav-dot.active { background:#fff; transform: scale(1.2); }
-
     .carousel-arrow {
       position:absolute; top:50%; transform:translateY(-50%);
       width:44px; height:44px; border-radius:50%; z-index:20;
@@ -212,7 +206,7 @@
     </div>
   </div>
 
-  <!-- Panels (order doesn’t matter; wrapper script will fix it if needed) -->
+  <!-- Panels -->
   <div class="chat-panel">
     <div class="chat-overlay" id="chatOverlay">
       <div class="overlay-title">What would you like to do next?</div>
@@ -262,14 +256,24 @@
     </div>
   </div>
 
-  <!-- Your original JS (unchanged) -->
   <script>
-    let currentPhase = 0;
+    // ---------- utilities ----------
+    const isMobileView = () => window.matchMedia('(max-width: 768px)').matches;
+
+    // Guard to stop duplicate boots (fixes repeated “Welcome”)
+    function bootOnce() {
+      if (window.__erikaBooted) return;
+      window.__erikaBooted = true;
+      setTimeout(init, 500);
+      installChatSheetDrag();
+      fitRowsForMobile();
+    }
+
+    // ---------- chat + flow ----------
     let spreadCards = [];
     let selectedCards = [];
     let currentCardIndex = 0;
     let userQuestion = sessionStorage.getItem('userQuestion') || 'What guidance do I need right now?';
-    let overlayTimer = null;
 
     const chatMessages = document.getElementById('chatMessages');
     const shuffleContainer = document.getElementById('shuffleContainer');
@@ -277,8 +281,9 @@
     const cardSelectionContainer = document.getElementById('cardSelectionContainer');
     const cardCarouselContainer = document.getElementById('cardCarouselContainer');
     const popupOverlay = document.getElementById('popupOverlay');
-    const chatOverlay = document.getElementById('chatOverlay');
     const cardStack = document.getElementById('cardStack');
+
+    let isReadingPhase = false;
 
     function init() {
       addMessage(`Welcome! I can feel your energy around the question: "${userQuestion}"`);
@@ -289,16 +294,14 @@
       }, 800);
     }
 
-    let isReadingPhase = false;
-
     function addMessage(text) {
-      const messageWrapper = document.createElement('div');
-      messageWrapper.className = 'message-wrapper';
+      const wrap = document.createElement('div');
+      wrap.className = 'message-wrapper';
 
-      const messageAvatar = document.createElement('img');
-      messageAvatar.src = '/assets/erika-avatar.png';
-      messageAvatar.className = 'message-avatar';
-      messageAvatar.onerror = function () {
+      const avatar = document.createElement('img');
+      avatar.src = '/assets/erika-avatar.png';
+      avatar.className = 'message-avatar';
+      avatar.onerror = function () {
         const fallback = document.createElement('div');
         fallback.style.cssText = `
           width: 40px; height: 40px; border-radius: 50%;
@@ -308,53 +311,47 @@
           border: 1px solid rgba(255,255,255,0.1);
         `;
         fallback.textContent = 'E';
-        messageAvatar.parentNode.replaceChild(fallback, messageAvatar);
+        avatar.parentNode.replaceChild(fallback, avatar);
       };
 
-      const messageContent = document.createElement('div');
-      messageContent.className = 'message-content';
-      messageContent.textContent = text;
+      const content = document.createElement('div');
+      content.className = 'message-content';
+      content.textContent = text;
 
-      messageWrapper.appendChild(messageAvatar);
-      messageWrapper.appendChild(messageContent);
+      wrap.appendChild(avatar);
+      wrap.appendChild(content);
 
       if (isReadingPhase) {
-        chatMessages.appendChild(messageWrapper);
+        chatMessages.appendChild(wrap);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       } else {
-        chatMessages.insertBefore(messageWrapper, chatMessages.firstChild);
+        chatMessages.insertBefore(wrap, chatMessages.firstChild);
         chatMessages.scrollTop = 0;
       }
 
-      setTimeout(() => messageWrapper.classList.add('visible'), 50);
+      setTimeout(() => wrap.classList.add('visible'), 50);
     }
 
-    function addStandaloneButton(buttonText, callback) {
-      const buttonWrapper = document.createElement('div');
-      buttonWrapper.style.cssText = `
+    function addStandaloneButton(text, cb) {
+      const wrap = document.createElement('div');
+      wrap.style.cssText = `
         display: flex; align-items: center; gap: 12px; margin: 20px 0; padding-left: 52px;
         opacity: 0; transform: translateY(20px); transition: opacity .5s ease, transform .5s ease;
       `;
-
-      const button = document.createElement('button');
-      button.className = 'chat-button';
-      button.textContent = buttonText;
-      button.onclick = callback;
-
-      buttonWrapper.appendChild(button);
+      const btn = document.createElement('button');
+      btn.className = 'chat-button';
+      btn.textContent = text;
+      btn.onclick = cb;
+      wrap.appendChild(btn);
 
       if (isReadingPhase) {
-        chatMessages.appendChild(buttonWrapper);
+        chatMessages.appendChild(wrap);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       } else {
-        chatMessages.insertBefore(buttonWrapper, chatMessages.firstChild);
+        chatMessages.insertBefore(wrap, chatMessages.firstChild);
         chatMessages.scrollTop = 0;
       }
-
-      setTimeout(() => {
-        buttonWrapper.style.opacity = '1';
-        buttonWrapper.style.transform = 'translateY(0)';
-      }, 50);
+      setTimeout(() => { wrap.style.opacity = '1'; wrap.style.transform = 'translateY(0)'; }, 50);
     }
 
     function showPhase(phase) {
@@ -399,177 +396,110 @@
       }, 4000);
     }
 
-    function isMobileView() {
-  return window.matchMedia('(max-width: 768px)').matches;
-}
+    // ---------- bottom-sheet drag (mobile only) ----------
+    function installChatSheetDrag() {
+      if (!isMobileView()) return;
 
-  function installChatSheetDrag() {
-    if (!isMobileView()) return;
-
-    const chat = document.querySelector('.chat-panel');
-    if (!chat) return;
-
-    // Create the handle once
-    let handle = document.getElementById('chatDragHandle');
-    if (!handle) {
-      handle = document.createElement('div');
-      handle.id = 'chatDragHandle';
-      handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
-      chat.prepend(handle);
-    }
-
-    // Enter sheet mode when drag starts
-    function enterSheet() {
-      if (!chat.classList.contains('sheet')) {
-        chat.classList.add('sheet');
-        // lock current height so we have a pixel base to drag from
-        const h = chat.getBoundingClientRect().height || (window.innerHeight * 0.45);
-        chat.style.setProperty('height', Math.max(220, Math.min(h, window.innerHeight)) + 'px', 'important');
-      }
-    }
-
-    const safeTop = () => (parseFloat(getComputedStyle(document.body).paddingTop) || 0); // your fixed top bar space
-    let startY, startH, minH, maxH;
-
-    function onStart(e) {
-      const t = (e.touches && e.touches[0]) || e;
-      enterSheet();
-
-      startY = t.clientY;
-      startH = chat.getBoundingClientRect().height;
-
-      // bounds: don’t collapse too small; allow full height up to just under the top bar
-      minH = Math.max(window.innerHeight * 0.30, 220);
-      maxH = window.innerHeight - safeTop() - 4;
-
-      document.addEventListener('touchmove', onMove, { passive: false });
-      document.addEventListener('touchend', onEnd);
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onEnd);
-    }
-
-    function onMove(e) {
-      const t = (e.touches && e.touches[0]) || e;
-      const dy = t.clientY - startY;     // drag up => negative
-      let newH = startH - dy;
-
-      if (newH < minH) newH = minH;
-      if (newH > maxH) newH = maxH;
-
-      chat.style.setProperty('height', newH + 'px', 'important');
-
-      if (e.cancelable) e.preventDefault();
-    }
-
-    function onEnd() {
-      document.removeEventListener('touchmove', onMove);
-      document.removeEventListener('touchend', onEnd);
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onEnd);
-    }
-
-    handle.addEventListener('touchstart', onStart, { passive: true });
-    handle.addEventListener('mousedown', onStart);
-  }
-
-  // Call it when the DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(init, 500);
-    installChatSheetDrag();
-  });
-
-  // Keep it mobile-only; clean up when moving to desktop
-  window.addEventListener('resize', () => {
-    if (isMobileView()) {
-      installChatSheetDrag();
-    } else {
       const chat = document.querySelector('.chat-panel');
-      if (chat) {
-        chat.classList.remove('sheet');
-        chat.style.removeProperty('height');
+      if (!chat) return;
+
+      // Create the handle once
+      let handle = document.getElementById('chatDragHandle');
+      if (!handle) {
+        handle = document.createElement('div');
+        handle.id = 'chatDragHandle';
+        handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
+        chat.prepend(handle);
       }
-    }
-  });
 
-  window.addEventListener('orientationchange', () => setTimeout(() => {
-    if (isMobileView()) installChatSheetDrag();
-  }, 250));
+      // Avoid binding multiple times
+      if (handle.dataset.bound === '1') return;
+      handle.dataset.bound = '1';
 
+      const safeTop = () => (parseFloat(getComputedStyle(document.body).paddingTop) || 0);
+      let startY, startH, minH, maxH, liveH;
 
-/* Fit both card rows inside the visible deck area on mobile.
-   Ensures row2 has some bottom padding while still fitting. */
-function fitRowsForMobile() {
-  if (!isMobileView()) return;
+      function enterSheet() {
+        if (!chat.classList.contains('sheet')) {
+          chat.classList.add('sheet');
+          const h = chat.getBoundingClientRect().height || (window.innerHeight * 0.45);
+          chat.style.setProperty('height', Math.max(220, Math.min(h, window.innerHeight)) + 'px', 'important');
+        }
+      }
 
-  const panel = document.getElementById('contentPanel');
-  const sel   = document.getElementById('cardSelectionContainer');
-  const row1  = document.getElementById('row1');
-  const row2  = document.getElementById('row2');
-  const progress = document.getElementById('selectionProgress');
-  if (!panel || !sel || !row1 || !row2) return;
+      function clamp(px) {
+        minH = Math.max(window.innerHeight * 0.30, 220);
+        maxH = window.innerHeight - safeTop() - 4;
+        return Math.max(minH, Math.min(px, maxH));
+      }
 
-  // padding of the selection container itself
-  const selStyles = getComputedStyle(sel);
-  const padY = parseFloat(selStyles.paddingTop) + parseFloat(selStyles.paddingBottom);
+      function onStart(e) {
+        const t = (e.touches && e.touches[0]) || e;
+        enterSheet();
+        startY = t.clientY;
+        startH = chat.getBoundingClientRect().height;
+        liveH  = startH;
 
-  const progressH = progress ? progress.offsetHeight : 0;
-  const gapBetweenRows = 20;       // your .card-row margin-bottom
-  const bottomPadRow2  = 16;       // desired bottom padding inside row 2
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd, { passive: true });
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+      }
 
-  // figure out how far row1 cards lift upward (negative translateY)
-  let maxUp = 0;
-  row1.querySelectorAll('.card').forEach(c => {
-    const lift = Number(c._lift || 0);     // negative means up
-    if (lift < 0) maxUp = Math.max(maxUp, -lift);
-  });
-  const topPadRow1 = Math.ceil(maxUp) + 8; // a little extra breathing room
+      function onMove(e) {
+        const t = (e.touches && e.touches[0]) || e;
+        const dy = t.clientY - startY;      // up => negative
+        liveH = clamp(startH - dy);
+        chat.style.setProperty('height', liveH + 'px', 'important');
+        if (e.cancelable) e.preventDefault();
+      }
 
-  // available height for the two rows *including* those paddings
-  const available = panel.clientHeight - padY - progressH - gapBetweenRows - topPadRow1 - bottomPadRow2;
+      function onEnd() {
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
 
-  let rowHeight = Math.floor(available / 2);
-  rowHeight = Math.max(rowHeight, 130);    // don't go smaller than card height-ish
+        // If small, exit overlay mode to restore normal layout
+        const exitThreshold = Math.max(window.innerHeight * 0.38, 260);
+        if (liveH && liveH <= exitThreshold) {
+          chat.classList.remove('sheet');
+          chat.style.removeProperty('height');
+        }
+      }
 
-  // apply sizes + paddings
-  row1.style.paddingTop = topPadRow1 + 'px';
-  row1.style.height = rowHeight + 'px';
-
-  row2.style.paddingBottom = bottomPadRow2 + 'px';
-  row2.style.height = rowHeight + 'px';
-}
-
-
-  function installChatDrag() {
-    if (!isMobileView()) return;
-
-    const chat   = document.querySelector('.chat-panel');
-    const deck   = document.getElementById('contentPanel');
-    if (!chat || !deck) return;
-
-    // Create the handle once
-    let handle = document.getElementById('chatDragHandle');
-    if (!handle) {
-      handle = document.createElement('div');
-      handle.id = 'chatDragHandle';
-      handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
-      chat.prepend(handle);
+      handle.addEventListener('touchstart', onStart, { passive: true });
+      handle.addEventListener('mousedown', onStart);
     }
 
-    const progress = document.getElementById('selectionProgress');
-    const sel = document.getElementById('cardSelectionContainer');
-    const row1 = document.getElementById('row1');
+    function clampSheetOnResize() {
+      const chat = document.querySelector('.chat-panel.sheet');
+      if (!chat) return;
+      const safeTop = parseFloat(getComputedStyle(document.body).paddingTop) || 0;
+      const maxH = window.innerHeight - safeTop - 4;
+      const current = chat.getBoundingClientRect().height;
+      chat.style.setProperty('height', Math.min(current, maxH) + 'px', 'important');
+    }
 
-    const bodyPadTop = () => parseFloat(getComputedStyle(document.body).paddingTop) || 0;
-    const avail = () => window.innerHeight - bodyPadTop(); // total space for deck+chat
+    // ---------- fit rows so both are always visible on mobile ----------
+    function fitRowsForMobile() {
+      if (!isMobileView()) return;
 
-    function computeMinDeck() {
-      if (!sel || !row1) return 320; // safe default
-      const s = getComputedStyle(sel);
-      const padY = parseFloat(s.paddingTop) + parseFloat(s.paddingBottom);
-      const gap = 20, bottomPadRow2 = 16;
+      const panel = document.getElementById('contentPanel');
+      const sel   = document.getElementById('cardSelectionContainer');
+      const row1  = document.getElementById('row1');
+      const row2  = document.getElementById('row2');
+      const progress = document.getElementById('selectionProgress');
+      if (!panel || !sel || !row1 || !row2) return;
+
+      const selStyles = getComputedStyle(sel);
+      const padY = parseFloat(selStyles.paddingTop) + parseFloat(selStyles.paddingBottom);
+
       const progressH = progress ? progress.offsetHeight : 0;
+      const gapBetweenRows = 20;
+      const bottomPadRow2  = 16;
 
-      // How much row1 lifts upward (negative translateY)
+      // how far row1 lifts upward (negative translateY)
       let maxUp = 0;
       row1.querySelectorAll('.card').forEach(c => {
         const lift = Number(c._lift || 0);
@@ -577,82 +507,23 @@ function fitRowsForMobile() {
       });
       const topPadRow1 = Math.ceil(maxUp) + 8;
 
-      // 2 rows * ~130px each + paddings/gap/progress text
-      return (2 * 130) + topPadRow1 + bottomPadRow2 + gap + progressH + padY;
+      const available = panel.clientHeight - padY - progressH - gapBetweenRows - topPadRow1 - bottomPadRow2;
+      let rowHeight = Math.floor(available / 2);
+      rowHeight = Math.max(rowHeight, 130);
+
+      row1.style.paddingTop = topPadRow1 + 'px';
+      row1.style.height = rowHeight + 'px';
+
+      row2.style.paddingBottom = bottomPadRow2 + 'px';
+      row2.style.height = rowHeight + 'px';
     }
 
-    let startY, startChatH, minDeckCached;
-
-    function onStart(e) {
-      const t = (e.touches && e.touches[0]) || e;
-      startY = t.clientY;
-      startChatH = chat.getBoundingClientRect().height;
-      minDeckCached = computeMinDeck();
-
-      document.addEventListener('touchmove', onMove, { passive: false });
-      document.addEventListener('touchend', onEnd);
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onEnd);
-    }
-
-    function onMove(e) {
-      const t = (e.touches && e.touches[0]) || e;
-      const dy = t.clientY - startY;          // up = negative
-      const total = avail();
-
-      // Grow chat when dragging up; clamp so deck never gets too small
-      let newChat = startChatH - dy;
-      const minChat = Math.max(total * 0.30, 200);
-      const maxChat = Math.max(total - minDeckCached, minChat + 1);
-
-      if (newChat < minChat) newChat = minChat;
-      if (newChat > maxChat) newChat = maxChat;
-
-      const newDeck = total - newChat;
-
-      // Override mobile CSS (which uses !important) with inline !important
-      chat.style.setProperty('height', newChat + 'px', 'important');
-      deck.style.setProperty('height', newDeck + 'px', 'important');
-
-      // Refit cards inside the new deck height
-      fitRowsForMobile();
-
-      if (e.cancelable) e.preventDefault();
-    }
-
-    function onEnd() {
-      document.removeEventListener('touchmove', onMove);
-      document.removeEventListener('touchend', onEnd);
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onEnd);
-    }
-
-    handle.addEventListener('touchstart', onStart, { passive: true });
-    handle.addEventListener('mousedown', onStart);
-  }
-
-  // After your existing listeners:
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(init, 500);
-    // install the handle after DOM is ready
-    installChatDrag();
-  });
-
-  window.addEventListener('resize', () => {
-    if (isMobileView()) installChatDrag();   // re-ensure handle exists after resizes
-    fitRowsForMobile();
-  });
-  window.addEventListener('orientationchange', () => setTimeout(() => {
-    if (isMobileView()) installChatDrag();
-    fitRowsForMobile();
-  }, 250));
-
+    // ---------- selection + carousel ----------
     function showCardSelection() {
       addMessage('Select 6 cards that call to you.');
       showPhase('selection');
       setupCardSelection();
     }
-
 
     function setupCardSelection() {
       const row1 = document.getElementById('row1');
@@ -667,15 +538,14 @@ function fitRowsForMobile() {
       fanCards(row1, firstHalf, true);
       fanCards(row2, secondHalf, false);
       requestAnimationFrame(() => fitRowsForMobile());
-
     }
 
     function fanCards(container, cards, upwardCurve) {
       const total = cards.length;
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      const ANGLE_SPREAD = isMobile ? 36 : 50;
-      const OFFSET_STEP = isMobile ? 32 : 46;
-      const LIFT_FACTOR = isMobile ? 6 : 8;
+      const mobile = isMobileView();
+      const ANGLE_SPREAD = mobile ? 36 : 50;
+      const OFFSET_STEP = mobile ? 32 : 46;
+      const LIFT_FACTOR = mobile ? 6 : 8;
 
       const angleStep = total > 1 ? ANGLE_SPREAD / (total - 1) : 0;
       const startAngle = -ANGLE_SPREAD / 2;
@@ -799,94 +669,81 @@ function fitRowsForMobile() {
       dots.forEach((dot, i) => dot.classList.toggle('active', i===currentCardIndex));
     }
 
-// --- Try to derive a human name if the API didn't include one ---
-function deriveNameFromImage(src = '') {
-  try {
-    const parts = src.split('/');
-    // Best-guess slug (e.g., "nine-of-pentacles" or filename without extension)
-    const slug = parts.find(p => /-of-|^the-|wands|cups|swords|pentacles|major|minor/i.test(p))
-              || parts[parts.length - 1].replace(/\.[a-z]+$/i, '');
-    const name = slug
-      .replace(/-/g, ' ')
-      .replace(/\b\w/g, c => c.toUpperCase())
-      .trim();
-    return name;
-  } catch {
-    return '';
-  }
-}
+    // --- helpers for reading ---
+    function deriveNameFromImage(src = '') {
+      try {
+        const parts = src.split('/');
+        const slug = parts.find(p => /-of-|^the-|wands|cups|swords|pentacles|major|minor/i.test(p))
+                  || parts[parts.length - 1].replace(/\.[a-z]+$/i, '');
+        return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim();
+      } catch { return ''; }
+    }
+    function buildCardPatterns(cards) {
+      const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return cards.map(card => {
+        const name = (card.name || deriveNameFromImage(card.image) || '').trim();
+        if (!name) return null;
+        return { name, re: new RegExp(`\\b${esc(name)}\\b`, 'i'), card };
+      }).filter(Boolean);
+    }
+    function addCardThumb(card, displayName) {
+      if (!isMobileView()) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'chat-card-thumb';
+      wrap.innerHTML = `<div class="thumb-label">${displayName}</div><img class="thumb-img" src="${card.image}" alt="${displayName}">`;
+      chatMessages.appendChild(wrap);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    function deliverReading(readingText) {
+      isReadingPhase = true;
+      const patterns = buildCardPatterns(selectedCards);
+      const shownThumbs = new Set();
 
-// --- Build regex patterns for each selected card name ---
-function buildCardPatterns(cards) {
-  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return cards
-    .map(card => {
-      const name = (card.name || deriveNameFromImage(card.image) || '').trim();
-      if (!name) return null;
-      return { name, re: new RegExp(`\\b${esc(name)}\\b`, 'i'), card };
-    })
-    .filter(Boolean);
-}
-
-// --- Append a small card thumb under the latest message (mobile only) ---
-function addCardThumb(card, displayName) {
-  if (!isMobileView()) return;
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-card-thumb';
-  wrap.innerHTML = `
-    <div class="thumb-label">${displayName}</div>
-    <img class="thumb-img" src="${card.image}" alt="${displayName}">
-  `;
-  chatMessages.appendChild(wrap);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-
- function deliverReading(readingText) {
-  isReadingPhase = true;
-
-  // Build patterns once for the selected cards
-  const patterns = buildCardPatterns(selectedCards);
-  const shownThumbs = new Set(); // avoid duplicate thumbs
-
-  const sentences = readingText.split(/(?<=[.!?])\s+/);
-  const chunks = [];
-  for (let i = 0; i < sentences.length; i += 3) {
-    chunks.push(sentences.slice(i, i + 3).join(' '));
-  }
-
-  chunks.forEach((chunk, index) => {
-    setTimeout(() => {
-      // 1) Add the reading chunk message
-      addMessage(chunk);
-
-      // 2) On mobile, check if this chunk mentions any card(s)
-      if (isMobileView() && patterns.length) {
-        for (const { name, re, card } of patterns) {
-          if (!shownThumbs.has(name) && re.test(chunk)) {
-            addCardThumb(card, name);
-            shownThumbs.add(name);
-          }
-        }
+      const sentences = readingText.split(/(?<=[.!?])\s+/);
+      const chunks = [];
+      for (let i = 0; i < sentences.length; i += 3) {
+        chunks.push(sentences.slice(i, i + 3).join(' '));
       }
 
-      // 3) Wrap up
-      if (index === chunks.length - 1) {
+      chunks.forEach((chunk, index) => {
         setTimeout(() => {
-          addStandaloneButton('New Reading', () => {
-            window.location.href = '/question-screen.html';
-          });
-        }, 600);
-      }
-    }, index * 1200);
-  });
-}
+          addMessage(chunk);
+          if (isMobileView() && patterns.length) {
+            for (const { name, re, card } of patterns) {
+              if (!shownThumbs.has(name) && re.test(chunk)) {
+                addCardThumb(card, name);
+                shownThumbs.add(name);
+              }
+            }
+          }
+          if (index === chunks.length - 1) {
+            setTimeout(() => {
+              addStandaloneButton('New Reading', () => { window.location.href = '/question-screen.html'; });
+            }, 600);
+          }
+        }, index * 1200);
+      });
+    }
 
-
-    document.addEventListener('DOMContentLoaded', () => { setTimeout(init, 500); });
-    window.addEventListener('resize', fitRowsForMobile);
-    window.addEventListener('orientationchange', () => setTimeout(fitRowsForMobile, 250));
+    // ---------- boot ----------
+    document.addEventListener('DOMContentLoaded', bootOnce);
     window.addEventListener('load', fitRowsForMobile);
+
+    window.addEventListener('resize', () => {
+      if (isMobileView()) {
+        installChatSheetDrag();
+        clampSheetOnResize();
+      } else {
+        const chat = document.querySelector('.chat-panel');
+        if (chat) { chat.classList.remove('sheet'); chat.style.removeProperty('height'); }
+      }
+      fitRowsForMobile();
+    });
+
+    window.addEventListener('orientationchange', () => setTimeout(() => {
+      if (isMobileView()) { installChatSheetDrag(); clampSheetOnResize(); }
+      fitRowsForMobile();
+    }, 250));
   </script>
 </body>
 </html>
