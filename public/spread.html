@@ -75,8 +75,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: black;
-      color: white;
+      background: white;
+      color: black;
       font-family: 'Bookman JF Pro', serif;
       display: block;
       padding-top: 80px;           /* JS will override on mobile */
@@ -99,7 +99,7 @@
       padding: 20px 40px;
       display: flex;
       flex-direction: column;
-      background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);
+      background: linear-gradient(145deg, white 0%, white 100%);
       border-right: 1px solid rgba(255,255,255,0.1);
       position: relative;
       min-height: calc(100vh - 80px);
@@ -203,6 +203,142 @@
     .carousel-arrow:hover { transform: translateY(-50%) translateY(-1px); background: rgba(255,255,255,0.14); }
     .carousel-arrow.prev { left:8px; }
     .carousel-arrow.next { right:8px; }
+
+    /* === LIGHT THEME OVERRIDES (paste after existing styles) === */
+:root{
+  --bg: #ffffff;
+  --text: #111827;           /* near-black */
+  --muted: #6b7280;
+  --panel: #ffffff;
+  --border: #e5e7eb;         /* light gray border */
+  --bubble: #f9fafb;         /* chat bubble bg */
+  --bubble-alt: #f3f4f6;
+  --primary: #6b46c1;        /* brand violet/indigo */
+  --primary-2: #9333ea;
+  --primary-text: #ffffff;
+  --gold: #d4af37;
+}
+
+/* Base */
+body{
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* Top bar + booking button */
+.top-bar{
+  background: var(--bg) !important;
+  border-bottom: 1px solid var(--border) !important;
+  justify-content: space-between; /* so the booking button sits on the right */
+}
+.byline{ color: var(--text) !important; }
+
+.booking-button{
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 9999px;
+  background: var(--text); color: #fff; border: 1px solid var(--text);
+  font-size: 14px; font-weight: 600; text-decoration: none;
+}
+.booking-button:hover{ opacity: .9; }
+
+/* Generic chat (your first CSS) */
+.chat-container{ background: var(--bg) !important; }
+.chat-bubble{
+  background: var(--bubble) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+.chat-input-container{
+  background: var(--panel) !important;
+  border-top: 1px solid var(--border) !important;
+}
+.chat-input-container input{
+  background: #f9fafb !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+.chat-input-container input.active{
+  background: #fff !important;
+  border: 2px solid var(--primary) !important;
+}
+.chat-input-container button,
+.chat-btn{
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  color: var(--primary-text) !important;
+}
+.chat-btn:hover{ filter: brightness(0.97); }
+.chat-btn:disabled{ background: #cbd5e1 !important; }
+
+/* Tooltip on light */
+.tooltip{
+  background: #fff !important;
+  color: var(--primary) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* SPREAD PAGE bits (class names from spread.html) */
+.chat-panel{
+  background: var(--panel) !important;
+  border-right: 1px solid var(--border) !important;
+}
+.chat-header{ border-bottom: 1px solid var(--border) !important; }
+.erika-info h2{ color: var(--text) !important; }
+.erika-info p{ color: rgba(17,24,39,.65) !important; }
+
+.message-content{
+  background: var(--bubble) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  backdrop-filter: none !important; /* crisper on white */
+  box-shadow: 0 2px 12px rgba(0,0,0,.06) !important;
+}
+
+/* Buttons in chat + overlays */
+.chat-button,
+.overlay-button{
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  color: var(--primary-text) !important;
+  border: none !important;
+}
+.overlay-button.secondary{
+  background: #fff !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Titles/text colors that were white before */
+.selection-title,
+.loading-title,
+.loading-subtitle,
+.carousel-title,
+.selection-progress{
+  color: var(--text) !important;
+}
+.loading-subtitle{ opacity: .8 !important; }
+
+/* Carousel controls on white */
+.nav-dot{ background: #e5e7eb !important; }
+.nav-dot.active{ background: var(--text) !important; }
+.carousel-arrow{
+  border: 1px solid #cbd5e1 !important;
+  background: rgba(0,0,0,0.04) !important;
+  color: var(--text) !important;
+}
+.carousel-arrow:hover{ background: rgba(0,0,0,0.08) !important; }
+
+/* Selection row hints */
+.selection-progress{ color: #374151 !important; }
+.card.selected{ box-shadow: 0 0 0 3px rgba(107,70,193,.25) !important; }
+
+/* Keep overlays dark so they still dim on white pages */
+.chat-overlay{ background: rgba(0,0,0,0.85) !important; }
+.popup-overlay{ background: rgba(0,0,0,0.8) !important; }
+
+/* Small polish */
+.message-avatar{ border-color: #e5e7eb !important; }
+
+
+    
   </style>
 </head>
 <body>
