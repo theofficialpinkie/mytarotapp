@@ -2,7 +2,7 @@
 @media (max-width: 768px) {
   html body {
     display: block !important;
-    padding-top: 60px !important; /* space for fixed top bar */
+    padding-top: 60px !important; /* JS will set exact height */
   }
 
   /* Stack deck -> chat on mobile */
@@ -32,13 +32,13 @@
 
     border-right: none !important;
     border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-    padding: 20px 20px 10px 20px !important;
+    padding: 16px 16px 10px 16px !important; /* a bit tighter by default */
     justify-content: flex-start !important;
 
     display: flex !important;
     flex-direction: column !important;
 
-    /* IMPORTANT: let fanned cards be fully visible */
+    /* IMPORTANT: never clip fanned cards */
     overflow: visible !important;
   }
 
@@ -69,8 +69,7 @@
     display: flex !important;
     flex-direction: column !important;
 
-    /* keep inner scrolling in .chat-messages, but don't hide the drag handle */
-    overflow: hidden !important;
+    overflow: hidden !important; /* content scrolls inside .chat-messages */
   }
 
   /* The scroll area */
@@ -142,7 +141,7 @@
   .chat-card-thumb { display: none; }
 }
 
-/* ---------- Bottom-sheet chat (mobile only) ---------- */
+/* ---------- Bottom-sheet chat (mobile only, only used in 'carousel' phase) ---------- */
 @media (max-width: 768px) {
   .chat-panel.sheet {
     position: fixed !important;
@@ -155,7 +154,7 @@
     overflow: hidden;              /* content scrolls inside */
   }
 
-  /* Drag handle INSIDE the chat (only created in reading phase) */
+  /* Drag handle INSIDE the chat (so overflow:hidden doesn't clip it) */
   #chatDragHandle {
     position: absolute;
     top: 6px;                      /* visible & tappable */
@@ -181,5 +180,35 @@
     width: 44px; height: 5px;
     border-radius: 999px;
     background: rgba(255,255,255,.35);
+  }
+}
+
+/* --- Shuffle phase tweaks (mobile only) --- */
+@media (max-width: 768px) {
+  /* Smaller stack + a touch more spacing so it never hides under the top bar */
+  body[data-phase="shuffle"] .shuffle-container {
+    padding-top: 12px !important;               /* was 6px */
+  }
+  body[data-phase="shuffle"] .card-stack,
+  body[data-phase="shuffle"] .stack-card {
+    width: 140px !important;
+    height: 200px !important;
+  }
+  /* balance heights during shuffle so the CTA shows */
+  body[data-phase="shuffle"] .content-panel {
+    min-height: 50svh !important;
+    max-height: 50svh !important;
+  }
+  body[data-phase="shuffle"] .chat-panel {
+    height: 50svh !important;
+  }
+}
+
+/* Extra-small screens: shrink a touch more */
+@media (max-width: 768px) and (max-height: 640px) {
+  body[data-phase="shuffle"] .card-stack,
+  body[data-phase="shuffle"] .stack-card {
+    width: 124px !important;
+    height: 178px !important;
   }
 }

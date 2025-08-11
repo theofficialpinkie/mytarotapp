@@ -7,7 +7,8 @@
   <title>Your Reading with Erika</title>
 
   <link rel="stylesheet" href="/shared-styles.css" />
-  <link rel="stylesheet" href="/mobile-overrides.css?v=7" />
+  <!-- bump so mobile tweaks take effect -->
+  <link rel="stylesheet" href="/mobile-overrides.css?v=9" />
 
   <script>
     // Insert top bar
@@ -27,6 +28,19 @@
       `
       );
       document.body.classList.add('has-top-bar');
+
+      // Dynamically set body top padding to EXACT top-bar height (prevents clipping)
+      function setBodyTopPaddingFromBar() {
+        const bar = document.querySelector('.top-bar');
+        const h = bar ? Math.ceil(bar.getBoundingClientRect().height) : 60;
+        document.body.style.setProperty('padding-top', h + 'px', 'important');
+      }
+      // initial + a little later (fonts/layout settle) + on resize/orientation
+      setBodyTopPaddingFromBar();
+      setTimeout(setBodyTopPaddingFromBar, 150);
+      window.addEventListener('resize', setBodyTopPaddingFromBar);
+      window.addEventListener('orientationchange', () => setTimeout(setBodyTopPaddingFromBar, 150));
+      window.__setBodyTopPaddingFromBar = setBodyTopPaddingFromBar; // expose for later calls
     });
 
     // Ensure a .layout wrapper with (deck, chat)
@@ -65,7 +79,7 @@
       color: white;
       font-family: 'Bookman JF Pro', serif;
       display: block;
-      padding-top: 80px;           /* room for fixed top bar */
+      padding-top: 80px;           /* JS will override on mobile */
       min-height: 100vh;
       overflow-x: hidden;
     }
@@ -89,6 +103,7 @@
       border-right: 1px solid rgba(255,255,255,0.1);
       position: relative;
       min-height: calc(100vh - 80px);
+      overflow: hidden; /* mobile overrides control internal scroll */
     }
     .chat-header { display:flex; align-items:center; gap:15px; padding:20px 0; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:20px; }
     .erika-avatar { width:50px; height:50px; border-radius:50%; border:2px solid rgba(255,255,255,0.1); object-fit:cover; }
@@ -119,6 +134,7 @@
       min-height: calc(100vh - 80px);
       padding:20px;
       position:relative;
+      overflow: visible; /* never clip fanned cards */
     }
 
     /* Shuffle / Loading / Selection / Carousel */
@@ -173,6 +189,7 @@
     .carousel-nav { display:flex; gap:10px; margin-top:30px; }
     .nav-dot { width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer; transition:all .3s; }
     .nav-dot.active { background:#fff; transform: scale(1.2); }
+
     .carousel-arrow {
       position:absolute; top:50%; transform:translateY(-50%);
       width:44px; height:44px; border-radius:50%; z-index:20;
@@ -264,8 +281,12 @@
     function bootOnce() {
       if (window.__erikaBooted) return;
       window.__erikaBooted = true;
+      // ensure body padding matches real top bar (again, in case)
+      if (window.__setBodyTopPaddingFromBar) window.__setBodyTopPaddingFromBar();
       setTimeout(init, 500);
       fitRowsForMobile();
+      // initial phase tag for mobile CSS
+      document.body.setAttribute('data-phase', 'shuffle');
     }
 
     // ---------- chat + flow ----------
@@ -350,27 +371,45 @@
         chatMessages.insertBefore(wrap, chatMessages.firstChild);
         chatMessages.scrollTop = 0;
       }
-      setTimeout(() => { wrap.style.opacity = '1'; wrap.style.transform = 'translateY(0)'; }, 50);
+
+      setTimeout(() => {
+        wrap.style.opacity = '1';
+        wrap.style.transform = 'translateY(0)';
+        // ensure Shuffle CTA is visible on mobile
+        if (isMobileView() && /shuffle cards/i.test(text)) {
+          document.querySelector('.chat-panel')?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+        }
+      }, 50);
     }
 
     function showPhase(phase) {
-      // toggle sections
+      // Tag the current phase for mobile CSS adjustments
+      document.body.setAttribute('data-phase', phase);
+
       shuffleContainer.classList.remove('active');
       loadingContainer.classList.remove('active');
       cardSelectionContainer.classList.remove('active');
       cardCarouselContainer.classList.remove('active');
 
-      // enable drag ONLY when we are in the reading/carousel phase
-      if (phase === 'carousel') {
-        cardCarouselContainer.classList.add('active');
-        enableChatDrag();          // <-- drag ON for reading
-      } else {
-        if (phase === 'shuffle')   shuffleContainer.classList.add('active');
-        if (phase === 'loading')   loadingContainer.classList.add('active');
-        if (phase === 'selection') cardSelectionContainer.classList.add('active');
-
-        disableChatDrag();         // <-- drag OFF for shuffle/loading/selection
+      switch (phase) {
+        case 'shuffle':   shuffleContainer.classList.add('active'); break;
+        case 'loading':   loadingContainer.classList.add('active'); break;
+        case 'selection': cardSelectionContainer.classList.add('active'); break;
+        case 'carousel':  cardCarouselContainer.classList.add('active'); break;
       }
+
+      // Only allow draggable chat in the reading (carousel) phase
+      const chat = document.querySelector('.chat-panel');
+      const handle = document.getElementById('chatDragHandle');
+      if (phase !== 'carousel') {
+        if (chat) { chat.classList.remove('sheet'); chat.style.removeProperty('height'); }
+        if (handle) handle.remove();
+      } else {
+        installChatSheetDrag(); // ensure handle exists when we enter reading
+      }
+
+      // keep top padding in sync (some mobile UIs change toolbar height)
+      if (window.__setBodyTopPaddingFromBar) window.__setBodyTopPaddingFromBar();
     }
 
     async function startShuffle() {
@@ -401,24 +440,24 @@
       }, 4000);
     }
 
-    // ---------- bottom-sheet drag (mobile only) ----------
-    const drag = { handle:null, bound:false, startY:0, startH:0, liveH:0, onStart:null, onMove:null, onEnd:null };
-
-    function enableChatDrag() {
+    // ---------- bottom-sheet drag (mobile only, reading phase only) ----------
+    function installChatSheetDrag() {
       if (!isMobileView()) return;
       const chat = document.querySelector('.chat-panel');
-      if (!chat || drag.bound) return;
+      if (!chat) return;
 
-      // create handle
-      drag.handle = document.getElementById('chatDragHandle');
-      if (!drag.handle) {
-        drag.handle = document.createElement('div');
-        drag.handle.id = 'chatDragHandle';
-        drag.handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
-        chat.prepend(drag.handle);
+      let handle = document.getElementById('chatDragHandle');
+      if (!handle) {
+        handle = document.createElement('div');
+        handle.id = 'chatDragHandle';
+        handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
+        chat.prepend(handle); // inside chat so it isn’t clipped
       }
+      if (handle.dataset.bound === '1') return;
+      handle.dataset.bound = '1';
 
       const safeTop = () => (parseFloat(getComputedStyle(document.body).paddingTop) || 0);
+      let startY, startH, minH, maxH, liveH;
 
       function enterSheet() {
         if (!chat.classList.contains('sheet')) {
@@ -427,74 +466,53 @@
           chat.style.setProperty('height', Math.max(220, Math.min(h, window.innerHeight)) + 'px', 'important');
         }
       }
+
       function clamp(px) {
-        const minH = Math.max(window.innerHeight * 0.30, 220);
-        const maxH = window.innerHeight - safeTop() - 4;
+        minH = Math.max(window.innerHeight * 0.30, 220);
+        maxH = window.innerHeight - safeTop() - 4;
         return Math.max(minH, Math.min(px, maxH));
       }
 
-      drag.onStart = function(e) {
+      function onStart(e) {
         const t = (e.touches && e.touches[0]) || e;
         enterSheet();
-        drag.startY = t.clientY;
-        drag.startH = chat.getBoundingClientRect().height;
-        drag.liveH  = drag.startH;
+        startY = t.clientY;
+        startH = chat.getBoundingClientRect().height;
+        liveH  = startH;
 
-        document.addEventListener('touchmove', drag.onMove, { passive: false });
-        document.addEventListener('touchend', drag.onEnd, { passive: true });
-        document.addEventListener('mousemove', drag.onMove);
-        document.addEventListener('mouseup', drag.onEnd);
-      };
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onEnd, { passive: true });
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+      }
 
-      drag.onMove = function(e) {
+      function onMove(e) {
         const t = (e.touches && e.touches[0]) || e;
-        const dy = t.clientY - drag.startY;      // up => negative
-        drag.liveH = clamp(drag.startH - dy);
-        chat.style.setProperty('height', drag.liveH + 'px', 'important');
+        const dy = t.clientY - startY;      // up => negative
+        liveH = clamp(startH - dy);
+        chat.style.setProperty('height', liveH + 'px', 'important');
         if (e.cancelable) e.preventDefault();
-      };
+      }
 
-      drag.onEnd = function() {
-        document.removeEventListener('touchmove', drag.onMove);
-        document.removeEventListener('touchend', drag.onEnd);
-        document.removeEventListener('mousemove', drag.onMove);
-        document.removeEventListener('mouseup', drag.onEnd);
+      function onEnd() {
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
 
+        // If small, exit overlay mode to restore normal layout
         const exitThreshold = Math.max(window.innerHeight * 0.38, 260);
-        if (drag.liveH && drag.liveH <= exitThreshold) {
+        if (liveH && liveH <= exitThreshold) {
           chat.classList.remove('sheet');
           chat.style.removeProperty('height');
         }
-      };
-
-      drag.handle.addEventListener('touchstart', drag.onStart, { passive: true });
-      drag.handle.addEventListener('mousedown', drag.onStart);
-      drag.bound = true;
-    }
-
-    function disableChatDrag() {
-      const chat = document.querySelector('.chat-panel');
-      if (!chat) return;
-
-      // remove listeners if bound
-      if (drag.bound && drag.handle) {
-        drag.handle.removeEventListener('touchstart', drag.onStart);
-        drag.handle.removeEventListener('mousedown', drag.onStart);
       }
-      drag.bound = false;
 
-      // remove handle element
-      const h = document.getElementById('chatDragHandle');
-      if (h && h.parentNode) h.parentNode.removeChild(h);
-      drag.handle = null;
-
-      // exit sheet mode & clear inline height
-      chat.classList.remove('sheet');
-      chat.style.removeProperty('height');
+      handle.addEventListener('touchstart', onStart, { passive: true });
+      handle.addEventListener('mousedown', onStart);
     }
 
     function clampSheetOnResize() {
-      if (!drag.bound) return;
       const chat = document.querySelector('.chat-panel.sheet');
       if (!chat) return;
       const safeTop = parseFloat(getComputedStyle(document.body).paddingTop) || 0;
@@ -566,8 +584,8 @@
       const total = cards.length;
       const mobile = isMobileView();
       const ANGLE_SPREAD = mobile ? 36 : 50;
-      const OFFSET_STEP = mobile ? 32 : 46;
-      const LIFT_FACTOR = mobile ? 6 : 8;
+      const OFFSET_STEP  = mobile ? 32 : 46;
+      const LIFT_FACTOR  = mobile ? 6  : 8;
 
       const angleStep = total > 1 ? ANGLE_SPREAD / (total - 1) : 0;
       const startAngle = -ANGLE_SPREAD / 2;
@@ -630,7 +648,7 @@
 
         setTimeout(() => {
           hidePopup();
-          showCardCarousel(); // this calls showPhase('carousel') which enables drag
+          showCardCarousel();
           setTimeout(() => { deliverReading(data.answer); }, 800);
         }, 2000);
       } catch (e) {
@@ -646,7 +664,7 @@
     function enableSwipe(el){ let startX=null; el.addEventListener('touchstart', e=>{startX=e.changedTouches[0].clientX;},{passive:true}); el.addEventListener('touchend', e=>{ if(startX==null) return; const dx=e.changedTouches[0].clientX-startX; startX=null; if(Math.abs(dx)>40){ dx<0?goNext():goPrev(); } }, {passive:true}); }
 
     function showCardCarousel() {
-      showPhase('carousel'); // <— enables drag here
+      showPhase('carousel');           // sets body[data-phase] + installs handle
       setupCarousel();
       document.querySelector('.carousel-arrow.prev').onclick = goPrev;
       document.querySelector('.carousel-arrow.next').onclick = goNext;
@@ -749,16 +767,38 @@
 
     // ---------- boot ----------
     document.addEventListener('DOMContentLoaded', bootOnce);
-    window.addEventListener('load', fitRowsForMobile);
+    window.addEventListener('load', () => {
+      if (window.__setBodyTopPaddingFromBar) window.__setBodyTopPaddingFromBar();
+      fitRowsForMobile();
+    });
 
     window.addEventListener('resize', () => {
-      if (!isMobileView()) disableChatDrag();
-      clampSheetOnResize();
+      if (isMobileView()) {
+        if (document.body.getAttribute('data-phase') === 'carousel') {
+          installChatSheetDrag();
+          clampSheetOnResize();
+        } else {
+          const chat = document.querySelector('.chat-panel');
+          const handle = document.getElementById('chatDragHandle');
+          if (chat) { chat.classList.remove('sheet'); chat.style.removeProperty('height'); }
+          if (handle) handle.remove();
+        }
+      } else {
+        const chat = document.querySelector('.chat-panel');
+        if (chat) { chat.classList.remove('sheet'); chat.style.removeProperty('height'); }
+        const handle = document.getElementById('chatDragHandle');
+        if (handle) handle.remove();
+      }
+      if (window.__setBodyTopPaddingFromBar) window.__setBodyTopPaddingFromBar();
       fitRowsForMobile();
     });
 
     window.addEventListener('orientationchange', () => setTimeout(() => {
-      clampSheetOnResize();
+      if (isMobileView() && document.body.getAttribute('data-phase') === 'carousel') {
+        installChatSheetDrag();
+        clampSheetOnResize();
+      }
+      if (window.__setBodyTopPaddingFromBar) window.__setBodyTopPaddingFromBar();
       fitRowsForMobile();
     }, 250));
   </script>
