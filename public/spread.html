@@ -7,7 +7,7 @@
   <title>Your Reading with Erika</title>
 
   <link rel="stylesheet" href="/shared-styles.css" />
-  <link rel="stylesheet" href="/mobile-overrides.css?v=6" />
+  <link rel="stylesheet" href="/mobile-overrides.css?v=7" />
 
   <script>
     // Insert top bar
@@ -265,7 +265,6 @@
       if (window.__erikaBooted) return;
       window.__erikaBooted = true;
       setTimeout(init, 500);
-      installChatSheetDrag();
       fitRowsForMobile();
     }
 
@@ -355,16 +354,22 @@
     }
 
     function showPhase(phase) {
+      // toggle sections
       shuffleContainer.classList.remove('active');
       loadingContainer.classList.remove('active');
       cardSelectionContainer.classList.remove('active');
       cardCarouselContainer.classList.remove('active');
 
-      switch (phase) {
-        case 'shuffle': shuffleContainer.classList.add('active'); break;
-        case 'loading': loadingContainer.classList.add('active'); break;
-        case 'selection': cardSelectionContainer.classList.add('active'); break;
-        case 'carousel': cardCarouselContainer.classList.add('active'); break;
+      // enable drag ONLY when we are in the reading/carousel phase
+      if (phase === 'carousel') {
+        cardCarouselContainer.classList.add('active');
+        enableChatDrag();          // <-- drag ON for reading
+      } else {
+        if (phase === 'shuffle')   shuffleContainer.classList.add('active');
+        if (phase === 'loading')   loadingContainer.classList.add('active');
+        if (phase === 'selection') cardSelectionContainer.classList.add('active');
+
+        disableChatDrag();         // <-- drag OFF for shuffle/loading/selection
       }
     }
 
@@ -397,27 +402,23 @@
     }
 
     // ---------- bottom-sheet drag (mobile only) ----------
-    function installChatSheetDrag() {
+    const drag = { handle:null, bound:false, startY:0, startH:0, liveH:0, onStart:null, onMove:null, onEnd:null };
+
+    function enableChatDrag() {
       if (!isMobileView()) return;
-
       const chat = document.querySelector('.chat-panel');
-      if (!chat) return;
+      if (!chat || drag.bound) return;
 
-      // Create the handle once
-      let handle = document.getElementById('chatDragHandle');
-      if (!handle) {
-        handle = document.createElement('div');
-        handle.id = 'chatDragHandle';
-        handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
-        chat.prepend(handle);
+      // create handle
+      drag.handle = document.getElementById('chatDragHandle');
+      if (!drag.handle) {
+        drag.handle = document.createElement('div');
+        drag.handle.id = 'chatDragHandle';
+        drag.handle.innerHTML = '<div class="chevron"></div><div class="grab-pill"></div>';
+        chat.prepend(drag.handle);
       }
 
-      // Avoid binding multiple times
-      if (handle.dataset.bound === '1') return;
-      handle.dataset.bound = '1';
-
       const safeTop = () => (parseFloat(getComputedStyle(document.body).paddingTop) || 0);
-      let startY, startH, minH, maxH, liveH;
 
       function enterSheet() {
         if (!chat.classList.contains('sheet')) {
@@ -426,53 +427,74 @@
           chat.style.setProperty('height', Math.max(220, Math.min(h, window.innerHeight)) + 'px', 'important');
         }
       }
-
       function clamp(px) {
-        minH = Math.max(window.innerHeight * 0.30, 220);
-        maxH = window.innerHeight - safeTop() - 4;
+        const minH = Math.max(window.innerHeight * 0.30, 220);
+        const maxH = window.innerHeight - safeTop() - 4;
         return Math.max(minH, Math.min(px, maxH));
       }
 
-      function onStart(e) {
+      drag.onStart = function(e) {
         const t = (e.touches && e.touches[0]) || e;
         enterSheet();
-        startY = t.clientY;
-        startH = chat.getBoundingClientRect().height;
-        liveH  = startH;
+        drag.startY = t.clientY;
+        drag.startH = chat.getBoundingClientRect().height;
+        drag.liveH  = drag.startH;
 
-        document.addEventListener('touchmove', onMove, { passive: false });
-        document.addEventListener('touchend', onEnd, { passive: true });
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onEnd);
-      }
+        document.addEventListener('touchmove', drag.onMove, { passive: false });
+        document.addEventListener('touchend', drag.onEnd, { passive: true });
+        document.addEventListener('mousemove', drag.onMove);
+        document.addEventListener('mouseup', drag.onEnd);
+      };
 
-      function onMove(e) {
+      drag.onMove = function(e) {
         const t = (e.touches && e.touches[0]) || e;
-        const dy = t.clientY - startY;      // up => negative
-        liveH = clamp(startH - dy);
-        chat.style.setProperty('height', liveH + 'px', 'important');
+        const dy = t.clientY - drag.startY;      // up => negative
+        drag.liveH = clamp(drag.startH - dy);
+        chat.style.setProperty('height', drag.liveH + 'px', 'important');
         if (e.cancelable) e.preventDefault();
-      }
+      };
 
-      function onEnd() {
-        document.removeEventListener('touchmove', onMove);
-        document.removeEventListener('touchend', onEnd);
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onEnd);
+      drag.onEnd = function() {
+        document.removeEventListener('touchmove', drag.onMove);
+        document.removeEventListener('touchend', drag.onEnd);
+        document.removeEventListener('mousemove', drag.onMove);
+        document.removeEventListener('mouseup', drag.onEnd);
 
-        // If small, exit overlay mode to restore normal layout
         const exitThreshold = Math.max(window.innerHeight * 0.38, 260);
-        if (liveH && liveH <= exitThreshold) {
+        if (drag.liveH && drag.liveH <= exitThreshold) {
           chat.classList.remove('sheet');
           chat.style.removeProperty('height');
         }
-      }
+      };
 
-      handle.addEventListener('touchstart', onStart, { passive: true });
-      handle.addEventListener('mousedown', onStart);
+      drag.handle.addEventListener('touchstart', drag.onStart, { passive: true });
+      drag.handle.addEventListener('mousedown', drag.onStart);
+      drag.bound = true;
+    }
+
+    function disableChatDrag() {
+      const chat = document.querySelector('.chat-panel');
+      if (!chat) return;
+
+      // remove listeners if bound
+      if (drag.bound && drag.handle) {
+        drag.handle.removeEventListener('touchstart', drag.onStart);
+        drag.handle.removeEventListener('mousedown', drag.onStart);
+      }
+      drag.bound = false;
+
+      // remove handle element
+      const h = document.getElementById('chatDragHandle');
+      if (h && h.parentNode) h.parentNode.removeChild(h);
+      drag.handle = null;
+
+      // exit sheet mode & clear inline height
+      chat.classList.remove('sheet');
+      chat.style.removeProperty('height');
     }
 
     function clampSheetOnResize() {
+      if (!drag.bound) return;
       const chat = document.querySelector('.chat-panel.sheet');
       if (!chat) return;
       const safeTop = parseFloat(getComputedStyle(document.body).paddingTop) || 0;
@@ -608,7 +630,7 @@
 
         setTimeout(() => {
           hidePopup();
-          showCardCarousel();
+          showCardCarousel(); // this calls showPhase('carousel') which enables drag
           setTimeout(() => { deliverReading(data.answer); }, 800);
         }, 2000);
       } catch (e) {
@@ -624,7 +646,7 @@
     function enableSwipe(el){ let startX=null; el.addEventListener('touchstart', e=>{startX=e.changedTouches[0].clientX;},{passive:true}); el.addEventListener('touchend', e=>{ if(startX==null) return; const dx=e.changedTouches[0].clientX-startX; startX=null; if(Math.abs(dx)>40){ dx<0?goNext():goPrev(); } }, {passive:true}); }
 
     function showCardCarousel() {
-      showPhase('carousel');
+      showPhase('carousel'); // <— enables drag here
       setupCarousel();
       document.querySelector('.carousel-arrow.prev').onclick = goPrev;
       document.querySelector('.carousel-arrow.next').onclick = goNext;
@@ -730,18 +752,13 @@
     window.addEventListener('load', fitRowsForMobile);
 
     window.addEventListener('resize', () => {
-      if (isMobileView()) {
-        installChatSheetDrag();
-        clampSheetOnResize();
-      } else {
-        const chat = document.querySelector('.chat-panel');
-        if (chat) { chat.classList.remove('sheet'); chat.style.removeProperty('height'); }
-      }
+      if (!isMobileView()) disableChatDrag();
+      clampSheetOnResize();
       fitRowsForMobile();
     });
 
     window.addEventListener('orientationchange', () => setTimeout(() => {
-      if (isMobileView()) { installChatSheetDrag(); clampSheetOnResize(); }
+      clampSheetOnResize();
       fitRowsForMobile();
     }, 250));
   </script>

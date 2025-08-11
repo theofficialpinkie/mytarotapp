@@ -155,7 +155,7 @@
     overflow: hidden;              /* content scrolls inside */
   }
 
-  /* Drag handle INSIDE the chat (so overflow:hidden doesn't clip it) */
+  /* Drag handle INSIDE the chat (only created in reading phase) */
   #chatDragHandle {
     position: absolute;
     top: 6px;                      /* visible & tappable */
