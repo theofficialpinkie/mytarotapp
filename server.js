@@ -15,7 +15,7 @@ try {
   tarotDeck = require("./deck");
   console.log("✅ Deck loaded successfully");
   console.log(`📊 Deck contains ${Object.keys(tarotDeck).length} cards`);
-} catch (error) {
+} catch (error) {a
   console.error("❌ Error loading deck.js:", error.message);
   tarotDeck = {
     "The Fool": { upright: "New beginnings", reversed: "Recklessness", image: "/assets/faces/placeholder.png" },
