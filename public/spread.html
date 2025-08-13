@@ -397,34 +397,30 @@
       setTimeout(() => wrap.classList.add('visible'), 50);
     }
 
+ 
     function addStandaloneButton(text, cb) {
   const wrap = document.createElement('div');
-  wrap.style.cssText = `
-    display:flex; align-items:center; gap:12px; margin:20px 0; padding-left:52px;
-    opacity:0; transform:translateY(20px); transition:opacity .5s ease, transform .5s ease;
-  `;
+  wrap.className = 'cta-wrap';
+
   const btn = document.createElement('button');
   btn.className = 'chat-button';
   btn.textContent = text;
-  btn.onclick = cb;
+  btn.onclick = () => {
+    wrap.remove();  // 🔹 remove the CTA from chat immediately after click
+    cb();           // run the original callback (e.g., startShuffle)
+  };
+
   wrap.appendChild(btn);
 
   if (isReadingPhase) {
     chatMessages.appendChild(wrap);
-    chatMessages.scrollTop = chatMessages.scrollHeight;   // <-- keep internal scroll only
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   } else {
     chatMessages.insertBefore(wrap, chatMessages.firstChild);
-    chatMessages.scrollTop = 0;                           // <-- keep at top pre-reading
+    chatMessages.scrollTop = 0;
   }
 
-  setTimeout(() => {
-    wrap.style.opacity = '1';
-    wrap.style.transform = 'translateY(0)';
-    // ⬇️ Remove the scrollIntoView that was causing the page jump
-    // if (isMobileView() && /shuffle cards/i.test(text)) {
-    //   document.querySelector('.chat-panel')?.scrollIntoView({ block: 'end', behavior: 'smooth' });
-    // }
-  }, 50);
+  requestAnimationFrame(() => wrap.classList.add('visible'));
 }
 
  
