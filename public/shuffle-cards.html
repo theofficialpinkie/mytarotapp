@@ -1,246 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="/shared-styles.css">
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.body.insertAdjacentHTML('afterbegin', `
-    <div class="top-bar">
-      <div class="logo-wrap">
-        <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
-        <span class="byline">by Erika Owls</span>
-      </div>
-      <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
-        Book a 1-1 Psychic Session
-      </a>
-    </div>
-  `);
-  document.body.classList.add('has-top-bar');
-});
-</script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <title>Tapp - Shuffle Cards</title>
+
+  <!-- Shared styles (keeps the top bar look) -->
+  <link rel="stylesheet" href="/shared-styles.css">
+
+  <!-- Preload the card back for instant paint -->
+  <link rel="preload" as="image" href="/assets/backs/card-back.webp">
+
   <style>
+    /* ---------- fonts ---------- */
     @font-face {
       font-family: 'Bookman JF Pro';
-      src: url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff2'),
-           url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff');
+      src:
+        url('/assets/fonts/BookmanJFPro-Regular.woff2') format('woff2'),
+        url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff');
       font-weight: normal;
       font-style: normal;
       font-display: swap;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    /* ---------- page reset ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       width: 100%;
       height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background: #000;
-      overflow: hidden;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      overflow: hidden; /* no accidental scroll */
     }
 
+    /* We'll compute this from JS (see script below) */
+    :root { --topbar-h: 90px; }
+
+    /* Neutralize global top padding from shared-styles on this page */
+    .has-top-bar { padding-top: 0 !important; }
+    .has-top-bar .question-container,
+    .has-top-bar .chat-container,
+    .has-top-bar main,
+    .has-top-bar .content { padding-top: 0 !important; }
+
+    /* ---------- layout ---------- */
     .shuffle-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      height: 100vh;
+      /* Fill the *visible* viewport minus the fixed top bar */
+      height: calc(100dvh - var(--topbar-h));
       padding: 40px 60px;
       gap: 60px;
       align-items: center;
+      /* Keep content clear of notches/home indicators just in case */
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
     }
 
-    .left-content {
-      display: flex;
-      flex-direction: column;
-      justify-self: end;
-      max-width: 400px;
-    }
+    .left-content { display: flex; flex-direction: column; justify-self: end; max-width: 420px; }
+    .right-content { display: flex; flex-direction: column; align-items: center; justify-self: start; gap: 20px; }
 
-    .right-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-self: start;
-      gap: 20px;
-    }
-
+    /* ---------- title + stars ---------- */
     .shuffle-title {
-  color: white;
-  font-family: 'Bookman JF Pro', serif;
-  font-size: 42px;
-  margin-bottom: 30px;
-  position: relative;
-}
-
-.stars-container {
-  position: absolute;
-  right: 40px; /* moved closer */
-  top: 50%;    /* lowered slightly */
-  transform: translateY(-50%);
-}
-
+      color: #fff;
+      font-family: 'Bookman JF Pro', serif;
+      font-size: 42px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .stars-container {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
     .star {
       color: white;
       font-size: 18px;
       transform: scaleY(1.5);
-      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
       position: absolute;
     }
-.star:first-child {
-  top: -18px;
-  left: 0;
-}
-.star:last-child {
-  top: 0px;
-  left: 16px;
-}
+    .star:first-child { top: -18px; left: 0; }
+    .star:last-child  { top:   0px; left: 16px; }
 
-
+    /* ---------- Erika bubble ---------- */
     .erika-message-section {
       display: flex;
       align-items: flex-start;
       gap: 20px;
-      margin-left: -10px; /* moved slightly to the left */
+      margin-left: -10px;
     }
-
     .erika-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      width: 50px; height: 50px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.2);
     }
-
     .erika-message {
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 14px;
-      font-style: italic;
-      font-weight: 300;
-      line-height: 1.5;
+      color: rgba(255,255,255,0.8);
+      font-size: 14px; font-style: italic; font-weight: 300; line-height: 1.5;
     }
 
-   .card-stack {
-  position: relative;
-  width: 140px;
-  height: 200px;
-  margin-top: -10px;
-  margin-bottom: 24px; /* added spacing before button row */
-  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
+    /* ---------- card stack ---------- */
+    .card-stack {
+      position: relative;
+      width: 140px; height: 200px;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      transition: transform .8s cubic-bezier(0.68,-0.55,0.265,1.55);
+    }
 
+    /* Provide a simple background-image first (broadest support),
+       then override with image-set when supported */
     .stack-card {
       position: absolute;
-      width: 140px;
-      height: 200px;
-      border-radius: 8px;
+      width: 140px; height: 200px; border-radius: 8px;
       background-image: url('/assets/backs/card-back.webp');
-      background-size: cover;
-      background-position: center;
+      background-size: cover; background-position: center;
       background-color: #333;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    @supports (background: image-set(url('/assets/backs/card-back.webp') type('image/webp') 1x)) {
+      .stack-card {
+        background-image: image-set(
+          url('/assets/backs/card-back.webp') type('image/webp') 1x
+          /* , url('/assets/backs/card-back.png') type('image/png') 1x */ /* optional fallback if you re-add PNG */
+        );
+      }
     }
 
-    .stack-card:nth-child(1) { z-index: 8; transform: translateY(0px) rotate(-0.5deg); }
-    .stack-card:nth-child(2) { z-index: 7; transform: translateY(2px) rotate(0.3deg); }
-    .stack-card:nth-child(3) { z-index: 6; transform: translateY(4px) rotate(-0.2deg); }
-    .stack-card:nth-child(4) { z-index: 5; transform: translateY(6px) rotate(0.4deg); }
-    .stack-card:nth-child(5) { z-index: 4; transform: translateY(8px) rotate(-0.3deg); }
-    .stack-card:nth-child(6) { z-index: 3; transform: translateY(10px) rotate(0.2deg); }
+    .stack-card:nth-child(1) { z-index: 8; transform: translateY(0px)  rotate(-0.5deg); }
+    .stack-card:nth-child(2) { z-index: 7; transform: translateY(2px)  rotate(0.3deg);  }
+    .stack-card:nth-child(3) { z-index: 6; transform: translateY(4px)  rotate(-0.2deg); }
+    .stack-card:nth-child(4) { z-index: 5; transform: translateY(6px)  rotate(0.4deg);  }
+    .stack-card:nth-child(5) { z-index: 4; transform: translateY(8px)  rotate(-0.3deg); }
+    .stack-card:nth-child(6) { z-index: 3; transform: translateY(10px) rotate(0.2deg);  }
     .stack-card:nth-child(7) { z-index: 2; transform: translateY(12px) rotate(-0.1deg); }
-    .stack-card:nth-child(8) { z-index: 1; transform: translateY(14px) rotate(0.5deg); }
+    .stack-card:nth-child(8) { z-index: 1; transform: translateY(14px) rotate(0.5deg);  }
 
-    .shuffle-actions {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-    }
-
+    /* ---------- actions ---------- */
+    .shuffle-actions { display: flex; align-items: center; justify-content: center; gap: 16px; }
     .shuffle-button {
-      padding: 14px 30px;
-      font-size: 14px;
-      border: 1px solid white;
-      border-radius: 30px;
-      background: transparent;
-      color: white;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
+      padding: 14px 30px; font-size: 14px;
+      border: 1px solid #fff; border-radius: 30px;
+      background: transparent; color: #fff; cursor: pointer; white-space: nowrap;
     }
+    .shuffle-button:hover { background: rgba(255,255,255,0.1); }
 
-    .shuffle-button:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
+    .shake-hint { color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 2px; white-space: nowrap; }
 
-    .shake-hint {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 13px;
-      margin-top: 2px;
-      white-space: nowrap;
-    }
-
-    .ready-message {
-      color: white;
-      font-size: 18px;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-
-    .ready-message.active {
-      opacity: 1;
-    }
+    .ready-message { color: #fff; font-size: 18px; opacity: 0; transition: opacity .5s ease; }
+    .ready-message.active { opacity: 1; }
 
     .next-button {
-      padding: 14px 30px;
-      font-size: 14px;
-      border: 1px solid #B8860B;
-      border-radius: 30px;
-      background: linear-gradient(135deg, rgba(184, 134, 11, 0.1), rgba(218, 165, 32, 0.05));
-      color: #B8860B;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
+      padding: 14px 30px; font-size: 14px;
+      border: 1px solid #B8860B; border-radius: 30px;
+      background: linear-gradient(135deg, rgba(184,134,11,0.1), rgba(218,165,32,0.05));
+      color: #B8860B; cursor: pointer; opacity: 0; pointer-events: none;
     }
+    .next-button.active { opacity: 1; pointer-events: auto; }
 
-    .next-button.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
+    /* ---------- mobile tweaks ---------- */
     @media (max-width: 768px) {
       .shuffle-container {
         grid-template-columns: 1fr;
-        padding: 20px;
-        gap: 30px;
+        height: calc(100svh - var(--topbar-h)); /* “small” vh is extra stable on mobile */
+        padding: 16px 16px max(16px, env(safe-area-inset-bottom));
+        gap: 20px;
       }
-
-      .left-content, .right-content {
-        justify-self: center;
-        text-align: center;
-      }
-
-      .erika-message-section {
-        flex-direction: column;
-        align-items: center;
-        margin-left: 0;
-      }
-
-      .shuffle-actions {
-        flex-direction: column;
-        gap: 10px;
-      }
+      .left-content, .right-content { justify-self: center; text-align: center; }
+      .erika-message-section { flex-direction: column; align-items: center; margin-left: 0; }
+      .shuffle-actions { flex-direction: column; gap: 10px; }
+      .shuffle-title { font-size: 34px; margin-bottom: 18px; }
+      .card-stack { margin-bottom: 14px; }
     }
   </style>
+
+  <script>
+    // Insert the top bar, then compute its real height and expose as --topbar-h
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.insertAdjacentHTML('afterbegin', `
+        <div class="top-bar">
+          <div class="logo-wrap">
+            <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
+            <span class="byline">by Erika Owls</span>
+          </div>
+          <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
+            Book a 1-1 Psychic Session
+          </a>
+        </div>
+      `);
+      document.body.classList.add('has-top-bar');
+
+      function setTopBarHeight() {
+        const bar = document.querySelector('.top-bar');
+        const h = bar ? Math.ceil(bar.getBoundingClientRect().height) : 60;
+        document.documentElement.style.setProperty('--topbar-h', h + 'px');
+      }
+      setTopBarHeight();
+      setTimeout(setTopBarHeight, 150); // fonts settle
+      window.addEventListener('resize', setTopBarHeight);
+      window.addEventListener('orientationchange', () => setTimeout(setTopBarHeight, 150));
+    });
+  </script>
 </head>
+
 <body>
   <div class="shuffle-container">
-    
     <!-- LEFT -->
     <div class="left-content">
       <h1 class="shuffle-title">
@@ -280,56 +249,73 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="ready-message" id="readyMessage">Ready to select your cards</div>
       <button class="next-button" id="nextBtn">Next</button>
     </div>
-
   </div>
 
+  <!-- tiny probe to confirm the asset path in your console -->
   <script>
-  let isShuffling = false;
-  let shuffleCount = 0;
-  let spreadReady = false;
+    (function(){
+      const probe = new Image();
+      probe.onload = () => console.log('✅ card-back.webp loaded');
+      probe.onerror = () => console.warn('⛔️ card-back.webp failed to load (check /assets/backs/card-back.webp)');
+      probe.src = '/assets/backs/card-back.webp';
+    })();
+  </script>
 
-  const shuffleBtn = document.getElementById('shuffleBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const readyMessage = document.getElementById('readyMessage');
-  const cardStack = document.getElementById('cardStack');
+  <script>
+    let isShuffling = false;
+    let shuffleCount = 0;
+    let spreadReady = false;
 
-shuffleBtn.addEventListener('click', () => {
-  window.location.href = '/shuffle-sequence.html';
-});
-  cardStack.addEventListener('click', shuffleCards);
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const readyMessage = document.getElementById('readyMessage');
+    const cardStack = document.getElementById('cardStack');
 
-  async function shuffleCards() {
-    if (isShuffling) return;
+    // If you want the button to go to a cinematic shuffle page:
+    shuffleBtn.addEventListener('click', () => {
+      window.location.href = '/shuffle-sequence.html';
+    });
 
-    isShuffling = true;
-    shuffleCount++;
-    shuffleBtn.disabled = true;
-    shuffleBtn.textContent = 'Shuffling...';
-    cardStack.style.transform = 'scale(1.1) rotate(5deg)';
+    // Tapping the stack triggers a backend shuffle and enables "Next"
+    cardStack.addEventListener('click', shuffleCards);
 
-    try {
-      // 🔮 Call backend to get a fresh spread
-      const res = await fetch('/api/spread');
-      const data = await res.json();
-      sessionStorage.setItem('spread', JSON.stringify(data.spread));
-      console.log('🃏 Spread saved to sessionStorage');
-    } catch (err) {
-      console.error('❌ Failed to fetch spread:', err);
+    async function shuffleCards() {
+      if (isShuffling) return;
+
+      isShuffling = true;
+      shuffleCount++;
+      shuffleBtn.disabled = true;
+      shuffleBtn.textContent = 'Shuffling...';
+      cardStack.style.transform = 'scale(1.1) rotate(5deg)';
+
+      try {
+        const res = await fetch('/api/spread', { cache: 'no-store' });
+        const data = await res.json();
+        sessionStorage.setItem('spread', JSON.stringify(data.spread));
+        console.log('🃏 Spread saved to sessionStorage');
+      } catch (err) {
+        console.error('❌ Failed to fetch spread:', err);
+      }
+
+      setTimeout(() => {
+        cardStack.style.transform = 'scale(1) rotate(0deg)';
+        isShuffling = false;
+        shuffleBtn.disabled = false;
+        shuffleBtn.textContent = 'Shuffle Again';
+
+        if (shuffleCount >= 1) {
+          spreadReady = true;
+          readyMessage.classList.add('active');
+          nextBtn.classList.add('active');
+        }
+      }, 800);
     }
 
-    setTimeout(() => {
-      cardStack.style.transform = 'scale(1) rotate(0deg)';
-      isShuffling = false;
-      shuffleBtn.disabled = false;
-      shuffleBtn.textContent = 'Shuffle Again';
-
-      if (shuffleCount >= 1) {
-        spreadReady = true;
-        readyMessage.classList.add('active');
-        nextBtn.classList.add('active');
-      }
-    }, 800);
-  }
-</script>
+    // Where to go next
+    nextBtn.addEventListener('click', () => {
+      if (!spreadReady) return;
+      window.location.href = '/spread.html';
+    });
+  </script>
 </body>
 </html>
