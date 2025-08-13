@@ -93,7 +93,7 @@
 @media (max-width: 480px) {
   .tapp-logo { height: 45px; }
   .byline { font-size: 14px; }
-  .booking-button { font-size: 10px; padding: 6px 10px; }
+  .booking-button { font-size: 10px; padding: 6px 10px; color: black}
   
   .has-top-bar,
   .has-top-bar .question-container,

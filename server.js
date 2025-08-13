@@ -31,14 +31,32 @@ console.log("✅ Express app created");
 // ==========================
 // Middleware
 // ==========================
+
+const compression = require('compression');
+app.use(compression()); // gzip/brotli where supported
+
 app.use(express.json());
 console.log("✅ JSON middleware added");
 
 app.use(cors());
 console.log("✅ CORS middleware added");
 
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets'), {
+  maxAge: '30d',
+  immutable: true,
+  etag: false,
+  setHeaders(res, filePath) {
+    if (/\.(woff2?|ttf|otf|png|jpg|jpeg|webp|mp4)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+    }
+  }
+}));
+
+
 app.use(express.static(path.join(__dirname, "public")));
 console.log("✅ Static middleware added");
+
+
 
 // Debug every request
 app.use((req, res, next) => {

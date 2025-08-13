@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     spread.forEach((card, index) => {
       const img = document.createElement("img");
-      img.src = "/assets/backs/card-back.png";
+      img.src = "/assets/backs/card-back.webp";
       img.classList.add("chat-card");
       img.alt = `Card ${index + 1}`;
       img.dataset.cardId = card.id; // 🎯 ADD: Store card ID

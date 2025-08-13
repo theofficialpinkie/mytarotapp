@@ -10,102 +10,12 @@ function normalizeCardName(name) {
     .replace(/'/g, "");
 }
 
-// Cards with uploaded face images
-const uploadedFaces = [
-  "ace-of-pentacles",
-  "eight-of-cups",
-  "king-of-pentacles",
-  "queen-of-wands",
-  "the-star",
-  "three-of-cups",
-  "two-of-swords",
-  "ace-of-cups",
-  "five-of-cups",
-  "four-of-cups",
-  "nine-of-cups",
-  "seven-of-cups",
-  "six-of-cups",
-  "ten-of-cups",
-  "the-fool",
-  "two-of-cups",
-  // Adding the 4 new cup cards
-  "page-of-cups",
-  "knight-of-cups",
-  "queen-of-cups",
-  "king-of-cups",
-  // Adding all remaining Major Arcana
-  "the-magician",
-  "the-high-priestess",
-  "the-empress", 
-  "the-emperor",
-  "the-hierophant",
-  "the-lovers",
-  "the-chariot",
-  "strength",
-  "the-hermit",
-  "wheel-of-fortune",
-  "justice",
-  "the-hanged-man",
-  "death",
-  "temperance",
-  "the-devil",
-  "the-tower",
-  "the-moon",
-  "the-sun",
-  "judgement",
-  "the-world",
-  // Additional Pentacles (12 cards)
-  "two-of-pentacles",
-  "three-of-pentacles",
-  "four-of-pentacles",
-  "five-of-pentacles",
-  "six-of-pentacles",
-  "seven-of-pentacles",
-  "eight-of-pentacles",
-  "nine-of-pentacles",
-  "ten-of-pentacles",
-  "page-of-pentacles",
-  "knight-of-pentacles",
-  "queen-of-pentacles",
-  // Swords (13 cards)
-  "ace-of-swords",
-  "three-of-swords",
-  "four-of-swords",
-  "five-of-swords",
-  "six-of-swords",
-  "seven-of-swords",
-  "eight-of-swords",
-  "nine-of-swords",
-  "ten-of-swords",
-  "page-of-swords",
-  "knight-of-swords",
-  "queen-of-swords",
-  "king-of-swords",
+// Small webp placeholder (keep this in /public/assets/faces/placeholder.webp)
+const PLACEHOLDER = "/assets/faces/placeholder.webp";
 
-// All Wands (13 cards)
-  "ace-of-wands",
-  "two-of-wands",
-  "three-of-wands",
-  "four-of-wands",
-  "five-of-wands",
-  "six-of-wands",
-  "seven-of-wands",
-  "eight-of-wands",
-  "nine-of-wands",
-  "ten-of-wands",
-  "page-of-wands",
-  "knight-of-wands",
-  "king-of-wands"
-
-
-];
-
-// Get correct image path
+// Build the face path (all faces are webp now)
 function imagePath(cardName) {
-  const normalized = normalizeCardName(cardName);
-  return uploadedFaces.includes(normalized)
-    ? `/assets/faces/${normalized}.png`
-    : `/assets/faces/placeholder.png`;
+  return `/assets/faces/webp/${normalizeCardName(cardName)}.webp`;
 }
 
 // Erika's signature meaning style
@@ -173,8 +83,7 @@ const deck = {
   "Queen of Cups": { upright: erikaMeaning("Compassion, intuition, and deep emotional connection guide you."), reversed: erikaMeaning("Emotional overwhelm or co-dependency may surface."), image: imagePath("Queen of Cups") },
   "King of Cups": { upright: erikaMeaning("Emotional maturity and balance bring stability in love."), reversed: erikaMeaning("Emotional repression or coldness creates distance."), image: imagePath("King of Cups") },
 
-
-// ==== SWORDS ====
+  // ==== SWORDS ====
   "Ace of Swords": { upright: erikaMeaning("Clarity, truth, and mental breakthroughs. A sharp insight shifts everything."), reversed: erikaMeaning("Confusion or misinformation clouds the way forward."), image: imagePath("Ace of Swords") },
   "Two of Swords": { upright: erikaMeaning("Indecision and stalemate. Trust your intuition when logic feels split."), reversed: erikaMeaning("Emotional overwhelm or avoidance — face what’s in front of you."), image: imagePath("Two of Swords") },
   "Three of Swords": { upright: erikaMeaning("Heartbreak or emotional pain — a truth that hurts but frees you."), reversed: erikaMeaning("Healing and release from past heartbreak."), image: imagePath("Three of Swords") },
@@ -190,8 +99,7 @@ const deck = {
   "Queen of Swords": { upright: erikaMeaning("Clarity, truth, and independence. Speak with wisdom."), reversed: erikaMeaning("Overcritical or coldness blocks connection."), image: imagePath("Queen of Swords") },
   "King of Swords": { upright: erikaMeaning("Logic, authority, and strategic thinking lead the way."), reversed: erikaMeaning("Misuse of power or manipulation clouds integrity."), image: imagePath("King of Swords") },
 
-
-// ==== PENTACLES ====
+  // ==== PENTACLES ====
   "Ace of Pentacles": { upright: erikaMeaning("New opportunity, prosperity, and strong foundations begin."), reversed: erikaMeaning("Missed chances or instability — ground your plans."), image: imagePath("Ace of Pentacles") },
   "Two of Pentacles": { upright: erikaMeaning("Balance, adaptability, and juggling priorities with skill."), reversed: erikaMeaning("Overwhelm or disorganization requires rebalancing."), image: imagePath("Two of Pentacles") },
   "Three of Pentacles": { upright: erikaMeaning("Teamwork, collaboration, and skill development bring success."), reversed: erikaMeaning("Misalignment or lack of effort disrupts progress."), image: imagePath("Three of Pentacles") },
