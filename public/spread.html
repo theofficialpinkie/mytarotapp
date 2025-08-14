@@ -335,7 +335,7 @@
       <div class="overlay-title">What would you like to do next?</div>
       <div class="overlay-buttons">
         <button class="overlay-button" onclick="hideOverlay()">Read Again</button>
-        <button class="overlay-button secondary" onclick="window.location.href='question-screen.html'">Ask Another Question</button>
+        <button class="overlay-button secondary" onclick="window.location.href='index.html'">Ask Another Question</button>
         <button class="overlay-button secondary" onclick="window.location.href='https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc'" target="_blank">Book 1-1 Session</button>
       </div>
     </div>
@@ -911,35 +911,42 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     function deliverReading(readingText) {
-      isReadingPhase = true;
-      const patterns = buildCardPatterns(selectedCards);
-      const shownThumbs = new Set();
 
-      const sentences = readingText.split(/(?<=[.!?])\s+/);
-      const chunks = [];
-      for (let i = 0; i < sentences.length; i += 3) {
-        chunks.push(sentences.slice(i, i + 3).join(' '));
+  // ✅ Increment question count in localStorage
+  let questionCount = parseInt(localStorage.getItem('questionCount') || '0', 10);
+  questionCount += 1;
+  localStorage.setItem('questionCount', questionCount);
+  console.log("Questions asked so far:", questionCount);
+
+  isReadingPhase = true;
+  const patterns = buildCardPatterns(selectedCards);
+  const shownThumbs = new Set();
+
+  const sentences = readingText.split(/(?<=[.!?])\s+/);
+  const chunks = [];
+  for (let i = 0; i < sentences.length; i += 3) {
+    chunks.push(sentences.slice(i, i + 3).join(' '));
+  }
+
+  chunks.forEach((chunk, index) => {
+    setTimeout(() => {
+      addMessage(chunk);
+      if (isMobileView() && patterns.length) {
+        for (const { name, re, card } of patterns) {
+          if (!shownThumbs.has(name) && re.test(chunk)) {
+            addCardThumb(card, name);
+            shownThumbs.add(name);
+          }
+        }
       }
-
-      chunks.forEach((chunk, index) => {
+      if (index === chunks.length - 1) {
         setTimeout(() => {
-          addMessage(chunk);
-          if (isMobileView() && patterns.length) {
-            for (const { name, re, card } of patterns) {
-              if (!shownThumbs.has(name) && re.test(chunk)) {
-                addCardThumb(card, name);
-                shownThumbs.add(name);
-              }
-            }
-          }
-          if (index === chunks.length - 1) {
-            setTimeout(() => {
-              addStandaloneButton('New Reading', () => { window.location.href = '/question-screen.html'; });
-            }, 600);
-          }
-        }, index * 1200);
-      });
-    }
+          addStandaloneButton('New Reading', () => { window.location.href = '/index.html'; });
+        }, 600);
+      }
+    }, index * 1200);
+  });
+}
 
     // ---------- boot ----------
     function bootOnce() {

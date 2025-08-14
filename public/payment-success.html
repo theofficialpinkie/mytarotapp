@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Successful</title>
+  <style>
+    @font-face {
+      font-family: 'Bookman JF Pro';
+      src: url('/assets/fonts/BookmanJFPro-Regular.woff2') format('woff2');
+      font-weight: normal; 
+      font-style: normal; 
+      font-display: swap;
+    }
+
+    body {
+      font-family: 'Bookman JF Pro', serif;
+      color: #fff;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #2e1a47, #0d0f1a);
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Sparkle Animation */
+    .sparkles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkle 3s infinite;
+    }
+
+    @keyframes sparkle {
+      0% { transform: translateY(0) scale(0); opacity: 0; }
+      10% { opacity: 1; transform: translateY(-10px) scale(1); }
+      90% { opacity: 1; }
+      100% { transform: translateY(-50px) scale(0); opacity: 0; }
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      padding-top: 10px; /* prevents emoji clipping */
+      text-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 25px;
+      line-height: 1.4;
+    }
+
+    a {
+      display: inline-block;
+      padding: 14px 30px;
+      font-size: 14px;
+      border: 1px solid white;
+      border-radius: 30px;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="sparkles"></div>
+
+  <h1>Payment Successful!</h1>
+  <p>You now have unlimited readings unlocked 🎉</p>
+
+  <a href="/index.html">Start a New Reading</a>
+
+  <script>
+    // Reset question count after payment
+    localStorage.setItem('questionCount', '0');
+
+    // Generate sparkles
+    const sparklesContainer = document.querySelector('.sparkles');
+    for (let i = 0; i < 30; i++) {
+      const sparkle = document.createElement('div');
+      sparkle.classList.add('sparkle');
+      sparkle.style.left = Math.random() * 100 + 'vw';
+      sparkle.style.top = Math.random() * 100 + 'vh';
+      sparkle.style.animationDelay = (Math.random() * 3) + 's';
+      sparklesContainer.appendChild(sparkle);
+    }
+  </script>
+</body>
+</html>
