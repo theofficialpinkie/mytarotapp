@@ -250,23 +250,33 @@
 
 
   </style>
-  
 <script>
 (function(){
   try {
-    if (!localStorage.getItem('tapp_has_visited')) {
-      localStorage.setItem('tapp_has_visited', 'true');
+    const visited = localStorage.getItem('tapp_has_visited');
+    console.log('[Index] tapp_has_visited from localStorage:', visited);
+
+    if (!visited) {
+      console.log('[Index] First visit detected — redirecting to /video-intro.html');
       window.location.href = '/video-intro.html';
+    } else {
+      console.log('[Index] Returning visitor — skipping redirect.');
     }
   } catch(e) {
-    // Fallback if localStorage fails (e.g., Safari private mode)
-    document.cookie = "tapp_has_visited=true; path=/; max-age=" + 60*60*24*365;
-    if (!document.cookie.includes("tapp_has_visited")) {
+    console.warn('[Index] localStorage error, falling back to cookies:', e);
+    const hasCookie = document.cookie.includes("tapp_has_visited");
+    console.log('[Index] tapp_has_visited from cookie:', hasCookie);
+
+    if (!hasCookie) {
+      console.log('[Index] First visit (cookie fallback) — redirecting to /video-intro.html');
       window.location.href = '/video-intro.html';
+    } else {
+      console.log('[Index] Returning visitor (cookie fallback) — skipping redirect.');
     }
   }
 })();
 </script>
+
 
 
 </head>
