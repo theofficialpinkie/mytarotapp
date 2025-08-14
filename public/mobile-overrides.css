@@ -254,6 +254,12 @@
     padding-top: 4px;
     padding-bottom: 6px;
   }
+
+  .upgrade-panel .continue-button.active {
+  background: white !important;
+  color: black !important;
+  border: none !important;
+}
 }
 
 @media (max-width: 768px) {
