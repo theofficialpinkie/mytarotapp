@@ -205,6 +205,50 @@
       cursor: pointer;
     }
     .close-upgrade:hover { color: #fff; }
+
+@media (max-width: 480px) {
+  .booking-button {
+    font-size: 12px;
+    padding: 8px 12px;
+    white-space: nowrap; /* prevents wrapping */
+  }
+
+  .tapp-logo {
+    height: 50px; /* shrink logo so both fit better */
+  }
+
+  .top-bar {
+    padding: 10px 12px; /* tighter spacing on small screens */
+  }
+
+ .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 12px;
+    gap: 8px; /* space between logo and button */
+  }
+
+  .logo-wrap {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tapp-logo {
+    height: 50px; /* smaller logo for mobile */
+  }
+
+  .booking-button {
+    font-size: 12px;
+    padding: 8px 12px;
+    align-self: center; /* center button below logo */
+    white-space: nowrap; /* prevent wrapping */
+  }
+}
+
+
+
+
+
   </style>
   
 <script>
