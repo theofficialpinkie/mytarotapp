@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+// Check if this is first visit - if so, redirect to welcome
+const hasVisited = localStorage.getItem('tapp_has_visited');
+const urlParams = new URLSearchParams(window.location.search);
+const forceWelcome = urlParams.get('welcome') === 'true';
+
+if (!hasVisited || forceWelcome) {
+  // First visit - show welcome page
+  window.location.href = '/video-intro.html';
+}
+// If hasVisited is true, continue loading index.html normally
+</script>
+
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tapp - Ask Your Question</title>
@@ -23,13 +37,13 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       width: 100%; height: 100%;
-      background: #000;
+      background: #F1F4F7;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     /* Top Bar */
     .top-bar {
-      background: black;
+      background: #F1F4F7;
       padding: 15px 20px;
       display: flex;
       justify-content: space-between;
@@ -38,22 +52,21 @@
       top: 0; left: 0;
       width: 100%;
       z-index: 100;
-      border-bottom: 1px solid #333;
     }
     .logo-wrap { display: flex; align-items: center; gap: 6px; }
     .tapp-logo { height: 75px; }
     .byline {
       font-family: 'AuthenticSignature', cursive;
-      font-size: 18px; color: white;
+      font-size: 18px; color: black;
     }
     .booking-button {
-      background: white; color: black;
+      background: black; color: white;
       padding: 12px 20px; border-radius: 8px;
       font-size: 14px; font-weight: 600;
       text-decoration: none; transition: 0.3s;
     }
     .booking-button:hover {
-      background: #f0f0f0; transform: translateY(-1px);
+      background: black; transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(255,255,255,0.3);
     }
 
@@ -65,7 +78,7 @@
     }
     .question-content { text-align: center; max-width: 600px; }
     .question-title {
-      color: white; font-family: 'Bookman JF Pro', serif;
+      color: black; font-family: 'Bookman JF Pro', serif;
       font-size: 42px; margin-bottom: 40px; font-weight: normal;
       position: relative; display: inline-block;
     }
@@ -74,7 +87,7 @@
       transform: translateY(-50%);
     }
     .star {
-      color: white; font-size: 20px; transform: scaleY(1.5);
+      color: black; font-size: 20px; transform: scaleY(1.5);
       filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
       position: absolute;
     }
@@ -86,23 +99,23 @@
       object-fit: cover; border: 2px solid rgba(255,255,255,0.2);
     }
     .question-subtitle {
-      color: rgba(255,255,255,0.8);
+      color: black(255,255,255,0.8);
       font-size: 16px; line-height: 1.6;
       text-align: left; flex: 1;
     }
     .question-input {
       width: 100%; max-width: 500px;
       padding: 16px 20px; font-size: 16px;
-      border: 1px solid rgba(255,255,255,0.3);
+      border: 1px white(155,155,155,0.3);
       border-radius: 15px;
       background: rgba(255,255,255,0.05);
-      color: white; text-align: center;
+      color: grey; text-align: center;
       margin-bottom: 30px;
     }
     .continue-button {
       padding: 14px 30px; font-size: 14px;
-      border: 1px solid white; border-radius: 30px;
-      background: transparent; color: white;
+      border: 1px solid black; border-radius: 30px;
+      background: transparent; color: black;
       cursor: pointer; opacity: 0.5; pointer-events: none;
     }
     .continue-button.active { opacity: 1; pointer-events: auto; }
@@ -204,6 +217,9 @@
     }
     .close-upgrade:hover { color: #fff; }
   </style>
+
+
+
 </head>
 
 <body>

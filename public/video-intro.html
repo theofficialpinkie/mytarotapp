@@ -1,275 +1,531 @@
-    /* Extra mobile adjustments for very small screens */
-    @media (max-width: 480px) {
-      .mobile-background-video {
-        opacity: 0.2;
-      }
-      
-      .center-overlay {
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10;
-      }
-      
-      .logo-and-signup {
-        gap: 15px;
-      }
-      
-      .tapp-logo {
-        width: 200px;
-      }
-      
-      .description-text {
-        font-size: 11px;
-        max-width: 220px;
-        line-height: 1.3;
-      }
-      
-      .next-button {
-        padding: 8px 16px;
-        font-size: 11px;
-      }
-    }
-
-    /* Extra small screens */
-    @media (max-width: 360px) {
-      .mobile-background-video {
-        opacity: 0.15;
-      }
-      
-      .center-overlay {
-        top: 50%;
-        z-index: 10;
-      }
-      
-      .logo-and-signup {
-        gap: 12px;
-      }
-      
-      .tapp-logo {
-        width: 180px;
-      }
-      
-      .description-text {
-        font-size: 10px;
-        max-width: 200px;
-        line-height: 1.2;
-      }
-      
-      .next-button {
-        padding: 6px 12px;
-        font-size: 10px;
-      }
-    }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Rosarivo:ital@0;1&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tapp - Video Intro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Welcome to Tapp</title>
+  <link rel="stylesheet" href="/shared-styles.css" />
+  <link rel="stylesheet" href="/mobile-overrides.css" />
+
+  <!-- Font -->
   <style>
-    html, body {
+    @font-face {
+      font-family: 'Bookman JF Pro';
+      src: url('/assets/fonts/BookmanJFPro-Regular.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #F1F4F7 0%, #E8EDF3 100%);
       margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Poppins', sans-serif;
-      background: black;
-    }
-
-    /* 🖤 Left Side - Tapp Logo */
-    .center-overlay {
-      position: absolute;
-      top: 50%;
-      left: 25%;
-      transform: translate(-50%, -50%);
-      z-index: 4;
-    }
-
-    .logo-and-signup {
+      font-family: 'Bookman JF Pro', serif;
+      color: #222;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 30px;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .tapp-logo {
-      width: 350px;
-      max-width: 90%;
-    }
-
-    .description-text {
-      color: white;
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-      font-weight: 400;
-      text-align: center;
-      max-width: 450px;
-      margin: 0;
-    }
-
-    /* 🎥 Right Side - Slimmer Video */
-    .video-section {
-      position: absolute;
-      top: 50%;
-      right: 10%;
-      transform: translateY(-50%);
-      width: 30%;
-      max-width: 400px;
-      z-index: 2;
+    /* Top nav with subtle animation */
+    .top-bar {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 15px 20px;
+      background: rgba(241, 244, 247, 0.95);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      transform: translateY(-100%);
+      animation: slideDown 1s ease 0.5s forwards;
     }
 
-    .video-container {
+    @keyframes slideDown {
+      to { transform: translateY(0); }
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease 1s forwards;
+    }
+
+    .tapp-logo {
+      height: 42px;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-wrap:hover .tapp-logo {
+      transform: scale(1.05);
+    }
+
+    .byline {
+      font-size: 14px;
+      color: #666;
+      font-weight: 400;
+    }
+
+    /* Main container with staggered entrance */
+    .intro-container {
       width: 100%;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+      max-width: 900px;
+      padding: 80px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
     }
 
-    .intro-video {
+    /* Video with enhanced transitions */
+    .video-wrap {
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px) scale(0.9);
+      animation: videoEntrance 1.2s ease 0.8s forwards;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    @keyframes videoEntrance {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .video-wrap.shrink {
+      transform: scale(0.75) translateY(-20px);
+      transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    video {
       width: 100%;
       height: auto;
-      object-fit: contain;
       display: block;
+      transition: filter 0.8s ease;
     }
 
-    /* Mobile background video - hidden by default */
-    .mobile-background-video {
-      display: none;
+    .video-wrap.content-visible video {
+      filter: brightness(0.7) blur(1px);
     }
 
-    /* Next button - positioned under logo */
-    .next-button {
-      padding: 14px 30px;
-      font-size: 14px;
-      border: 1px solid white;
-      border-radius: 30px;
-      background: transparent;
+    /* Enhanced overlay with better typography */
+    .video-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
       color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
+      font-weight: bold;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: opacity 1s ease;
+    }
+
+    .word {
+      opacity: 0;
+      transform: translateY(30px) scale(0.8);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .word.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .word img {
+      height: clamp(40px, 8vw, 60px);
+      vertical-align: middle;
+      filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+    }
+
+    /* Welcome content with immediate visibility */
+    .welcome-content {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
       text-align: center;
-      white-space: nowrap;
+      max-width: 750px;
+      animation: contentSlideIn 1s ease 2s forwards;
     }
 
-    .next-button:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* 💻 Laptop/Medium screen adjustments (1024px - 1366px) */
-    @media (max-width: 1366px) and (min-width: 1024px) {
-      .center-overlay {
-        left: 30%;
-      }
-      
-      .tapp-logo {
-        width: 220px;
-      }
-      
-      .description-text {
-        font-size: 11px;
-        max-width: 280px;
-      }
-      
-      .video-section {
-        right: 8%;
-        width: 28%;
-        max-width: 350px;
+    @keyframes contentSlideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
-    /* 📱 Small laptop/tablet adjustments */
-    @media (max-width: 1023px) {
-      .center-overlay {
-        left: 50%;
-        top: 70%;
-      }
-      
-      .tapp-logo {
-        width: 250px;
-    
-      }
-      
-      .description-text {
-        font-size: 12px;
-        max-width: 320px;
-        top: 70%;
-      }
-      
-      .video-section {
-        top: 65%;
-        right: 50%;
-        transform: translate(50%, -50%);
-        width: 60%;
-        max-width: 300px;
+    .welcome-content.enhanced {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .welcome-header {
+      font-size: clamp(24px, 5vw, 32px);
+      font-weight: bold;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #333, #666);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: headerAppear 0.8s ease 2.3s forwards;
+    }
+
+    @keyframes headerAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
-    /* 📱 Mobile adjustments */
-    @media (max-width: 768px) {
-      .center-overlay {
-        left: 50%;
-        top: 40%;
+    /* Enhanced profile card */
+    .erika-profile {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      padding: 28px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: profileSlideIn 0.8s ease 2.6s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes profileSlideIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .erika-profile::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.8s ease;
+    }
+
+    .erika-profile:hover::before {
+      left: 100%;
+    }
+
+    .erika-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .erika-profile:hover .erika-avatar {
+      transform: scale(1.05);
+    }
+
+    .erika-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #444;
+    }
+
+    /* Enhanced button with modern styling */
+    .enter-btn {
+      background: linear-gradient(135deg, #222 0%, #444 100%);
+      color: white;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-top: 32px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: scale(0) translateY(20px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .enter-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .enter-btn:hover::before {
+      left: 100%;
+    }
+
+    .enter-btn.pop {
+      transform: scale(1) translateY(0);
+      animation: buttonBounce 0.6s ease 3s forwards;
+    }
+
+    @keyframes buttonBounce {
+      0%, 100% { transform: scale(1) translateY(0); }
+      50% { transform: scale(1.05) translateY(-2px); }
+    }
+
+    .enter-btn:hover {
+      background: linear-gradient(135deg, #333 0%, #555 100%);
+      transform: scale(1.02) translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    }
+
+    .enter-btn:active {
+      transform: scale(0.98) translateY(0);
+    }
+
+    /* Smooth fade animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Skip button for impatient users */
+    .skip-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      color: #666;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      z-index: 50;
+    }
+
+    .skip-btn:hover {
+      opacity: 1;
+      background: rgba(255,255,255,1);
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 600px) {
+      .intro-container {
+        padding: 70px 15px 30px;
+        gap: 30px;
       }
       
-      .tapp-logo {
-        width: 280px;
+      .erika-profile {
+        padding: 20px;
+        gap: 12px;
       }
       
-      .description-text {
-        font-size: 13px;
-        max-width: 380px;
+      .erika-text {
+        font-size: 15px;
       }
       
-      .video-section {
-        top: 10%;
-        right: 50%;
-        transform: translate(50%, -50%);
-        width: 80%;
-        max-width: 280px;
+      .enter-btn {
+        font-size: 16px;
+        padding: 14px 28px;
+        margin-top: 24px;
       }
 
-      @media (max-width: 768px) {
-  .center-overlay {
-    top: 63%; /* Instead of 50% */
-  }
-}
+      .video-wrap {
+        border-radius: 12px;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- 🖤 Left Side - Tapp Logo -->
-<div class="center-overlay">
-  <div class="logo-and-signup">
-    <img src="/assets/tapp-logo-erika.png" alt="Tapp Logo" class="tapp-logo">
-    <p class="description-text">
-      Tapp's tarot readings are based on 1000s of readings from prestigious, professional psychic, Erika Owls. After a near death experience, Erika connected to a higher self and started using her psychic abilities to help people navigate life's uncertainties. Book a one on one session with her anytime.
-    </p>
-   <a href="/question-screen.html" class="next-button">Next</a>
+  <!-- Skip Animation Button -->
+  <button class="skip-btn" onclick="skipAnimation()">Skip intro</button>
 
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="logo-wrap">
+      <img src="/assets/tapp-logo.png" alt="Tapp Logo" class="tapp-logo">
+      <span class="byline">by Erika Owls</span>
+    </div>
+  </div>
+
+  <!-- Intro Container -->
+  <div class="intro-container">
+    
+    <!-- Video -->
+    <div class="video-wrap" id="videoWrap">
+      <video autoplay muted playsinline loop id="introVideo">
+        <source src="/assets/erika-intro.mp4" type="video/mp4">
+        Your browser does not support HTML video.
+      </video>
+      <!-- Overlay words -->
+      <div class="video-overlay" id="videoOverlay">
+        <span class="word" id="word1">Welcome</span>
+        <span class="word" id="word2">to</span>
+        <span class="word" id="word3">
+          <img src="/assets/tapp-logo.png" alt="Tapp Logo">
+        </span>
+      </div>
+    </div>
+
+    <!-- Welcome Content -->
+    <div class="welcome-content" id="welcomeContent">
+      <div class="welcome-header">Welcome to Tapp</div>
+      <div class="erika-profile">
+        <img src="/assets/erika-avatar.png" alt="Erika Owls" class="erika-avatar">
+        <div class="erika-text">
+          ✨ "Hi my loves, I'm Erika Owls.<br><br>
+          After thousands of personal tarot readings for people all over the world, I've created Tapp — your pocket guide to clarity, built to feel just like a real reading with me.<br><br>
+          Here's how it works:<br>
+          1️⃣ Ask anything – love, career, life, soul purpose.<br>
+          2️⃣ Choose your cards – drawn from my years of trusted readings and connected to your intuition.<br>
+          3️⃣ Get instant answers – guidance you can rely on, anytime, anywhere.<br><br>
+          💫 3 free readings every week — your intuition, always within reach." ✨
+        </div>
+      </div>
+      <button class="enter-btn" id="enterBtn" onclick="window.location.href='/index.html'">Enter Tapp</button>
+    </div>
 
   </div>
-</div>
 
-<!-- 🎥 Right Side - Full Screen Video -->
-<div class="video-section">
-  <div class="video-container">
-    <video class="intro-video" controls autoplay muted loop>
-      <source src="/assets/erika-intro.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-</div>
+  <script>
+    // Check if user has visited before
+    function checkFirstVisit() {
+      const hasVisited = localStorage.getItem('tapp_has_visited');
+      
+      if (hasVisited) {
+        // Redirect immediately if not first visit
+        window.location.href = '/index.html';
+        return false;
+      }
+      
+      return true;
+    }
 
+    // Mark user as having visited
+    function markVisited() {
+      localStorage.setItem('tapp_has_visited', 'true');
+      localStorage.setItem('tapp_first_visit_date', new Date().toISOString());
+    }
+
+    // Only proceed with welcome animation if first visit
+    if (!checkFirstVisit()) {
+      // This will redirect, so no need to run the rest
+    } else {
+      // Mark as visited immediately so refresh doesn't show welcome again
+      markVisited();
+
+      const video = document.getElementById('introVideo');
+      const videoWrap = document.getElementById('videoWrap');
+      const welcomeContent = document.getElementById('welcomeContent');
+      const enterBtn = document.getElementById('enterBtn');
+      const videoOverlay = document.getElementById('videoOverlay');
+
+      const word1 = document.getElementById('word1');
+      const word2 = document.getElementById('word2');
+      const word3 = document.getElementById('word3');
+
+      let animationComplete = false;
+
+      function revealWords() {
+        word1.classList.add('show');
+        setTimeout(() => word2.classList.add('show'), 400);
+        setTimeout(() => word3.classList.add('show'), 800);
+      }
+
+      function enhanceContent() {
+        if (animationComplete) return;
+        animationComplete = true;
+        
+        // Add subtle blur to video and shrink it
+        videoWrap.classList.add('shrink', 'content-visible');
+        
+        // Fade out overlay gradually
+        setTimeout(() => {
+          videoOverlay.style.opacity = '0';
+        }, 800);
+        
+        // Enhance welcome content visibility
+        welcomeContent.classList.add('enhanced');
+        
+        // Pop the button with a slight delay
+        setTimeout(() => {
+          enterBtn.classList.add('pop');
+        }, 1200);
+      }
+
+      function skipAnimation() {
+        // Skip directly to the enhanced state
+        video.currentTime = video.duration || 5;
+        enhanceContent();
+        
+        // Hide skip button
+        document.querySelector('.skip-btn').style.display = 'none';
+      }
+
+      // Make skipAnimation global for the button onclick
+      window.skipAnimation = skipAnimation;
+
+      // Start word animation when video plays
+      video.addEventListener('play', () => {
+        setTimeout(revealWords, 800);
+      });
+
+      // Enhanced content after video ends OR after 4 seconds
+      video.addEventListener('ended', enhanceContent);
+      setTimeout(enhanceContent, 4000);
+
+      // Hide skip button after animation completes
+      setTimeout(() => {
+        if (document.querySelector('.skip-btn')) {
+          document.querySelector('.skip-btn').style.opacity = '0';
+          setTimeout(() => {
+            document.querySelector('.skip-btn').style.display = 'none';
+          }, 300);
+        }
+      }, 6000);
+    }
+  </script>
 
 </body>
 </html>

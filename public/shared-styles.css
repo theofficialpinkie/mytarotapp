@@ -7,7 +7,7 @@
 
 /* Top Bar Styles */
 .top-bar {
-  background: white;
+  background: #F1F4F7;
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
@@ -105,12 +105,12 @@
 
   /* === LIGHT THEME OVERRIDES (paste after existing styles) === */
 :root{
-  --bg: #ffffff;
+  --bg: #F1F4F7;
   --text: #111827;           /* near-black */
   --muted: #6b7280;
-  --panel: #ffffff;
+  --panel: #F1F4F7;
   --border: #e5e7eb;         /* light gray border */
-  --bubble: #f9fafb;         /* chat bubble bg */
+  --bubble: #F1F4F7;         /* chat bubble bg */
   --bubble-alt: #f3f4f6;
   --primary: #6b46c1;        /* brand violet/indigo */
   --primary-2: #9333ea;

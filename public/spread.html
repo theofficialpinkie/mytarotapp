@@ -74,7 +74,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #fff;
+      background: #F1F4F7;
       color: #111827;
       font-family: 'Bookman JF Pro', serif;
       display: block;
@@ -98,7 +98,7 @@
       padding: 20px 40px;
       display: flex;
       flex-direction: column;
-      background: #fff;
+      background: #F1F4F7;
       border-right: 1px solid #e5e7eb;
       position: relative;
       min-height: calc(100vh - 80px);
@@ -134,6 +134,7 @@
       padding:20px;
       position:relative;
       overflow:visible;
+      background: #F1F4F7;
     }
 
     /* Shuffle / Selection / Carousel (loading container kept but empty/unused) */
@@ -312,6 +313,10 @@
       .pulse { animation: none; }
       .title { transition: none; }
     }
+#selectionProgress {
+  display: none !important;
+}
+
   </style>
 </head>
 <body>
@@ -673,7 +678,6 @@
     }
 
     function showCardSelection() {
-      addMessage('Select 6 cards that call to you.');
       showPhase('selection');
       setupCardSelection();
     }

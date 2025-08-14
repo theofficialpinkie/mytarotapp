@@ -3,6 +3,7 @@
   html body {
     display: block !important;
     padding-top: 60px !important; /* JS will set exact height */
+    background: #F1F4F7;
   }
 
   /* Stack deck -> chat on mobile */
@@ -63,6 +64,7 @@
     position: relative !important;
     float: none !important;
     flex: none !important;
+    background-color: #F1F4F7; 
 
     /* default when not dragging */
     height: 45svh !important;
@@ -90,7 +92,7 @@
     max-height: none !important;  /* let it breathe; sticky CTA will stay visible */
     margin-top: 0 !important;
     padding-top: 5px !important;
-    background-color: #fff;
+    background-color: #F1F4F7;
   }
 
   .shuffle-container { padding-top: 5px !important; }
@@ -248,7 +250,7 @@
     position: sticky;
     top: 4px;               /* sits right below the chat header */
     z-index: 2;
-    background: #fff;
+    background: #F1F4F7;
     padding-top: 4px;
     padding-bottom: 6px;
   }
