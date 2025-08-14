@@ -206,7 +206,23 @@
     }
     .close-upgrade:hover { color: #fff; }
   </style>
-
+  
+<script>
+(function(){
+  try {
+    if (!localStorage.getItem('tapp_has_visited')) {
+      localStorage.setItem('tapp_has_visited', 'true');
+      window.location.href = '/video-intro.html';
+    }
+  } catch(e) {
+    // Fallback if localStorage fails (e.g., Safari private mode)
+    document.cookie = "tapp_has_visited=true; path=/; max-age=" + 60*60*24*365;
+    if (!document.cookie.includes("tapp_has_visited")) {
+      window.location.href = '/video-intro.html';
+    }
+  }
+})();
+</script>
 
 
 </head>
