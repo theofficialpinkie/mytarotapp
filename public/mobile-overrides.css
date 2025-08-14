@@ -260,6 +260,13 @@
   color: black !important;
   border: none !important;
 }
+
+#upgradeBtn {
+  background: white !important;
+  color: black !important;
+  border: none !important;
+}
+
 }
 
 @media (max-width: 768px) {
