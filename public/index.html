@@ -1,20 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-// Check if this is first visit - if so, redirect to welcome
-const hasVisited = localStorage.getItem('tapp_has_visited');
-const urlParams = new URLSearchParams(window.location.search);
-const forceWelcome = urlParams.get('welcome') === 'true';
-
-if (!hasVisited || forceWelcome) {
-  // First visit - show welcome page
-  window.location.href = '/video-intro.html';
-}
-// If hasVisited is true, continue loading index.html normally
-</script>
 
 
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tapp - Ask Your Question</title>
@@ -106,7 +95,7 @@ if (!hasVisited || forceWelcome) {
     .question-input {
       width: 100%; max-width: 500px;
       padding: 16px 20px; font-size: 16px;
-      border: 1px white(155,155,155,0.3);
+      border: 1px solid grey;
       border-radius: 15px;
       background: rgba(255,255,255,0.05);
       color: grey; text-align: center;
