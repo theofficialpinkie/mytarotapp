@@ -218,6 +218,5 @@ process.on("unhandledRejection", err => {
 // ==========================
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-  console.log(`📁 Serving static files from: ${path.join(__dirname, "public")}`);
+  console.log(`Server running on port ${PORT}`);
 });
