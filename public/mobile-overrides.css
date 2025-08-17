@@ -263,8 +263,8 @@
 
 #upgradeBtn {
   background: white !important;
-  color: black !important;
-  border: none !important;
+  color: white !important;
+  border: white !important;
 }
 
 }
