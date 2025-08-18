@@ -95,20 +95,27 @@
 
   <a href="/index.html">Start a New Reading</a>
 
-  <script>
-    // Reset question count after payment
-    localStorage.setItem('questionCount', '0');
+<script>
+  // Reset question count after payment
+  localStorage.setItem('questionCount', '0');
+  localStorage.setItem('isPaid', 'true');
 
-    // Generate sparkles
-    const sparklesContainer = document.querySelector('.sparkles');
-    for (let i = 0; i < 30; i++) {
-      const sparkle = document.createElement('div');
-      sparkle.classList.add('sparkle');
-      sparkle.style.left = Math.random() * 100 + 'vw';
-      sparkle.style.top = Math.random() * 100 + 'vh';
-      sparkle.style.animationDelay = (Math.random() * 3) + 's';
-      sparklesContainer.appendChild(sparkle);
-    }
-  </script>
+  // Generate sparkles
+  const sparklesContainer = document.querySelector('.sparkles');
+  for (let i = 0; i < 30; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = Math.random() * 100 + 'vw';
+    sparkle.style.top = Math.random() * 100 + 'vh';
+    sparkle.style.animationDelay = (Math.random() * 3) + 's';
+    sparklesContainer.appendChild(sparkle);
+  }
+
+  // ✅ No redirect here — user stays on success page
+  // From now on, any code that checks `localStorage.getItem('isPaid')`
+  // will know the user already paid, so they’ll never see the payment wall again.
+</script>
+
+
 </body>
 </html>

@@ -14,8 +14,6 @@
     })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 </script>
 
-
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tapp - Ask Your Question</title>
@@ -128,7 +126,7 @@
     }
     .button-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
 
-    /* Upgrade Screen from fetch page */
+    /* Upgrade Screen */
     .upgrade-screen {
       position: fixed;
       inset: 0;
@@ -222,22 +220,18 @@
   .booking-button {
     font-size: 12px;
     padding: 8px 12px;
-    white-space: nowrap; /* prevents wrapping */
+    white-space: nowrap;
   }
 
   .tapp-logo {
-    height: 50px; /* shrink logo so both fit better */
+    height: 50px;
   }
 
   .top-bar {
-    padding: 10px 12px; /* tighter spacing on small screens */
-  }
-
- .top-bar {
+    padding: 10px 12px;
     flex-direction: column;
     align-items: flex-start;
-    padding: 10px 12px;
-    gap: 8px; /* space between logo and button */
+    gap: 8px;
   }
 
   .logo-wrap {
@@ -245,52 +239,14 @@
     width: 100%;
   }
 
-  .tapp-logo {
-    height: 50px; /* smaller logo for mobile */
-  }
-
   .booking-button {
     font-size: 12px;
     padding: 8px 12px;
-    align-self: center; /* center button below logo */
-    white-space: nowrap; /* prevent wrapping */
+    align-self: center;
+    white-space: nowrap;
   }
 }
-
-
-
-
-
   </style>
-<script>
-(function(){
-  try {
-    const visited = localStorage.getItem('tapp_has_visited');
-    console.log('[Index] tapp_has_visited from localStorage:', visited);
-
-    if (!visited) {
-      console.log('[Index] First visit detected — redirecting to /video-intro.html');
-      window.location.href = '/video-intro.html';
-    } else {
-      console.log('[Index] Returning visitor — skipping redirect.');
-    }
-  } catch(e) {
-    console.warn('[Index] localStorage error, falling back to cookies:', e);
-    const hasCookie = document.cookie.includes("tapp_has_visited");
-    console.log('[Index] tapp_has_visited from cookie:', hasCookie);
-
-    if (!hasCookie) {
-      console.log('[Index] First visit (cookie fallback) — redirecting to /video-intro.html');
-      window.location.href = '/video-intro.html';
-    } else {
-      console.log('[Index] Returning visitor (cookie fallback) — skipping redirect.');
-    }
-  }
-})();
-</script>
-
-
-
 </head>
 
 <body>
@@ -331,7 +287,7 @@
       <button class="close-upgrade" id="closeUpgrade" aria-label="Close">×</button>
       <h2>Upgrade for Unlimited Readings</h2>
       <p>You've reached your free limit of 3 questions for this week. Come back next week or upgrade now to ask unlimited questions anytime.</p>
-      <button class="continue-button active" id="upgradeBtn">Upgrade for £3.70 </button>
+      <button class="continue-button active" id="upgradeBtn">Upgrade for £3.33</button>
     </div>
   </div>
 
@@ -366,19 +322,23 @@
     function proceedToReading() {
       const question = questionInput.value.trim();
       if (!question) return;
+
+      const isPaid = localStorage.getItem('isPaid') === 'true';
       let count = parseInt(localStorage.getItem('questionCount') || '0', 10);
-      if (count >= 3) {
+
+      if (!isPaid && count >= 5) {
         questionSection.style.display = 'none';
         upgradeScreen.style.display = 'flex';
         return;
       }
+
       localStorage.setItem('questionCount', count + 1);
       sessionStorage.setItem('userQuestion', question);
       window.location.href = '/spread.html';
     }
 
     document.getElementById('upgradeBtn').addEventListener('click', () => {
-      window.location.href = 'https://buy.stripe.com/9B67sKaoBaMd0Jgb5tbbG01';
+      window.location.href = 'https://buy.stripe.com/3cI6oGcwJaMdajQflJbbG02';
     });
     document.getElementById('closeUpgrade').addEventListener('click', () => {
       upgradeScreen.style.display = 'none';

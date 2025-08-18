@@ -949,13 +949,6 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     function deliverReading(readingText) {
-
-  // ✅ Increment question count in localStorage
-  let questionCount = parseInt(localStorage.getItem('questionCount') || '0', 10);
-  questionCount += 1;
-  localStorage.setItem('questionCount', questionCount);
-  console.log("Questions asked so far:", questionCount);
-
   isReadingPhase = true;
   const patterns = buildCardPatterns(selectedCards);
   const shownThumbs = new Set();
@@ -977,14 +970,28 @@
           }
         }
       }
+
+      // ✅ When the LAST chunk has been displayed
       if (index === chunks.length - 1) {
         setTimeout(() => {
-          addStandaloneButton('New Reading', () => { window.location.href = '/index.html'; });
+          // ✅ Increment question count ONCE per completed reading
+          const isPaid = localStorage.getItem('isPaid') === 'true';
+          if (!isPaid) {
+            let questionCount = parseInt(localStorage.getItem('questionCount') || '0', 10);
+            questionCount += 1;
+            localStorage.setItem('questionCount', questionCount);
+            console.log("Questions asked so far:", questionCount);
+          }
+
+          addStandaloneButton('New Reading', () => { 
+            window.location.href = '/index.html'; 
+          });
         }, 600);
       }
     }, index * 1200);
   });
 }
+
 
     // ---------- boot ----------
     function bootOnce() {
