@@ -172,7 +172,14 @@
     .card-front { background-image: var(--card-image); transform: rotateY(180deg); }
     .card:not(.selected) .card-inner { transform: rotateY(0deg); }
     .card.selected .card-inner { transform: rotateY(180deg); }
-    .selection-progress { text-align:center; color:#374151; font-size:14px; margin-top:20px; }
+.selection-progress {
+  text-align: center;
+  color: #374151;
+  font-size: 14px;
+  margin: 6px 0 10px 0;   /* tighter top/bottom spacing */
+  font-weight: 500;
+}
+
 
     .popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:1000; backdrop-filter: blur(5px); }
     .popup-overlay.active { display:flex; }
@@ -348,8 +355,13 @@
 }
 
 #selectionProgress {
-  display: none !important;
+  display: none;
 }
+
+.card-selection-container.active #selectionProgress {
+  display: block;
+}
+
 
   </style>
 </head>
@@ -400,9 +412,9 @@
     <div class="loading-container" id="loadingContainer"></div>
 
     <div class="card-selection-container" id="cardSelectionContainer">
+       <div class="selection-progress" id="selectionProgress"></div>
       <div class="card-row" id="row1"></div>
       <div class="card-row" id="row2"></div>
-      <div class="selection-progress" id="selectionProgress"></div>
     </div>
 
     <div class="card-carousel-container" id="cardCarouselContainer">

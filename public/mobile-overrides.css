@@ -274,3 +274,14 @@
     padding-bottom: 30px; /* ensures dots are above chat boundary */
   }
 }
+
+@media (max-width: 768px) {
+  .selection-progress {
+    margin: 4px 0 6px 0;
+    font-size: 13px;      /* a bit smaller */
+  }
+  .card-row {
+    margin-bottom: 12px !important; /* less gap between row1 and row2 */
+    height: 180px !important;       /* optional: bring cards closer in */
+  }
+}
