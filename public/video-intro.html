@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+  <!-- Hotjar Tracking Code for Site 6493538 (name missing) -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:6493538,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Welcome to Tapp</title>
@@ -412,7 +425,7 @@
     <div class="welcome-content" id="welcomeContent">
       <div class="welcome-header">Welcome to Tapp</div>
       <div class="erika-profile">
-        <img src="/assets/erika-avatar.png" alt="Erika Owls" class="erika-avatar">
+        <img src="/assets/your-logo-here.png" alt="Erika Owls" class="erika-avatar">
         <div class="erika-text">
           ✨ "Hi my loves, I'm Erika Owls.<br><br>
           After thousands of personal tarot readings for people all over the world, I've created Tapp — your pocket guide to clarity, built to feel just like a real reading with me.<br><br>
@@ -428,104 +441,105 @@
 
   </div>
 
-  <script>
-    // Check if user has visited before
-    function checkFirstVisit() {
-      const hasVisited = localStorage.getItem('tapp_has_visited');
-      
-      if (hasVisited) {
-        // Redirect immediately if not first visit
-        window.location.href = '/index.html';
-        return false;
-      }
-      
-      return true;
+ <script>
+  // Check if user has visited before
+  function checkFirstVisit() {
+    const hasVisited = localStorage.getItem('tapp_has_visited');
+    if (hasVisited) {
+      // Redirect immediately if not first visit
+      window.location.href = '/index.html';
+      return false;
+    }
+    return true;
+  }
+
+  // Mark user as having visited
+  function markVisited() {
+    localStorage.setItem('tapp_has_visited', 'true');
+    localStorage.setItem('tapp_first_visit_date', new Date().toISOString());
+  }
+
+  // Only proceed with welcome animation if first visit
+  if (!checkFirstVisit()) {
+    // This will redirect, so no need to run the rest
+  } else {
+    const video = document.getElementById('introVideo');
+    const videoWrap = document.getElementById('videoWrap');
+    const welcomeContent = document.getElementById('welcomeContent');
+    const enterBtn = document.getElementById('enterBtn');
+    const videoOverlay = document.getElementById('videoOverlay');
+
+    const word1 = document.getElementById('word1');
+    const word2 = document.getElementById('word2');
+    const word3 = document.getElementById('word3');
+
+    let animationComplete = false;
+
+    function revealWords() {
+      word1.classList.add('show');
+      setTimeout(() => word2.classList.add('show'), 400);
+      setTimeout(() => word3.classList.add('show'), 800);
     }
 
-    // Mark user as having visited
-    function markVisited() {
-      localStorage.setItem('tapp_has_visited', 'true');
-      localStorage.setItem('tapp_first_visit_date', new Date().toISOString());
-    }
+    function enhanceContent() {
+      if (animationComplete) return;
+      animationComplete = true;
 
-    // Only proceed with welcome animation if first visit
-    if (!checkFirstVisit()) {
-      // This will redirect, so no need to run the rest
-    } else {
-      // Mark as visited immediately so refresh doesn't show welcome again
+      // Now mark as visited when intro finishes
       markVisited();
 
-      const video = document.getElementById('introVideo');
-      const videoWrap = document.getElementById('videoWrap');
-      const welcomeContent = document.getElementById('welcomeContent');
-      const enterBtn = document.getElementById('enterBtn');
-      const videoOverlay = document.getElementById('videoOverlay');
+      // Add subtle blur to video and shrink it
+      videoWrap.classList.add('shrink', 'content-visible');
 
-      const word1 = document.getElementById('word1');
-      const word2 = document.getElementById('word2');
-      const word3 = document.getElementById('word3');
-
-      let animationComplete = false;
-
-      function revealWords() {
-        word1.classList.add('show');
-        setTimeout(() => word2.classList.add('show'), 400);
-        setTimeout(() => word3.classList.add('show'), 800);
-      }
-
-      function enhanceContent() {
-        if (animationComplete) return;
-        animationComplete = true;
-        
-        // Add subtle blur to video and shrink it
-        videoWrap.classList.add('shrink', 'content-visible');
-        
-        // Fade out overlay gradually
-        setTimeout(() => {
-          videoOverlay.style.opacity = '0';
-        }, 800);
-        
-        // Enhance welcome content visibility
-        welcomeContent.classList.add('enhanced');
-        
-        // Pop the button with a slight delay
-        setTimeout(() => {
-          enterBtn.classList.add('pop');
-        }, 1200);
-      }
-
-      function skipAnimation() {
-        // Skip directly to the enhanced state
-        video.currentTime = video.duration || 5;
-        enhanceContent();
-        
-        // Hide skip button
-        document.querySelector('.skip-btn').style.display = 'none';
-      }
-
-      // Make skipAnimation global for the button onclick
-      window.skipAnimation = skipAnimation;
-
-      // Start word animation when video plays
-      video.addEventListener('play', () => {
-        setTimeout(revealWords, 800);
-      });
-
-      // Enhanced content after video ends OR after 4 seconds
-      video.addEventListener('ended', enhanceContent);
-      setTimeout(enhanceContent, 4000);
-
-      // Hide skip button after animation completes
+      // Fade out overlay gradually
       setTimeout(() => {
-        if (document.querySelector('.skip-btn')) {
-          document.querySelector('.skip-btn').style.opacity = '0';
-          setTimeout(() => {
-            document.querySelector('.skip-btn').style.display = 'none';
-          }, 300);
-        }
-      }, 6000);
+        videoOverlay.style.opacity = '0';
+      }, 800);
+
+      // Enhance welcome content visibility
+      welcomeContent.classList.add('enhanced');
+
+      // Pop the button with a slight delay
+      setTimeout(() => {
+        enterBtn.classList.add('pop');
+      }, 1200);
     }
-  </script>
+
+    function skipAnimation() {
+      // Mark visited immediately on skip
+      markVisited();
+
+      // Skip directly to the enhanced state
+      video.currentTime = video.duration || 5;
+      enhanceContent();
+
+      // Hide skip button
+      document.querySelector('.skip-btn').style.display = 'none';
+    }
+
+    // Make skipAnimation global for the button onclick
+    window.skipAnimation = skipAnimation;
+
+    // Start word animation when video plays
+    video.addEventListener('play', () => {
+      setTimeout(revealWords, 800);
+    });
+
+    // Enhanced content after video ends OR after 4 seconds
+    video.addEventListener('ended', enhanceContent);
+    setTimeout(enhanceContent, 4000);
+
+    // Hide skip button after animation completes
+    setTimeout(() => {
+      if (document.querySelector('.skip-btn')) {
+        document.querySelector('.skip-btn').style.opacity = '0';
+        setTimeout(() => {
+          document.querySelector('.skip-btn').style.display = 'none';
+        }, 300);
+      }
+    }, 6000);
+  }
+</script>
 
 </body>
 </html>

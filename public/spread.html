@@ -1,9 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+  <!-- Hotjar Tracking Code for Site 6493538 (name missing) -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:6493538,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your Reading with Erika</title>
+  <title>Your Reading with "Your Name Here"</title>
 
   <!-- Base styles -->
   <link rel="stylesheet" href="/shared-styles.css" />
@@ -12,7 +26,7 @@
   <!-- Preload tiny but critical assets -->
   <link rel="preload" as="font" href="/assets/fonts/BookmanJFPro-Regular.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="image" href="/assets/backs/card-back.webp">
-  <link rel="preload" as="image" href="/assets/erika-avatar.png">
+  <link rel="preload" as="image" href="/assets/your-logo-here.png">
 
   <script>
     // Insert top bar
@@ -20,8 +34,8 @@
       document.body.insertAdjacentHTML('afterbegin', `
         <div class="top-bar">
           <div class="logo-wrap">
-            <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
-            <span class="byline">by Erika Owls</span>
+            <img src="/assets/your-tarot-app-logo.png" class="tapp-logo" alt="Tapp Logo">
+            <span class="byline">by Your Name Here</span>
           </div>
           <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
             Book a 1-1 Psychic Session
@@ -158,7 +172,14 @@
     .card-front { background-image: var(--card-image); transform: rotateY(180deg); }
     .card:not(.selected) .card-inner { transform: rotateY(0deg); }
     .card.selected .card-inner { transform: rotateY(180deg); }
-    .selection-progress { text-align:center; color:#374151; font-size:14px; margin-top:20px; }
+.selection-progress {
+  text-align: center;
+  color: #374151;
+  font-size: 14px;
+  margin: 6px 0 10px 0;   /* tighter top/bottom spacing */
+  font-weight: 500;
+}
+
 
     .popup-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:1000; backdrop-filter: blur(5px); }
     .popup-overlay.active { display:flex; }
@@ -183,8 +204,8 @@
     .carousel-card.hidden { z-index:1; opacity:.3; transform: scale(0.6); }
 
     .carousel-nav { display:flex; gap:10px; margin-top:30px; }
-    .nav-dot { width:12px; height:12px; border-radius:50%; background:#e5e7eb; cursor:pointer; transition:all .3s; }
-    .nav-dot.active { background:#111827; transform: scale(1.2); }
+    .nav-dot { width:12px; height:12px; border-radius:50%; background:#e5e7eb; cursor:pointer; transition:all .3s;  display: none !important; }
+    .nav-dot.active { background:#111827; transform: scale(1.2);  display: none !important; }
 
     .carousel-arrow {
       position:absolute; top:50%; transform:translateY(-50%);
@@ -193,7 +214,7 @@
       background: rgba(0,0,0,0.04);
       color:#111827; font-size:22px; line-height:1; cursor:pointer;
       display:grid; place-items:center;
-      transition: transform .15s, background .2s, box-shadow .2s;
+      transition: transform .15s, background-transform .2s, box-shadow .2s;
     }
     .carousel-arrow:hover { transform: translateY(-50%) translateY(-1px); background: rgba(0,0,0,0.08); }
     .carousel-arrow.prev { left:8px; }
@@ -313,9 +334,34 @@
       .pulse { animation: none; }
       .title { transition: none; }
     }
-#selectionProgress {
-  display: none !important;
+
+    #upgradeScreen .continue-button.active,
+.upgrade-panel .continue-button.active {
+  background: white !important;
+  color: white !important;
+  border: none !important;
 }
+
+#upgradeBtn {
+  background: white !important;
+  color: white !important;
+  border: none !important;
+}
+
+.upgrade-panel .continue-button.active {
+  background: white !important;
+  color: white !important;
+  border: none !important;
+}
+
+#selectionProgress {
+  display: none;
+}
+
+.card-selection-container.active #selectionProgress {
+  display: block;
+}
+
 
   </style>
 </head>
@@ -345,9 +391,9 @@
       </div>
     </div>
     <div class="chat-header">
-      <img src="/assets/erika-avatar.png" alt="Erika Owls" class="erika-avatar" onerror="this.style.display='none'" />
+      <img src="/assets/your-logo-here.png" alt="Erika Owls" class="erika-avatar" onerror="this.style.display='none'" />
       <div class="erika-info">
-        <h2>Erika Owls</h2>
+        <h2>Your Name Here</h2>
         <p>Spiritual Mentor & Tarot Reader</p>
       </div>
     </div>
@@ -366,9 +412,9 @@
     <div class="loading-container" id="loadingContainer"></div>
 
     <div class="card-selection-container" id="cardSelectionContainer">
+       <div class="selection-progress" id="selectionProgress"></div>
       <div class="card-row" id="row1"></div>
       <div class="card-row" id="row2"></div>
-      <div class="selection-progress" id="selectionProgress"></div>
     </div>
 
     <div class="card-carousel-container" id="cardCarouselContainer">
@@ -476,7 +522,7 @@
       wrap.className = 'message-wrapper';
 
       const avatar = document.createElement('img');
-      avatar.src = '/assets/erika-avatar.png';
+      avatar.src = '/assets/your-logo-here.png';
       avatar.className = 'message-avatar';
       avatar.onerror = function () {
         const fallback = document.createElement('div');
@@ -915,13 +961,6 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     function deliverReading(readingText) {
-
-  // ✅ Increment question count in localStorage
-  let questionCount = parseInt(localStorage.getItem('questionCount') || '0', 10);
-  questionCount += 1;
-  localStorage.setItem('questionCount', questionCount);
-  console.log("Questions asked so far:", questionCount);
-
   isReadingPhase = true;
   const patterns = buildCardPatterns(selectedCards);
   const shownThumbs = new Set();
@@ -943,14 +982,28 @@
           }
         }
       }
+
+      // ✅ When the LAST chunk has been displayed
       if (index === chunks.length - 1) {
         setTimeout(() => {
-          addStandaloneButton('New Reading', () => { window.location.href = '/index.html'; });
+          // ✅ Increment question count ONCE per completed reading
+          const isPaid = localStorage.getItem('isPaid') === 'true';
+          if (!isPaid) {
+            let questionCount = parseInt(localStorage.getItem('questionCount') || '0', 10);
+            questionCount += 1;
+            localStorage.setItem('questionCount', questionCount);
+            console.log("Questions asked so far:", questionCount);
+          }
+
+          addStandaloneButton('New Reading', () => { 
+            window.location.href = '/index.html'; 
+          });
         }, 600);
       }
     }, index * 1200);
   });
 }
+
 
     // ---------- boot ----------
     function bootOnce() {
