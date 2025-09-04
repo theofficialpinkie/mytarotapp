@@ -17,7 +17,7 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your Reading with Erika</title>
+  <title>Your Reading with "Your Name Here"</title>
 
   <!-- Base styles -->
   <link rel="stylesheet" href="/shared-styles.css" />
@@ -26,7 +26,7 @@
   <!-- Preload tiny but critical assets -->
   <link rel="preload" as="font" href="/assets/fonts/BookmanJFPro-Regular.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="image" href="/assets/backs/card-back.webp">
-  <link rel="preload" as="image" href="/assets/erika-avatar.png">
+  <link rel="preload" as="image" href="/assets/your-logo-here.png">
 
   <script>
     // Insert top bar
@@ -34,8 +34,8 @@
       document.body.insertAdjacentHTML('afterbegin', `
         <div class="top-bar">
           <div class="logo-wrap">
-            <img src="/assets/tapp-logo.png" class="tapp-logo" alt="Tapp Logo">
-            <span class="byline">by Erika Owls</span>
+            <img src="/assets/your-tarot-app-logo.png" class="tapp-logo" alt="Tapp Logo">
+            <span class="byline">by Your Name Here</span>
           </div>
           <a href="https://erikaowlsspiritualmentor.as.me/schedule/e19f47fc" target="_blank" class="booking-button">
             Book a 1-1 Psychic Session
@@ -391,9 +391,9 @@
       </div>
     </div>
     <div class="chat-header">
-      <img src="/assets/erika-avatar.png" alt="Erika Owls" class="erika-avatar" onerror="this.style.display='none'" />
+      <img src="/assets/your-logo-here.png" alt="Erika Owls" class="erika-avatar" onerror="this.style.display='none'" />
       <div class="erika-info">
-        <h2>Erika Owls</h2>
+        <h2>Your Name Here</h2>
         <p>Spiritual Mentor & Tarot Reader</p>
       </div>
     </div>
@@ -522,7 +522,7 @@
       wrap.className = 'message-wrapper';
 
       const avatar = document.createElement('img');
-      avatar.src = '/assets/erika-avatar.png';
+      avatar.src = '/assets/your-logo-here.png';
       avatar.className = 'message-avatar';
       avatar.onerror = function () {
         const fallback = document.createElement('div');
