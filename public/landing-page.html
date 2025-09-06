@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyTarotApp — Launch Your Own Digital Tarot Experience</title>
+  <style>
+    :root{ --ink:#0c0f2e; --cream:#faf8f3; --gold:#d1b46a; --line:#e9e6df; --muted:#4b5563; --kvBlack:#0a0c14; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--cream);color:var(--ink)}
+    a{color:inherit;text-decoration:none}
+
+    /* Site bg + tiny charms */
+    .site-bg{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+    .site-bg::before{
+      content:""; position:absolute; inset:0;
+      background:
+        radial-gradient(1000px 260px at 70% -10%, rgba(209,180,106,.10), transparent 60%),
+        radial-gradient(1000px 260px at 20% 110%, rgba(209,180,106,.08), transparent 60%),
+        repeating-linear-gradient(to right, rgba(12,15,46,.05), rgba(12,15,46,.05) 1px, transparent 1px, transparent 48px),
+        repeating-linear-gradient(to bottom, rgba(12,15,46,.05), rgba(12,15,46,.05) 1px, transparent 1px, transparent 42px);
+      opacity:.06; mix-blend:multiply;
+    }
+    .charm{position:absolute;width:46px;aspect-ratio:2/3;border-radius:8px;overflow:hidden;border:1px solid rgba(0,0,0,.04);box-shadow:0 6px 14px rgba(0,0,0,.06);opacity:.08;transform:rotate(-9deg)}
+    .charm img{width:100%;height:100%;object-fit:cover}
+    .charm.c1{top:12%; left:6%}.charm.c2{top:38%; right:8%; transform:rotate(7deg)}
+    .charm.c3{bottom:12%; left:28%; transform:rotate(5deg)}.charm.c4{top:64%; left:72%; transform:rotate(-6deg)}
+    @media (max-width:980px){ .charm{display:none} }
+
+    /* Header */
+    header{position:sticky;top:0;background:rgba(250,248,243,.92);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--line);z-index:50}
+    .nav{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-mark{width:28px;height:42px;border-radius:8px;background:linear-gradient(160deg,#202736,#0f1322)}
+    .brand span{font-weight:600;letter-spacing:.2px}
+
+    /* CTA */
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;font-weight:500;border:1px solid transparent;transition:transform .12s ease, box-shadow .2s ease, background .2s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:linear-gradient(135deg,var(--ink),#1b2240); color:#fff; border-color:rgba(0,0,0,.2); box-shadow:0 8px 24px rgba(12,15,32,.22)}
+    .btn-primary:hover{box-shadow:0 12px 28px rgba(12,15,32,.28)}
+
+    /* Hero */
+    .hero{padding:50px 20px;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;position:relative; z-index:1; }
+    .hero::after{content:"";position:absolute;inset:0;background:url('/assets/wonderland-bg.png') center/cover no-repeat;opacity:.06;pointer-events:none;z-index:-2}
+    .hero > * { position:relative; z-index:1; }
+    .h1{font-weight:300;font-size:44px;line-height:1.1;margin:.2em 0 .4em}
+    .sub{color:var(--muted);margin:-6px 0 18px}
+
+    /* Bracelet squiggle */
+    .hero-squiggle{position:absolute;left:-8vw;right:-8vw;top:46%;height:120px;z-index:0;pointer-events:none}
+    .hero-squiggle svg{width:100%;height:100%}
+    .hero-squiggle path.main{fill:none;stroke:url(#sqBracelet);stroke-width:1.7;vector-effect:non-scaling-stroke}
+    .hero-squiggle path.glow{fill:none;stroke:rgba(255,255,255,.18);stroke-width:.8;vector-effect:non-scaling-stroke;mix-blend-mode:screen}
+
+    .hero-charms{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+    .h-charm{position:absolute;width:52px;aspect-ratio:2/3;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,.05);box-shadow:0 8px 18px rgba(0,0,0,.08);opacity:.10;mix-blend:multiply;animation:floaty var(--dur,10s) ease-in-out infinite}
+    .h-charm img{width:100%;height:100%;object-fit:cover}
+    .h1c{ left:8%;  top:18%; transform:rotate(-7deg) }
+    .h2c{ right:6%; top:14%; transform:rotate(6deg); --dur:12s }
+    .h3c{ left:24%; bottom:8%; transform:rotate(5deg); --dur:14s }
+    .h4c{ right:22%; bottom:12%; transform:rotate(-6deg); --dur:11s }
+    @keyframes floaty{0%,100%{transform:translateY(0) rotate(var(--rot,0deg))}50%{transform:translateY(-8px) rotate(calc(var(--rot,0deg) + 2deg))}}
+    @media (max-width:980px){ .h-charm{display:none} }
+
+    .spotlight{display:grid;place-items:center}
+    .device{position:relative;width:min(420px,70%);aspect-ratio:5/8.5;border-radius:34px;padding:12px;background:linear-gradient(180deg,#fefefe,#f8f6ef);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.6)}
+    .device::after{content:"";position:absolute;inset:0;border-radius:34px;pointer-events:none;background:linear-gradient(140deg, rgba(209,180,106,.18), transparent 50%);mix-blend:multiply}
+    .device-screen{position:absolute;inset:12px;border-radius:14px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+    .device video{width:100%;height:100%;object-fit:cover;display:block}
+    .device-notch{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:42%;height:22px;background:rgba(16,18,32,.92);border-bottom-left-radius:14px;border-bottom-right-radius:14px;box-shadow:0 1px 0 rgba(255,255,255,.08) inset}
+    .device-btn{position:absolute;width:3px;border-radius:3px;background:#d9d6cd;opacity:.6}
+    .btn-vol-up{left:-3px;top:80px;height:38px}.btn-vol-dn{left:-3px;top:124px;height:38px}.btn-power{right:-3px;top:108px;height:60px}
+
+    /* Key Values */
+    .kv.kv-banner{position:relative;max-width:1180px;margin:60px auto;border-radius:24px;overflow:hidden;background:var(--kvBlack);box-shadow:0 16px 42px rgba(0,0,0,.14);isolation:isolate}
+    .kv-text{position:relative;z-index:2;display:grid;place-items:center;min-height:320px;padding:60px 18px;text-align:center}
+    .kv-rotator{position:relative;width:min(1100px,94vw);margin:0 auto;min-height:clamp(48px,8vw,84px)}
+    .kv-rotator span{position:absolute;left:50%;transform:translate(-50%,14px);opacity:0;color:#fff;font-size:clamp(22px,3.4vw,40px);font-weight:400;letter-spacing:.2px;line-height:1.25;text-shadow:0 2px 14px rgba(0,0,0,.28);transition:opacity .8s ease, transform .8s ease;white-space:nowrap;text-wrap:balance}
+    .kv-rotator span.show{opacity:1;transform:translate(-50%,0)}
+
+    /* How it works – image-based */
+    .how{position:relative;padding:8px 0 0}
+    .how-step{max-width:1080px;margin:36px auto;padding:32px 20px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,#ffffff,#fbf8f0);box-shadow:0 12px 28px rgba(0,0,0,.06);display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:center;position:relative;z-index:1}
+    .how-step.even{grid-template-columns:.95fr 1.05fr;background:linear-gradient(180deg,#ffffff,#f6f3eb)}
+    .how-overline{display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
+    .how h3{margin:0 0 10px;font-size:26px;font-weight:400}
+    .how p{margin:0;color:var(--muted);font-size:16px;line-height:1.6}
+
+    .how-viz{
+      border-radius:16px;border:1px solid var(--line);
+      background:linear-gradient(180deg,#fff,#f5f1e9);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 10px 20px rgba(0,0,0,.06);
+      overflow:hidden; position:relative;
+      aspect-ratio: 16/10;   /* keeps a nice proportion */
+    }
+    .how-viz img{
+      width:100%; height:100%; object-fit:cover; display:block;
+    }
+
+    .connector{position:absolute;left:-8vw;right:-8vw;bottom:-28px;height:70px;pointer-events:none;opacity:.6;z-index:0}
+    .connector svg{width:100%;height:100%}
+    .connector path{fill:none;stroke:rgba(209,180,106,.55);stroke-width:1.6;vector-effect:non-scaling-stroke}
+    .how-step:last-of-type .connector{display:none}
+
+    /* Tarot six */
+    .tarot-six{max-width:1180px;margin:18px auto 70px;padding:0 20px}
+    .tarot-six .row{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; padding:8px 0;}
+    .tarot-six .tile{width:160px; aspect-ratio:2/3; border-radius:14px; overflow:hidden; border:1px solid var(--line); background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.08); animation:floatCard var(--dur,12s) ease-in-out infinite; transform:translateZ(0);}
+    .tarot-six .tile img{width:100%;height:100%;object-fit:cover;display:block}
+    @keyframes floatCard{0%,100%{ transform:translateY(0) rotate(var(--rot,0deg)) }50%{ transform:translateY(-6px) rotate(calc(var(--rot,0deg) + .6deg)) }}
+
+    /* About */
+    .about{max-width:1180px;margin:0 auto 20px;padding:46px 20px;display:grid;grid-template-columns:1fr 1.1fr;gap:26px;align-items:center}
+    .about h2{font-weight:300;font-size:30px;margin:0 0 10px}
+    .about p{color:var(--muted);margin:0;line-height:1.6}
+    .media-frame{position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--line); background:linear-gradient(180deg,#fff,#f6f3eb); box-shadow:0 16px 40px rgba(0,0,0,.10), inset 0 0 0 1px rgba(255,255,255,.5); aspect-ratio:16/9; display:block;}
+    .media-frame video,.media-frame img{width:100%;height:100%;object-fit:cover;display:block}
+    .media-frame::after{content:""; position:absolute; inset:0; pointer-events:none; border-radius:18px; background:linear-gradient(140deg, rgba(209,180,106,.14), transparent 55%); mix-blend-mode:multiply;}
+
+    footer{border-top:1px solid var(--line);padding:20px 20px;color:#6b7280;text-align:center;margin-top:40px}
+
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .h1{font-size:34px}
+      .device{width:88%}
+      .kv.kv-banner{margin:40px 16px;border-radius:18px}
+      .kv-text{min-height:260px;padding:36px 14px}
+      .kv-rotator{width:92vw}
+      .kv-rotator span{white-space:normal;font-size:clamp(18px,5.2vw,22px)}
+      .how-step{grid-template-columns:1fr;gap:18px;padding:24px}
+      .tarot-six .tile{ width:132px; }
+      .about{grid-template-columns:1fr;gap:16px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .h-charm{animation:none}.tarot-six .tile{animation:none}.kv-rotator span{ transition:none }
+    }
+  </style>
+</head>
+<body>
+  <!-- background & charms -->
+  <div class="site-bg" aria-hidden="false">
+    <div class="charm c1"><img src="/assets/cards/six-of-pentacles/stars.png" alt=""></div>
+    <div class="charm c2"><img src="/assets/charms/charm-sun.webp" alt=""></div>
+    <div class="charm c3"><img src="/assets/charms/charm-moon.webp" alt=""></div>
+    <div class="charm c4"><img src="/assets/charms/charm-fool.webp" alt=""></div>
+  </div>
+
+  <header>
+    <div class="nav">
+      <div class="brand"><div class="brand-mark"></div><span>MyTarotApp</span></div>
+      <a class="btn btn-primary" href="mailto:hello@yourdomain.com?subject=Schedule%20a%20Call">Schedule a call</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-squiggle" aria-hidden="true">
+      <svg viewBox="0 0 1400 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sqBracelet" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="rgba(209,180,106,.25)"/>
+            <stop offset="0.45" stop-color="rgba(209,180,106,.78)"/>
+            <stop offset="1" stop-color="rgba(209,180,106,.25)"/>
+          </linearGradient>
+        </defs>
+        <path class="main" d="M-20,18 C 110,2, 215,80, 330,46 S 555,18, 670,64 S 850,106, 980,44 S 1200,34, 1350,86"/>
+        <path class="glow" d="M-20,18 C 110,2, 215,80, 330,46 S 555,18, 670,64 S 850,106, 980,44 S 1200,34, 1350,86"/>
+      </svg>
+    </div>
+    <div class="hero-charms" aria-hidden="true">
+      <div class="h-charm h1c" style="--rot:-6deg;"><img src="/assets/charms/charm-empress.webp" alt=""></div>
+      <div class="h-charm h2c" style="--rot:6deg;"><img src="/assets/charms/charm-magician.webp" alt=""></div>
+      <div class="h-charm h3c" style="--rot:3deg;"><img src="/assets/charms/charm-star.webp" alt=""></div>
+      <div class="h-charm h4c" style="--rot:-4deg;"><img src="/assets/charms/charm-sun.webp" alt=""></div>
+    </div>
+
+    <div>
+      <h1 class="h1">Launch Your Own Digital Tarot Experience</h1>
+      <p class="sub">Beautiful deck design, interactive readings, and subscriptions—wrapped in your brand.</p>
+      <a class="btn btn-primary" href="mailto:hello@yourdomain.com?subject=Schedule%20a%20Call">Schedule a call</a>
+    </div>
+
+    <div class="spotlight">
+      <div class="device" aria-label="App preview device frame">
+        <div class="device-notch" aria-hidden="true"></div>
+        <div class="device-screen">
+          <video src="/assets/demo/demo.mp4" poster="/assets/demo/poster.jpg" autoplay muted playsinline loop></video>
+        </div>
+        <div class="device-btn btn-vol-up" aria-hidden="true"></div>
+        <div class="device-btn btn-vol-dn" aria-hidden="true"></div>
+        <div class="device-btn btn-power" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY VALUES -->
+  <section class="kv kv-banner" id="values" aria-label="Key values">
+    <div class="kv-text">
+      <div class="kv-rotator" id="kvRotator">
+        <span class="show">Become the face of your own technology product</span>
+        <span>Offer new ways for followers to engage with tarot on the go</span>
+        <span>Earn subscription revenue while you sleep</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAROT SIX -->
+  <section class="tarot-six" aria-label="Tarot visuals">
+    <div class="row">
+      <div class="tile" style="--rot:-2deg; --dur:12s"><img src="/assets/cards/landingpage/the-chariot.webp" alt="The Chariot"></div>
+      <div class="tile" style="--rot:2deg; --dur:13s"><img src="/assets/cards/landingpage/six-of-pentacles.webp" alt="Six of Pentacles"></div>
+      <div class="tile" style="--rot:-1deg; --dur:14s"><img src="/assets/cards/landingpage/the-high-priestess.webp" alt="The High Priestess"></div>
+      <div class="tile" style="--rot:1deg; --dur:12.5s"><img src="/assets/cards/landingpage/the-hanged-man.webp" alt="The Hanged Man"></div>
+      <div class="tile" style="--rot:-2deg; --dur:15s"><img src="/assets/cards/landingpage/the-emperor.webp" alt="The Emperor"></div>
+      <div class="tile" style="--rot:1.5deg; --dur:13.5s"><img src="/assets/cards/landingpage/the-lovers.webp" alt="The Lovers"></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS — now full images -->
+  <div class="how" aria-label="How it works">
+    <!-- DESIGN -->
+    <section class="how-step" id="design">
+      <div>
+        <span class="how-overline">Step 1</span>
+        <h3>Design your digital deck</h3>
+        <p>Your own beautiful digital deck and brand elements—sized for web &amp; mobile.</p>
+      </div>
+      <div class="how-viz">
+        <img src="/assets/cards/landingpage/deck-design-graphic2.png" alt="Design visuals">
+      </div>
+      <div class="connector" aria-hidden="true">
+        <svg viewBox="0 0 1400 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C140,10 280,60 420,40 S700,10 840,40 1120,70 1260,40 1400,10 1400,10"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ENGAGE -->
+    <section class="how-step even" id="engage">
+      <div class="how-viz">
+        <img src="/assets/cards/landingpage/App-Screens-3.png" alt="Engage visuals">
+      </div>
+      <div>
+        <span class="how-overline">Step 2</span>
+        <h3>Engage your audience</h3>
+        <p>Interactive readings and spreads your audience can use anytime, anywhere.</p>
+      </div>
+      <div class="connector" aria-hidden="true">
+        <svg viewBox="0 0 1400 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,30 C160,60 320,20 480,35 S800,52 960,28 1200,18 1400,40"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- EARN -->
+    <section class="how-step" id="earn">
+      <div>
+        <span class="how-overline">Step 3</span>
+        <h3>Earn recurring revenue</h3>
+        <p>Subscriptions with Stripe—own the customer relationship and recurring revenue.</p>
+      </div>
+      <div class="how-viz">
+        <img src="/assets/cards/landingpage/earn-graphic.png" alt="Earn visuals">
+      </div>
+    </section>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about" class="about">
+    <div class="media-frame">
+      <video src="/assets/about/me.mp4" poster="/assets/about/me-poster.jpg" playsinline controls></video>
+    </div>
+    <div>
+      <h2>About Me</h2>
+      <p>I’m Priyanka. I created My Tarot App to make quality tarot experiences available through technology while feeling more connected to tarot readers people trust. </p>
+    </div>
+  </section>
+
+  <footer>© <span id="y"></span> MyTarotApp — built with care</footer>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+    // rotate key values
+    const texts = Array.from(document.querySelectorAll('#kvRotator span'));
+    let idx = 0;
+    setInterval(()=>{ texts[idx].classList.remove('show'); idx = (idx + 1) % texts.length; texts[idx].classList.add('show'); }, 3200);
+  </script>
+</body>
+</html>

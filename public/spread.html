@@ -744,47 +744,66 @@
     }
 
     function fanCards(container, cards, upwardCurve) {
-      const total = cards.length;
-      const mobile = isMobileView();
-      const ANGLE_SPREAD = mobile ? 36 : 50;
-      const OFFSET_STEP  = mobile ? 32 : 46;
-      const LIFT_FACTOR  = mobile ? 6  : 8;
+  const total = cards.length;
+  const mobile = isMobileView();
+  const ANGLE_SPREAD = mobile ? 36 : 50;
+  const OFFSET_STEP  = mobile ? 32 : 46;
+  const LIFT_FACTOR  = mobile ? 6  : 8;
 
-      const angleStep = total > 1 ? ANGLE_SPREAD / (total - 1) : 0;
-      const startAngle = -ANGLE_SPREAD / 2;
+  const angleStep = total > 1 ? ANGLE_SPREAD / (total - 1) : 0;
+  const startAngle = -ANGLE_SPREAD / 2;
 
-      cards.forEach((card, i) => {
-        const el = document.createElement('div');
-        el.className = 'card';
+  cards.forEach((card, i) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    if (card.isPlaceholder) el.classList.add('placeholder'); // style hook
 
-        const inner = document.createElement('div');
-        inner.className = 'card-inner';
+    const inner = document.createElement('div');
+    inner.className = 'card-inner';
 
-        const back = document.createElement('div');
-        back.className = 'card-face card-back';
+    const back = document.createElement('div');
+    back.className = 'card-face card-back';
 
-        const front = document.createElement('div');
-        front.className = 'card-face card-front';
-        front.dataset.image = card.image;
-
-        inner.appendChild(back);
-        inner.appendChild(front);
-        el.appendChild(inner);
-
-        const angle = startAngle + i * angleStep;
-        const centerIndex = (total - 1) / 2;
-        const offset = (i - centerIndex) * OFFSET_STEP;
-        const lift = upwardCurve ? -Math.abs(i - centerIndex) * LIFT_FACTOR : 0;
-
-        el.style.transform = `translate(${offset}px, ${lift}px) rotate(${angle}deg)`;
-        el._offset = offset; el._lift = lift; el._angle = angle;
-
-        el.addEventListener('click', () => selectCard(el, card));
-        container.appendChild(el);
-      });
-
-      warmUpFaces(container);
+    const front = document.createElement('div');
+    front.className = 'card-face card-front';
+    if (!card.isPlaceholder) {
+      // only real cards get a face image
+      front.dataset.image = card.image;
     }
+
+    inner.appendChild(back);
+    inner.appendChild(front);
+    el.appendChild(inner);
+
+    const angle = startAngle + i * angleStep;
+    const centerIndex = (total - 1) / 2;
+    const offset = (i - centerIndex) * OFFSET_STEP;
+    const lift = upwardCurve ? -Math.abs(i - centerIndex) * LIFT_FACTOR : 0;
+
+    el.style.transform = `translate(${offset}px, ${lift}px) rotate(${angle}deg)`;
+    el._offset = offset; el._lift = lift; el._angle = angle;
+
+    // Disable selection if placeholder
+    el.addEventListener('click', () => {
+      if (card.isPlaceholder) return;
+      selectCard(el, card);
+    });
+
+    // Accessibility hint
+    if (card.isPlaceholder) {
+      el.setAttribute('aria-hidden', 'true');
+      el.setAttribute('title', 'Not selectable');
+    } else {
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-label', `Select ${card.name}`);
+    }
+
+    container.appendChild(el);
+  });
+
+  // Warm up only real card faces
+  warmUpFaces(container);
+}
 
     function warmUpFaces(container) {
       const fronts = Array.from(container.querySelectorAll('.card-front'));
