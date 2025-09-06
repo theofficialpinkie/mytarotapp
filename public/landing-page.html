@@ -25,27 +25,32 @@
     .charm img{width:100%;height:100%;object-fit:cover}
     .charm.c1{top:12%; left:6%}.charm.c2{top:38%; right:8%; transform:rotate(7deg)}
     .charm.c3{bottom:12%; left:28%; transform:rotate(5deg)}.charm.c4{top:64%; left:72%; transform:rotate(-6deg)}
-    @media (max-width:980px){ .charm{display:none} }
+    
+    @media (max-width: 980px){ .charm{display:none} }
 
     /* Header */
-    header{position:sticky;top:0;background:rgba(250,248,243,.92);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--line);z-index:50}
-    .nav{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+    header{position:sticky;top:0;background:rgba(250,248,243,.95);backdrop-filter:saturate(120%) blur(12px);border-bottom:1px solid var(--line);z-index:50}
+    .nav{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand{display:flex;align-items:center;gap:12px}
     .brand-mark{width:28px;height:42px;border-radius:8px;background:linear-gradient(160deg,#202736,#0f1322)}
     .brand span{font-weight:600;letter-spacing:.2px}
 
     /* CTA */
-    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;font-weight:500;border:1px solid transparent;transition:transform .12s ease, box-shadow .2s ease, background .2s ease}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 18px;border-radius:999px;font-weight:500;border:1px solid transparent;transition:transform .12s ease, box-shadow .2s ease, background .2s ease}
     .btn:active{transform:translateY(1px)}
     .btn-primary{background:linear-gradient(135deg,var(--ink),#1b2240); color:#fff; border-color:rgba(0,0,0,.2); box-shadow:0 8px 24px rgba(12,15,32,.22)}
     .btn-primary:hover{box-shadow:0 12px 28px rgba(12,15,32,.28)}
 
     /* Hero */
-    .hero{padding:50px 20px;max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;position:relative; z-index:1; }
+    .hero{
+      padding: clamp(32px, 6vw, 56px) 20px;
+      max-width:1080px;margin:0 auto;
+      display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:center;position:relative; z-index:1;
+    }
     .hero::after{content:"";position:absolute;inset:0;background:url('/assets/wonderland-bg.png') center/cover no-repeat;opacity:.06;pointer-events:none;z-index:-2}
     .hero > * { position:relative; z-index:1; }
-    .h1{font-weight:300;font-size:44px;line-height:1.1;margin:.2em 0 .4em}
-    .sub{color:var(--muted);margin:-6px 0 18px}
+    .h1{font-weight:300;font-size:clamp(32px,5.5vw,48px);line-height:1.15;margin:.2em 0 .4em}
+    .sub{color:var(--muted);margin:-4px 0 24px;font-size:clamp(16px,2.8vw,19px);line-height:1.5}
 
     /* Bracelet squiggle */
     .hero-squiggle{position:absolute;left:-8vw;right:-8vw;top:46%;height:120px;z-index:0;pointer-events:none}
@@ -64,10 +69,17 @@
     @media (max-width:980px){ .h-charm{display:none} }
 
     .spotlight{display:grid;place-items:center}
-    .device{position:relative;width:min(420px,70%);aspect-ratio:5/8.5;border-radius:34px;padding:12px;background:linear-gradient(180deg,#fefefe,#f8f6ef);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.6)}
+    .device{
+      position:relative;
+      width:min(420px,70%);
+      aspect-ratio:5/8.5;border-radius:34px;padding:12px;
+      background:linear-gradient(180deg,#fefefe,#f8f6ef);
+      border:1px solid var(--line);
+      box-shadow:0 20px 60px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.6)
+    }
     .device::after{content:"";position:absolute;inset:0;border-radius:34px;pointer-events:none;background:linear-gradient(140deg, rgba(209,180,106,.18), transparent 50%);mix-blend:multiply}
     .device-screen{position:absolute;inset:12px;border-radius:14px;overflow:hidden;background:#000;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
-    .device video{width:100%;height:100%;object-fit:cover;display:block}
+    .device video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
     .device-notch{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:42%;height:22px;background:rgba(16,18,32,.92);border-bottom-left-radius:14px;border-bottom-right-radius:14px;box-shadow:0 1px 0 rgba(255,255,255,.08) inset}
     .device-btn{position:absolute;width:3px;border-radius:3px;background:#d9d6cd;opacity:.6}
     .btn-vol-up{left:-3px;top:80px;height:38px}.btn-vol-dn{left:-3px;top:124px;height:38px}.btn-power{right:-3px;top:108px;height:60px}
@@ -76,27 +88,30 @@
     .kv.kv-banner{position:relative;max-width:1180px;margin:60px auto;border-radius:24px;overflow:hidden;background:var(--kvBlack);box-shadow:0 16px 42px rgba(0,0,0,.14);isolation:isolate}
     .kv-text{position:relative;z-index:2;display:grid;place-items:center;min-height:320px;padding:60px 18px;text-align:center}
     .kv-rotator{position:relative;width:min(1100px,94vw);margin:0 auto;min-height:clamp(48px,8vw,84px)}
-    .kv-rotator span{position:absolute;left:50%;transform:translate(-50%,14px);opacity:0;color:#fff;font-size:clamp(22px,3.4vw,40px);font-weight:400;letter-spacing:.2px;line-height:1.25;text-shadow:0 2px 14px rgba(0,0,0,.28);transition:opacity .8s ease, transform .8s ease;white-space:nowrap;text-wrap:balance}
+    .kv-rotator span{position:absolute;left:50%;transform:translate(-50%,14px);opacity:0;color:#fff;font-size:clamp(20px,3.4vw,40px);font-weight:400;letter-spacing:.2px;line-height:1.25;text-shadow:0 2px 14px rgba(0,0,0,.28);transition:opacity .8s ease, transform .8s ease;white-space:nowrap;text-wrap:balance}
     .kv-rotator span.show{opacity:1;transform:translate(-50%,0)}
 
     /* How it works – image-based */
     .how{position:relative;padding:8px 0 0}
-    .how-step{max-width:1080px;margin:36px auto;padding:32px 20px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,#ffffff,#fbf8f0);box-shadow:0 12px 28px rgba(0,0,0,.06);display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:center;position:relative;z-index:1}
+    .how-step{
+      max-width:1080px;margin:36px auto;padding: clamp(24px,3.8vw,34px) 20px;
+      border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,#ffffff,#fbf8f0);
+      box-shadow:0 12px 28px rgba(0,0,0,.06);
+      display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;position:relative;z-index:1
+    }
     .how-step.even{grid-template-columns:.95fr 1.05fr;background:linear-gradient(180deg,#ffffff,#f6f3eb)}
     .how-overline{display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#6b7280;margin-bottom:8px}
-    .how h3{margin:0 0 10px;font-size:26px;font-weight:400}
-    .how p{margin:0;color:var(--muted);font-size:16px;line-height:1.6}
+    .how h3{margin:0 0 10px;font-size:clamp(22px,3.2vw,28px);font-weight:400;line-height:1.2}
+    .how p{margin:0;color:var(--muted);font-size:clamp(15px,2.4vw,17px);line-height:1.6}
 
     .how-viz{
       border-radius:16px;border:1px solid var(--line);
       background:linear-gradient(180deg,#fff,#f5f1e9);
       box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 10px 20px rgba(0,0,0,.06);
       overflow:hidden; position:relative;
-      aspect-ratio: 16/10;   /* keeps a nice proportion */
+      aspect-ratio: 16/10;
     }
-    .how-viz img{
-      width:100%; height:100%; object-fit:cover; display:block;
-    }
+    .how-viz img{width:100%; height:100%; object-fit:cover; display:block}
 
     .connector{position:absolute;left:-8vw;right:-8vw;bottom:-28px;height:70px;pointer-events:none;opacity:.6;z-index:0}
     .connector svg{width:100%;height:100%}
@@ -106,44 +121,130 @@
     /* Tarot six */
     .tarot-six{max-width:1180px;margin:18px auto 70px;padding:0 20px}
     .tarot-six .row{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; padding:8px 0;}
-    .tarot-six .tile{width:160px; aspect-ratio:2/3; border-radius:14px; overflow:hidden; border:1px solid var(--line); background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.08); animation:floatCard var(--dur,12s) ease-in-out infinite; transform:translateZ(0);}
+    .tarot-six .tile{width:clamp(120px,22vw,160px); aspect-ratio:2/3; border-radius:14px; overflow:hidden; border:1px solid var(--line); background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.08); animation:floatCard var(--dur,12s) ease-in-out infinite; transform:translateZ(0);}
     .tarot-six .tile img{width:100%;height:100%;object-fit:cover;display:block}
     @keyframes floatCard{0%,100%{ transform:translateY(0) rotate(var(--rot,0deg)) }50%{ transform:translateY(-6px) rotate(calc(var(--rot,0deg) + .6deg)) }}
 
     /* About */
-    .about{max-width:1180px;margin:0 auto 20px;padding:46px 20px;display:grid;grid-template-columns:1fr 1.1fr;gap:26px;align-items:center}
-    .about h2{font-weight:300;font-size:30px;margin:0 0 10px}
-    .about p{color:var(--muted);margin:0;line-height:1.6}
-    .media-frame{position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--line); background:linear-gradient(180deg,#fff,#f6f3eb); box-shadow:0 16px 40px rgba(0,0,0,.10), inset 0 0 0 1px rgba(255,255,255,.5); aspect-ratio:16/9; display:block;}
-    .media-frame video,.media-frame img{width:100%;height:100%;object-fit:cover;display:block}
-    .media-frame::after{content:""; position:absolute; inset:0; pointer-events:none; border-radius:18px; background:linear-gradient(140deg, rgba(209,180,106,.14), transparent 55%); mix-blend-mode:multiply;}
+    .about{max-width:1180px;margin:0 auto 20px;padding:46px 20px;display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:center}
+    .about h2{font-weight:300;font-size:clamp(24px,3.4vw,32px);margin:0 0 12px;line-height:1.2}
+    .about p{color:var(--muted);margin:0;line-height:1.6;font-size:clamp(15px,2.4vw,17px)}
 
-    footer{border-top:1px solid var(--line);padding:20px 20px;color:#6b7280;text-align:center;margin-top:40px}
-
-    @media (max-width:980px){
-      .hero{grid-template-columns:1fr}
-      .h1{font-size:34px}
-      .device{width:88%}
-      .kv.kv-banner{margin:40px 16px;border-radius:18px}
-      .kv-text{min-height:260px;padding:36px 14px}
-      .kv-rotator{width:92vw}
-      .kv-rotator span{white-space:normal;font-size:clamp(18px,5.2vw,22px)}
-      .how-step{grid-template-columns:1fr;gap:18px;padding:24px}
-      .tarot-six .tile{ width:132px; }
-      .about{grid-template-columns:1fr;gap:16px}
+    /* About photo bubble */
+    .media-frame{
+      width:clamp(150px,26vw,190px);
+      aspect-ratio:1/1;
+      border-radius:50%;
+      overflow:hidden;
+      border:3px solid var(--gold);
+      box-shadow:0 8px 24px rgba(0,0,0,.12);
+      margin:auto;
     }
+    .media-frame img{width:100%; height:100%; object-fit:cover; display:block}
+
+    footer{border-top:1px solid var(--line);padding:24px 20px;color:#6b7280;text-align:center;margin-top:40px;font-size:14px}
+
+    /* ======= Mobile Optimizations ======= */
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr;gap:24px;text-align:center}
+      .device{width:min(380px,75vw)}
+      .kv.kv-banner{margin:50px 18px;border-radius:20px}
+      .kv-text{min-height:280px;padding:40px 18px}
+      .kv-rotator{width:92vw}
+      .kv-rotator span{white-space:normal}
+      .how-step{grid-template-columns:1fr;gap:20px;padding:26px 18px;margin:28px 18px}
+      .how-step.even{grid-template-columns:1fr}
+      .about{grid-template-columns:1fr;gap:20px;text-align:center}
+      .btn{padding:12px 16px}
+    }
+
+    @media (max-width: 720px){
+      /* Header refinements */
+      .nav{padding:12px 16px}
+      .brand span{font-size:15px}
+      
+      /* Hero mobile polish */
+      .hero{
+        padding: 40px 18px 32px;
+        gap: 20px;
+      }
+      .h1{margin-top:0;margin-bottom:.3em}
+      .sub{margin-bottom:20px}
+      .device{width:min(340px,82vw)}
+      .hero-squiggle{top:52%;height:100px}
+      
+      /* Key values mobile */
+      .kv.kv-banner{margin:40px 16px;border-radius:18px}
+      .kv-text{min-height:240px;padding:32px 16px}
+      .kv-rotator span{font-size:clamp(18px,4.5vw,24px);line-height:1.3}
+      
+      /* How it works mobile */
+      .how-step{
+        margin:24px 16px;
+        padding:24px 16px;
+        border-radius:18px;
+        gap:18px;
+      }
+      .how h3{margin-bottom:8px}
+      
+      /* Tarot cards mobile */
+      .tarot-six{padding:0 16px}
+      .tarot-six .row{gap:10px}
+      .tarot-six .tile{width:clamp(100px,28vw,140px)}
+      
+      /* About mobile */
+      .about{padding:36px 16px;gap:18px}
+      .media-frame{width:140px}
+      
+      /* Footer mobile */
+      footer{padding:20px 16px;font-size:13px}
+    }
+
+    @media (max-width: 480px){
+      /* Extra small mobile refinements */
+      .nav{gap:8px;padding:10px 14px}
+      .nav .btn{display:none} /* Keep button hidden on smallest screens */
+      .spotlight{display:none} /* Keep phone hidden */
+      
+      .hero{padding:32px 16px 28px}
+      .h1{font-size:clamp(28px,7vw,36px)}
+      .sub{font-size:16px}
+      .device{width:88vw}
+      
+      .kv.kv-banner{display:none} /* Keep key values hidden on smallest screens */
+      
+      .how-step{margin:20px 12px;padding:20px 14px}
+      .how h3{font-size:clamp(20px,4.5vw,24px)}
+      .how p{font-size:14px}
+      
+      .tarot-six{padding:0 12px}
+      .tarot-six .tile{width:clamp(90px,30vw,120px)}
+      
+      .about{padding:28px 14px}
+      .about h2{font-size:clamp(22px,5vw,26px)}
+      .about p{font-size:14px}
+      .media-frame{width:120px}
+    }
+
+    /* Remove animations on reduced motion */
     @media (prefers-reduced-motion: reduce){
-      .h-charm{animation:none}.tarot-six .tile{animation:none}.kv-rotator span{ transition:none }
+      .h-charm{animation:none}
+      .tarot-six .tile{animation:none}
+      .kv-rotator span{ transition:none }
+    }
+
+    /* High contrast improvements */
+    @media (prefers-contrast: high){
+      .btn-primary{background:var(--ink);border-color:var(--ink)}
+      .how-step{border-color:#ccc}
+      .device{border-color:#aaa}
     }
   </style>
 </head>
 <body>
   <!-- background & charms -->
   <div class="site-bg" aria-hidden="false">
-    <div class="charm c1"><img src="/assets/cards/six-of-pentacles/stars.png" alt=""></div>
-    <div class="charm c2"><img src="/assets/charms/charm-sun.webp" alt=""></div>
-    <div class="charm c3"><img src="/assets/charms/charm-moon.webp" alt=""></div>
-    <div class="charm c4"><img src="/assets/charms/charm-fool.webp" alt=""></div>
+    
   </div>
 
   <header>
@@ -169,10 +270,10 @@
       </svg>
     </div>
     <div class="hero-charms" aria-hidden="true">
-      <div class="h-charm h1c" style="--rot:-6deg;"><img src="/assets/charms/charm-empress.webp" alt=""></div>
-      <div class="h-charm h2c" style="--rot:6deg;"><img src="/assets/charms/charm-magician.webp" alt=""></div>
-      <div class="h-charm h3c" style="--rot:3deg;"><img src="/assets/charms/charm-star.webp" alt=""></div>
-      <div class="h-charm h4c" style="--rot:-4deg;"><img src="/assets/charms/charm-sun.webp" alt=""></div>
+      <div class="h-charm h1c" style="--rot:-6deg;"><img src="/assets/charms/charm-empress.webp" alt="" loading="lazy" decoding="async"></div>
+      <div class="h-charm h2c" style="--rot:6deg;"><img src="/assets/charms/charm-magician.webp" alt="" loading="lazy" decoding="async"></div>
+      <div class="h-charm h3c" style="--rot:3deg;"><img src="/assets/charms/charm-star.webp" alt="" loading="lazy" decoding="async"></div>
+      <div class="h-charm h4c" style="--rot:-4deg;"><img src="/assets/charms/charm-sun.webp" alt="" loading="lazy" decoding="async"></div>
     </div>
 
     <div>
@@ -185,7 +286,7 @@
       <div class="device" aria-label="App preview device frame">
         <div class="device-notch" aria-hidden="true"></div>
         <div class="device-screen">
-          <video src="/assets/demo/demo.mp4" poster="/assets/demo/poster.jpg" autoplay muted playsinline loop></video>
+          <video src="/assets/cards/landingpage/demo-video.MP4?v=2" autoplay muted playsinline loop preload="metadata"></video>
         </div>
         <div class="device-btn btn-vol-up" aria-hidden="true"></div>
         <div class="device-btn btn-vol-dn" aria-hidden="true"></div>
@@ -208,12 +309,12 @@
   <!-- TAROT SIX -->
   <section class="tarot-six" aria-label="Tarot visuals">
     <div class="row">
-      <div class="tile" style="--rot:-2deg; --dur:12s"><img src="/assets/cards/landingpage/the-chariot.webp" alt="The Chariot"></div>
-      <div class="tile" style="--rot:2deg; --dur:13s"><img src="/assets/cards/landingpage/six-of-pentacles.webp" alt="Six of Pentacles"></div>
-      <div class="tile" style="--rot:-1deg; --dur:14s"><img src="/assets/cards/landingpage/the-high-priestess.webp" alt="The High Priestess"></div>
-      <div class="tile" style="--rot:1deg; --dur:12.5s"><img src="/assets/cards/landingpage/the-hanged-man.webp" alt="The Hanged Man"></div>
-      <div class="tile" style="--rot:-2deg; --dur:15s"><img src="/assets/cards/landingpage/the-emperor.webp" alt="The Emperor"></div>
-      <div class="tile" style="--rot:1.5deg; --dur:13.5s"><img src="/assets/cards/landingpage/the-lovers.webp" alt="The Lovers"></div>
+      <div class="tile" style="--rot:-2deg; --dur:12s"><img src="/assets/cards/landingpage/the-chariot.webp" alt="The Chariot" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--rot:2deg; --dur:13s"><img src="/assets/cards/landingpage/six-of-pentacles.webp" alt="Six of Pentacles" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--rot:-1deg; --dur:14s"><img src="/assets/cards/landingpage/the-high-priestess.webp" alt="The High Priestess" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--rot:1deg; --dur:12.5s"><img src="/assets/cards/landingpage/the-hanged-man.webp" alt="The Hanged Man" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--rot:-2deg; --dur:15s"><img src="/assets/cards/landingpage/the-emperor.webp" alt="The Emperor" loading="lazy" decoding="async"></div>
+      <div class="tile" style="--rot:1.5deg; --dur:13.5s"><img src="/assets/cards/landingpage/the-lovers.webp" alt="The Lovers" loading="lazy" decoding="async"></div>
     </div>
   </section>
 
@@ -227,7 +328,7 @@
         <p>Your own beautiful digital deck and brand elements—sized for web &amp; mobile.</p>
       </div>
       <div class="how-viz">
-        <img src="/assets/cards/landingpage/deck-design-graphic2.png" alt="Design visuals">
+        <img src="/assets/cards/landingpage/deck-design-graphic2.png" alt="Design visuals" loading="lazy" decoding="async">
       </div>
       <div class="connector" aria-hidden="true">
         <svg viewBox="0 0 1400 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -239,7 +340,7 @@
     <!-- ENGAGE -->
     <section class="how-step even" id="engage">
       <div class="how-viz">
-        <img src="/assets/cards/landingpage/App-Screens-3.png" alt="Engage visuals">
+        <img src="/assets/cards/landingpage/App-Screens-3.png" alt="Engage visuals" loading="lazy" decoding="async">
       </div>
       <div>
         <span class="how-overline">Step 2</span>
@@ -261,7 +362,7 @@
         <p>Subscriptions with Stripe—own the customer relationship and recurring revenue.</p>
       </div>
       <div class="how-viz">
-        <img src="/assets/cards/landingpage/earn-graphic.png" alt="Earn visuals">
+        <img src="/assets/cards/landingpage/earn-graphic.png" alt="Earn visuals" loading="lazy" decoding="async">
       </div>
     </section>
   </div>
@@ -269,11 +370,12 @@
   <!-- ABOUT -->
   <section id="about" class="about">
     <div class="media-frame">
-      <video src="/assets/about/me.mp4" poster="/assets/about/me-poster.jpg" playsinline controls></video>
+      <img src="/assets/cards/landingpage/priyanka.jpeg" alt="Priyanka Sundhar" loading="lazy" decoding="async">
     </div>
     <div>
-      <h2>About Me</h2>
-      <p>I’m Priyanka. I created My Tarot App to make quality tarot experiences available through technology while feeling more connected to tarot readers people trust. </p>
+      <h2>Gain a Creative Tech Partner</h2>
+      <p> 
+     👋🏼 I’m Priyanka, I've spent 8 years working at startups in Silicon Valley. I started this to merge my love of tech and tarot. Now, I’d love to help you bring your tarot business online in a way that feels beautiful and true to you. </p>
     </div>
   </section>
 
